@@ -31,7 +31,7 @@ const Button = ({
     <button
       type={type}
       disabled={disabled}
-      className={`${disabled ? "bg-gray-600 text-white" : `${buttonColorVariant[color]}`} ${buttonSizeVariant[size]}`}
+      className={`${disabled ? "bg-gray-600 text-white" : `${buttonColorVariant[color]}`} ${buttonSizeVariant[size]} `}
       onClick={onClick}
     >
       {children}

@@ -1,9 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import ActivityHeaderKebabMenu from "./ActivityHeaderKebabMenu";
+import { useAuth } from "@context/AuthContext";
 import locationIcon from "@icons/icon_location.svg";
 import starIcon from "@icons/icon_star_on.svg";
 
 interface ActivityHeaderProps {
+  userId: number;
   category: string;
   title: string;
   rating: number;
@@ -17,9 +21,10 @@ export default function ActivityHeader({
   rating,
   reviewCount,
   address,
+  userId,
 }: ActivityHeaderProps) {
-  /**
-   */
+  const { user } = useAuth();
+
   return (
     <header className="mb-[1.5625rem] flex h-[7.25rem] w-full justify-between">
       {/* 헤더 왼쪽 영역 */}
@@ -54,7 +59,7 @@ export default function ActivityHeader({
         </div>
       </div>
       {/* 헤더 케밥 메뉴 영역 */}
-      <ActivityHeaderKebabMenu />
+      {user?.id === userId && <ActivityHeaderKebabMenu />}
     </header>
   );
 }
