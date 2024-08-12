@@ -14,7 +14,7 @@ const navItems = [
 
 const SideNavigation: React.FC = () => {
   return (
-    <div className="shadow-[rgba(17, 34, 17, 0.05)] rounded-xl border border-gray-300 bg-white p-6 shadow-md">
+    <div className="shadow-custom-shadow-01 rounded-xl border border-gray-300 bg-white p-6">
       <div className="mb-6 flex flex-col items-center">
         <ProfileImage />
       </div>
@@ -26,7 +26,7 @@ const SideNavigation: React.FC = () => {
               href={item.href}
               label={item.label}
               icon={item.icon}
-              className="flex min-h-11 items-center gap-[0.875rem] rounded-xl px-4 py-2 text-lg font-semibold text-primary"
+              className="flex min-h-11 items-center gap-[0.875rem] rounded-xl px-4 py-2 text-lg font-bold text-primary"
               activeClassName="bg-[#CED8D5]"
               hoverClassName="hover:bg-[#CED8D5]"
             />

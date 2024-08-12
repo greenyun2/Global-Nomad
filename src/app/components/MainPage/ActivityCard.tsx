@@ -13,13 +13,15 @@ const ActivityCard = ({
 }: ActivityCardProps) => {
   return (
     <div>
-      <Link href={`/activity/${id}`}>
+      <Link href={`/activities/${id}`}>
         <div className="mb-[10px] flex flex-col gap-[16px] md:mb-[30px] xl:mb-[48px]">
           <div className="relative h-[168px] w-[168px] md:h-[221px] md:w-[221px] xl:h-[283px] xl:w-[283px]">
             <Image
               src={`${bannerImageUrl}`}
               alt="card image"
               fill
+              sizes="(min-width: 1280px) 283px,
+              (min-width: 768px) 221px"
               objectFit="cover"
               style={{ borderRadius: 15 }}
             />
