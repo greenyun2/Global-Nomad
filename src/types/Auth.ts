@@ -41,7 +41,6 @@ export const TestFormSchema = z.object({
   calendar: z.string(),
   dropdown: z.string(),
   startTime: z.string(),
-  endTime: z.string(),
 });
 
 export type TTestFormSchema = z.infer<typeof TestFormSchema>;
