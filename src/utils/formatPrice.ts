@@ -8,12 +8,15 @@
  * 옵션 객체는 Object 형태로, 숫자 포맷팅의 세부 사항을 지정하는 여러 속성을 지원합니다.
  *
  * @param {number} price - 포맷할 숫자
- * @returns {string} - 포맷된 문자열 (예: ₩1,000,000)
+ * @returns {string} - 포맷된 문자열 (예: ₩ 1,000,000)
  */
 export function formatPriceKorean(price: number): string {
-  return new Intl.NumberFormat("ko-KR", {
+  const formattedPrice = new Intl.NumberFormat("ko-KR", {
     style: "currency", // 통화 형식으로 포맷팅
     currency: "KRW", // KRW으로 설정하여 앞에 '₩' 사인이 붙음
     minimumFractionDigits: 0, // 표시할 최소 소수점 자릿수를 지정
   }).format(price); // 이 함수가 호출되면 숫자 price가 포맷된 문자열로 변환됩니다.
+
+  // 통화 기호와 숫자 사이에 공백 추가
+  return formattedPrice.replace("₩", "₩ ");
 }
