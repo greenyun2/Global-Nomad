@@ -22,13 +22,16 @@ const ActivityCard = ({
               fill
               sizes="(min-width: 1280px) 283px,
               (min-width: 768px) 221px"
-              objectFit="cover"
-              style={{ borderRadius: 15 }}
+              style={{ borderRadius: 15, objectFit: "cover" }}
             />
           </div>
           <div>
             <div className="flex">
-              <Image src={icon_star} alt="star icon" width={20} height={20} />
+              <Image
+                src={icon_star}
+                alt="star icon"
+                style={{ width: 20, height: 20 }}
+              />
               <p>
                 {rating}
                 <span className="text-[#A1A1A1]">{` (${reviewCount})`}</span>

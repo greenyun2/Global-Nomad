@@ -46,6 +46,7 @@ const CategorySort = ({
             alt="arrow icon"
             width={22}
             height={22}
+            style={{ width: 22, height: 22 }}
           />
         </button>
         {isOpen && (
