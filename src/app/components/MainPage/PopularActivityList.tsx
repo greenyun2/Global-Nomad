@@ -66,7 +66,7 @@ const PopularActivityList = () => {
       <h1 className="mb-4 text-[18px] font-bold md:mb-8 md:text-[36px]">
         🔥인기 체험
       </h1>
-      <div className="slick-next:before {display: none}">
+      <div>
         <Slider {...settings}>
           {popularActivities.map((activity) => (
             <PopularActivityCard key={activity.id} cardData={activity} />
