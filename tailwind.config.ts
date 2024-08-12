@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        "custom-shadow-01": "0 0.25rem 1rem 0 rgba(17, 34, 17, 0.05)",
+      },
       colors: {
         primary: "#112211",
         secondary: "",

@@ -25,7 +25,7 @@ export default async function MyPageLayout({
           <SideNavigation></SideNavigation>
         </div>
         <MyActivityListContextProvider data={myActivityList}>
-          <div className="flex-1">{children}</div>
+          <div className="min-w-0 flex-1">{children}</div>
         </MyActivityListContextProvider>
       </div>
     </div>

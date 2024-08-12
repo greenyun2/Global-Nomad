@@ -5,6 +5,7 @@ import { MyActivityType } from "@customTypes/MyActivity-Status";
 
 export type MyActivityListContextType = {
   myActivityList: MyActivityType[] | [];
+  setMyActivityList: React.Dispatch<React.SetStateAction<MyActivityType[]>>;
   handleMyActivitySelect: (selectedActivity: string) => void;
   selectedActivityId: string;
 };
@@ -32,7 +33,7 @@ export default function MyActivityListContextProvider({
 
   return (
     <MyActivityListContext.Provider
-      value={{ myActivityList, handleMyActivitySelect, selectedActivityId }}
+      value={{ myActivityList, setMyActivityList, handleMyActivitySelect, selectedActivityId }}
     >
       {children}
     </MyActivityListContext.Provider>
