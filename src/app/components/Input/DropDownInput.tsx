@@ -11,25 +11,35 @@ type DropDownOption = string;
 type DropDownPropsType = {
   dropDownOptions: DropDownOption[] | [];
   placeholder?: string;
-  id?: string;
+  id?: string; // <label> 태그에 연결할 id값입니다.
   value?: string; // Ensure the value prop is used for controlled component
   onChange: (value: string) => void; // Update the onChange type to handle value changes
   onBlur?: (e: React.FocusEvent<HTMLInputElement, Element>) => void;
   invalid?: boolean;
+  // setInitialSelectedItem은 dropDownOption중에 가장 첫번째 값을 초기값으로 설정할지 말지 결정합니다.
+  setInitialSelectedItem?: boolean;
 };
 
 const DropDownInput = forwardRef<HTMLInputElement, DropDownPropsType>(
   (
-    { placeholder, dropDownOptions, id, value, onChange, onBlur, invalid },
+    {
+      placeholder,
+      dropDownOptions,
+      id,
+      onChange,
+      onBlur,
+      invalid,
+      setInitialSelectedItem,
+    },
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(
-      dropDownOptions.length > 0 ? dropDownOptions[0] : "",
+      setInitialSelectedItem ? dropDownOptions[0] : "",
     );
 
     return (
-      <div className="flex flex-col">
+      <div className="relative flex flex-col">
         <section>
           <div className="relative flex items-center">
             <input
@@ -38,7 +48,7 @@ const DropDownInput = forwardRef<HTMLInputElement, DropDownPropsType>(
               onBlur={onBlur}
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               id={id}
-              value={selectedItem} // Controlled component
+              value={selectedItem} // 선택된 option을 Input에 표시합니다.
               placeholder={placeholder}
               className={`w-full cursor-pointer rounded-[6px] border ${invalid ? "border-red-500" : "border-gray-700"} px-[16px] py-[16px] caret-transparent`}
             />
@@ -52,13 +62,13 @@ const DropDownInput = forwardRef<HTMLInputElement, DropDownPropsType>(
           </div>
         </section>
         {isDropdownOpen && (
-          <section className="mt-[16px] h-[200px] overflow-y-scroll shadow-md">
+          <section className="absolute top-[70px] z-50 mt-[16px] max-h-[200px] w-full overflow-y-scroll bg-white shadow-md">
             <ul>
               {dropDownOptions?.map((option, index) => (
                 <li
                   onClick={() => {
-                    onChange(option); // Notify React Hook Form of the selected option
-                    setSelectedItem(option);
+                    onChange(option); // react-hook-form의 controller에 값을 전달합니다.
+                    setSelectedItem(option); // input의 value값 표시 용도입니다.
                     setIsDropdownOpen(false);
                   }}
                   key={index}
