@@ -29,19 +29,38 @@ const usePopularData = () => {
 };
 
 const PopularActivityList = () => {
+  const SlickButtonFix = (props: {
+    children: JSX.Element;
+    slideCount?: number;
+    currentSlide?: number;
+  }) => {
+    const { children, currentSlide, slideCount, ...others } = props;
+    return <span {...others}>{children}</span>;
+  };
+
   const settings = {
     dots: true,
     infinite: true,
     slidesToShow: 3,
     slidesToScroll: 3,
     initialSlide: 0,
-    nextArrow: <Image src={Arrow_Right} alt="right arrow" />,
-    prevArrow: <Image src={Arrow_Left} alt="legt arrow" />,
+    nextArrow: (
+      <SlickButtonFix>
+        <Image src={Arrow_Right} alt="right arrow" />
+      </SlickButtonFix>
+    ),
+    prevArrow: (
+      <SlickButtonFix>
+        <Image src={Arrow_Left} alt="left arrow" />
+      </SlickButtonFix>
+    ),
   };
+
   const { data } = usePopularData();
   const totalCount = data?.totalCount || 0;
   const activities = data?.activities || [];
   const popularActivities = activities.slice(0, 6);
+
   return (
     <div className="md:mb-15 mb-10">
       <h1 className="mb-4 text-[18px] font-bold md:mb-8 md:text-[36px]">

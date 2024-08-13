@@ -17,7 +17,11 @@ const PopularActivityCard = ({
       >
         <div className="mb-6 ml-5 flex h-[160px] flex-col justify-end gap-[6px] text-white md:h-[340px]">
           <div className="flex">
-            <Image src={icon_star} alt="star icon" width={20} height={20} />
+            <Image
+              src={icon_star}
+              alt="star icon"
+              style={{ width: 20, height: 20 }}
+            />
             <p className="text-lg">
               {rating}
               <span>{` (${reviewCount})`}</span>
