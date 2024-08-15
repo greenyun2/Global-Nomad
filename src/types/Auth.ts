@@ -29,3 +29,18 @@ export const LoginSchema = z.object({
 });
 
 export type TLoginSchema = z.infer<typeof LoginSchema>;
+
+// 테스트 form에서 사용할 스키마 입니다.
+export const TestFormSchema = z.object({
+  email: z
+    .string({ required_error: "이메일을 입력해 주세요" })
+    .email({ message: "잘못된 이메일입니다." }),
+  password: z
+    .string({ required_error: "비밀번호를 입력해 주세요" })
+    .min(8, { message: "8자리 이상 입력해 주세요" }),
+  calendar: z.string(),
+  dropdown: z.string(),
+  startTime: z.string(),
+});
+
+export type TTestFormSchema = z.infer<typeof TestFormSchema>;
