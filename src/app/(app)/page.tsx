@@ -82,7 +82,9 @@ export default function Home() {
           </Suspense>
         </section>
         {content ? (
-          <SearchActivityResult />
+          <Suspense>
+            <SearchActivityResult />
+          </Suspense>
         ) : (
           <div>
             <section>
