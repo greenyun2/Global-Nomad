@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { getMonthlyReservationsStatus } from "@api/myactivity-status";
+import { getMonthlyReservationsStatus } from "@api/MyActivity-Status";
 import { DailyReservationsStatus } from "@customTypes/MyActivity-Status";
 import { useQuery } from "@tanstack/react-query";
 import "./Calendar.css";
