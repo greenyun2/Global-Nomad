@@ -1,7 +1,7 @@
 "use client";
 
 import { formatPriceKorean } from "@/utils/formatPrice";
-import { MyActivityType } from "@customTypes/MyActivity-Status";
+import { MyActivityType } from "@customTypes/MyActivityStatusType";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

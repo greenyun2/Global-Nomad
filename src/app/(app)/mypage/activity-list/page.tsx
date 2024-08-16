@@ -8,11 +8,10 @@ import {
 } from "@api/myActivites";
 import Button from "@app/components/Button/Button";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import MyActivityComponent from "./MyActivity";
 import { MyActivityListContext } from "@context/MyActivityListContext";
-import Empty from "@icons/icon_empty.svg";
+import EmptyState from "@components/EmptyState/EmptyState";
 
 export default function ActivityList() {
   const queryClient = useQueryClient();
