@@ -1,6 +1,12 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
-import { useAuth } from "@context/AuthContext";
+
+// 토큰 재발급 요청 전용 axiosInstance 입니다.
+// 이 axiosInstance를 사용하여 request요청을 보낼 경우 interceptor를 거치지 않게 됩니다.
+const TokenRefreshAxiosInstance = axios.create({
+  baseURL: "https://sp-globalnomad-api.vercel.app/6-12",
+  withCredentials: false,
+});
 
 const instance = axios.create({
   baseURL: "https://sp-globalnomad-api.vercel.app/6-12",
@@ -41,12 +47,15 @@ instance.interceptors.response.use(
           throw new Error("No refresh token available.");
         }
 
-        const response = await instance.post<{
-          accessToken: string;
-          refreshToken: string;
-        }>("/auth/tokens", {
-          refreshToken,
-        });
+        const response = await TokenRefreshAxiosInstance.post(
+          "https://sp-globalnomad-api.vercel.app/6-12/auth/tokens",
+          "",
+          {
+            headers: {
+              Authorization: `Bearer ${refreshToken}`,
+            },
+          },
+        );
 
         const { accessToken, refreshToken: newRefreshToken } = response.data;
 
