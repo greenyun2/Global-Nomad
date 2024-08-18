@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, FormEvent, Suspense } from "react";
-import ActivityCardList from "@app/components/MainPage/ActivityCardList";
-import PopularActivityList from "@app/components/MainPage/PopularActivityList";
+import { Suspense, useState, FormEvent } from "react";
+import SearchActivityResult from "@app/components/MainPage/SearchActivityResult";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import BedIcon from "@icons/icon_search.svg";
 
-export default function Home() {
+export default function Search() {
   const monthNum = new Date().getMonth() + 1;
   const [keyword, setKeyword] = useState<string>("");
   const router = useRouter();
@@ -16,7 +15,6 @@ export default function Home() {
     e.preventDefault();
     router.push(`/search?keyword=${keyword}`);
   };
-
   return (
     <>
       <section>
@@ -67,16 +65,9 @@ export default function Home() {
             </form>
           </div>
         </section>
-        <div>
-          <section>
-            <PopularActivityList />
-          </section>
-          <section className="container">
-            <Suspense>
-              <ActivityCardList />
-            </Suspense>
-          </section>
-        </div>
+        <Suspense>
+          <SearchActivityResult />
+        </Suspense>
       </div>
     </>
   );
