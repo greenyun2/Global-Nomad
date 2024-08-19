@@ -32,6 +32,16 @@ a {
   text-decoration: none;
 }
 
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -128,7 +138,7 @@ button,
     display: none; /* Chrome, Safari, Opera */
   }
 
-   /** 
+  /** 
   * 요소사이를 나누는 선(디자인적 요소)
   * 
   * @example
@@ -138,6 +148,6 @@ button,
     @apply relative;
   }
   .divider::before {
-    @apply absolute left-0 h-full top-0 w-px bg-inherit content-[''];
+    @apply absolute left-0 top-0 h-full w-px bg-inherit content-[''];
   }
 }
