@@ -39,7 +39,7 @@ const CalendarInput = forwardRef<HTMLInputElement, CalendarInputPropsType>(
     useEffect(() => {
       if (selectedDate) {
         // react-hook-form에 전달할 date값을 schema에 맞게 formatting 합니다.
-        setDate1(format(selectedDate as Date, "yyyy/MM/dd"));
+        setDate1(format(selectedDate as Date, "yyyy-MM-dd"));
         // react-hook-form에 포맷이 완료된 날짜 값을 전달합니다.
         onChange(dateformat1);
 

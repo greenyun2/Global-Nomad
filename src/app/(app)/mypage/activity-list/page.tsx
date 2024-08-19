@@ -1,18 +1,19 @@
 "use client";
 
-import { useContext } from "react";
-import { deleteMyActivity } from "@api/myActivites";
+import { useContext, useEffect } from "react";
+import { deleteMyActivity, getMyActivities } from "@api/myActivites";
 import Button from "@app/components/Button/Button";
 import { MyActivityType } from "@customTypes/MyActivityStatusType";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import Image from "next/image";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import EmptyState from "@components/EmptyState/EmptyState";
-import MyActivity from "./MyActivity";
+import MyActivityComponent from "./MyActivity";
 import { MyActivityListContext } from "@context/MyActivityListContext";
-import Empty from "@icons/icon_empty.svg";
 
 export default function ActivityList() {
   const queryClient = useQueryClient();
+  const router = useRouter();
+
   const context = useContext(MyActivityListContext);
 
   if (!context) {
@@ -22,6 +23,22 @@ export default function ActivityList() {
   }
 
   const { myActivityList, setMyActivityList } = context;
+
+  // useQuery를 사용하여 데이터를 패칭하고 컨텍스트와 동기화
+  const { data, refetch } = useQuery<MyActivityType[]>({
+    queryKey: ["myActivityList"],
+    queryFn: async () => {
+      const response = await getMyActivities();
+      return response.activities as MyActivityType[]; // MyActivityType으로 캐스팅
+    },
+    initialData: myActivityList,
+  });
+
+  useEffect(() => {
+    if (data) {
+      setMyActivityList(data);
+    }
+  }, [data, setMyActivityList]);
 
   const mutation = useMutation<
     void,
@@ -49,6 +66,7 @@ export default function ActivityList() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["myActivityList"] });
+      refetch();
     },
   });
 
@@ -56,18 +74,27 @@ export default function ActivityList() {
     mutation.mutate(id);
   };
 
+  const handleRegisterClick = () => {
+    router.push("/mypage/activity-list/create");
+  };
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-3xl font-bold text-primary">내 체험 관리</h2>
-        <Button size={"sm"} color={"dark"} className={""}>
+        <Button
+          size={"sm"}
+          color={"dark"}
+          onClick={handleRegisterClick}
+          className={""}
+        >
           체험 등록하기
         </Button>
       </div>
       {myActivityList.length > 0 ? (
         <ul className="flex flex-col gap-4 xl:gap-6">
           {myActivityList.map((myActivity) => (
-            <MyActivity
+            <MyActivityComponent
               key={myActivity.id}
               {...myActivity}
               onDelete={handleDelete}

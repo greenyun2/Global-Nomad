@@ -7,34 +7,54 @@ import icon_visibility_on from "@icons/icon_visibility_on.svg";
 
 type BasicInputPropsType = {
   placeholder: string;
-  type: "email" | "password" | "text" | "number";
+  type: "email" | "password" | "text" | "number" | "textarea"; // textarea 추가
   id: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
   invalid?: boolean;
-  value?: string;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement, Element>) => void;
+  value?: string | number;
+  onBlur?: (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
+  ) => void;
 };
 
-const BasicInput = forwardRef<HTMLInputElement, BasicInputPropsType>(
+const BasicInput = forwardRef<
+  HTMLInputElement | HTMLTextAreaElement,
+  BasicInputPropsType
+>(
   (
     { placeholder, id, type, onChange, onBlur, invalid, value },
-    ref: ForwardedRef<HTMLInputElement>,
+    ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
     return (
       <section>
         <div className="relative flex items-center">
-          <div>{value}</div>
-          <input
-            placeholder={placeholder}
-            id={id}
-            type={isPasswordVisible ? "text" : type}
-            onChange={onChange} // Directly pass the onChange handler
-            onBlur={onBlur}
-            ref={ref}
-            className={`${invalid ? "border-red-100" : "border-gray-700"} h-[58px] w-full rounded-[6px] border px-[16px] py-[20px] text-[16px] font-[400] text-black`}
-          />
+          {type === "textarea" ? (
+            <textarea
+              placeholder={placeholder}
+              id={id}
+              onChange={onChange}
+              onBlur={onBlur}
+              ref={ref as ForwardedRef<HTMLTextAreaElement>}
+              value={value}
+              className={`${invalid ? "border-red-100" : "border-gray-700"} h-[58px] w-full rounded-[6px] border px-[16px] py-[20px] text-[16px] font-[400] text-black`}
+            />
+          ) : (
+            <input
+              placeholder={placeholder}
+              id={id}
+              type={isPasswordVisible ? "text" : type}
+              onChange={onChange} // Directly pass the onChange handler
+              onBlur={onBlur}
+              ref={ref as ForwardedRef<HTMLInputElement>}
+              value={value}
+              className={`${invalid ? "border-red-100" : "border-gray-700"} h-[58px] w-full rounded-[6px] border px-[16px] py-[20px] text-[16px] font-[400] text-black`}
+            />
+          )}
+
           {type == "password" && (
             <div
               onClick={() => {
