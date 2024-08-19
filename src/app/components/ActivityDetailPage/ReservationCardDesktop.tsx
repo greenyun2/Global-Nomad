@@ -17,7 +17,6 @@ interface ReservationCardProps {
   totalNumber: number;
 }
 
-// useAuth 컨텍스트를 부모로 부터? 아니면 자식에서?
 type User = {
   id: number;
   email: string;
