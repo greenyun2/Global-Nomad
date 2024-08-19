@@ -4,11 +4,10 @@ import {
 } from "@api/fetchActivityDetail";
 import ActivityDetailReviews from "@app/components/ActivityDetailPage/ActivityDetailReviews";
 import ActivityHeader from "@app/components/ActivityDetailPage/ActivityHeader";
+import ActivityIconWrap from "@app/components/ActivityDetailPage/ActivityIconWrap";
 import ActivityImageSlider from "@app/components/ActivityDetailPage/ActivityImageSlider";
 import ActivityKakaoMap from "@app/components/ActivityDetailPage/ActivityKakaoMap";
 import ReservationCard from "@app/components/ActivityDetailPage/ReservationCard";
-import Image from "next/image";
-import locationIcon from "@icons/icon_location.svg";
 
 interface ActivityDetailPageProps {
   params: {
@@ -20,11 +19,13 @@ export default async function ActivityDetailPage({
   params,
 }: ActivityDetailPageProps) {
   const activityId = Number(params.activityId);
-  const activityDetailList = await getActivityDetailList({
-    activityId,
-  });
 
-  const activityDetailReviews = await getActivityDetailReviews({ activityId });
+  const [activityDetailList, activityDetailReviews] = await Promise.all([
+    getActivityDetailList({
+      activityId,
+    }),
+    getActivityDetailReviews({ activityId }),
+  ]);
 
   const {
     category,
@@ -42,7 +43,7 @@ export default async function ActivityDetailPage({
   const { reviews, totalCount, averageRating } = activityDetailReviews;
 
   return (
-    <div className="container h-[2798px] w-full pt-[4.875rem]">
+    <div className="container h-full w-full pt-4 md:pt-6 xl:pt-[4.875rem]">
       <ActivityHeader
         userId={userId}
         category={category}
@@ -51,33 +52,34 @@ export default async function ActivityDetailPage({
         reviewCount={reviewCount}
         address={address}
       />
+
       <ActivityImageSlider
         bannerImageUrl={bannerImageUrl}
         subImages={subImages}
       />
-      <div className="mb-[2.5rem] flex w-full gap-[0.875rem]">
-        <div className="h-[53.8125rem] w-[49.375rem] border-t border-solid border-primary border-opacity-25">
+
+      <div className="mb-[2.5rem] w-full pt-[0.9375rem] md:flex md:w-full md:gap-[0.875rem] md:pt-8 xl:gap-6 xl:pt-[5.3125rem]">
+        <div className="h-full md:w-[49.375rem] md:border-t md:border-solid md:border-primary md:border-opacity-25">
           {/* 체험 설명 */}
-          <div className="flex flex-col gap-[1rem] pb-[2.125rem] pt-[2.5rem]">
-            <h3 className="text-xl font-bold text-primary">체험 설명</h3>
-            <p className="text-lg font-normal text-primary">{description}</p>
+          <div className="flex h-auto w-full flex-col gap-[1rem] pb-4 md:pb-[2.125rem] md:pt-[2.5rem]">
+            <h2 className="text-xl font-bold text-primary">체험 설명</h2>
+            <p className="text-lg font-normal text-primary text-opacity-75">
+              {description}
+            </p>
           </div>
 
           {/* 카카오 지도 */}
-          <div className="flex h-[29.75rem] w-full flex-col gap-[0.5rem] border-b border-t border-solid border-primary border-opacity-25 py-10">
+          <div className="flex h-[30.125rem] w-full flex-col gap-[0.5rem] border-t border-solid border-primary border-opacity-25 pb-10 pt-4 md:h-[29.75rem] md:w-full md:border-b">
             <ActivityKakaoMap />
-            <div className="flex items-center">
-              <Image
-                width={18}
-                height={18}
-                src={locationIcon}
-                alt="주소 아이콘"
-              />
-              <span className="text-base/[1rem] text-primary">{address}</span>
-            </div>
+            <ActivityIconWrap
+              iconType="location"
+              fontColor="location"
+              text={address}
+            />
           </div>
+
           {/* 리뷰 */}
-          <div className="pt-10">
+          <div className="md:pt-10">
             <ActivityDetailReviews
               reviews={reviews}
               totalCount={totalCount}
@@ -86,7 +88,7 @@ export default async function ActivityDetailPage({
           </div>
         </div>
         {/* 예약 카드 */}
-        <ReservationCard price={price} />
+        <ReservationCard price={price} userId={userId} />
       </div>
     </div>
   );

@@ -109,6 +109,12 @@ export default function CalendarSection() {
 
   const disabledTiles: TileDisabledFunc = ({ date }: TileArgs) => {
     const today = new Date();
+    // const reservation = monthlyReservations?.find(
+    //   (dailyReservation) => dailyReservation.date == format(date, "yyyy-MM-dd"),
+    // );
+    // if (reservation) {
+    //   return false;
+    // }
     if (date < today) {
       return true;
     }
@@ -143,15 +149,18 @@ export default function CalendarSection() {
           }
         }}
       />
-      <div ref={ref} className="absolute right-0 w-full max-w-[380px]">
-        {isOpen && selectedDate && (
+      {isOpen && selectedDate && (
+        <div
+          ref={ref}
+          className="fixed bottom-[160px] left-0 top-0 z-50 w-full md:absolute md:left-auto md:right-0 md:top-[px] md:max-w-[429px]"
+        >
           <PopUpMenu
             date={selectedDate}
             closePopUp={close}
             selectedActivityId={selectedActivityId}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
