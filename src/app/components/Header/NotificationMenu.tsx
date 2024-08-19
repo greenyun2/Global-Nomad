@@ -15,7 +15,7 @@ export default function NotificationMenu() {
         <Image src={Notification} alt="알림" width={24} height={24} />
       </button>
       {isOpen && (
-        <div className="absolute right-0 top-full z-10 mt-2 w-[368px] min-w-40 rounded-lg border border-gray-400 bg-[#CBD8D5] px-5 py-6 shadow-custom-shadow-01">
+        <div className="fixed inset-0 z-10 rounded-lg border border-gray-400 bg-[#CBD8D5] px-5 py-6 shadow-custom-shadow-01 md:absolute md:bottom-auto md:left-auto md:right-0 md:top-full md:mt-2 md:w-[368px] md:min-w-40">
           <div
             className="py-1"
             role="menu"

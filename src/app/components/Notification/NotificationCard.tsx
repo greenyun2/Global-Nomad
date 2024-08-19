@@ -24,7 +24,7 @@ const NotificationCard = ({
     mutationFn: deleteNotification,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["notificatioin"],
+        queryKey: ["notification"],
       });
     },
   });

@@ -19,7 +19,7 @@ const getNotification = async (size?: number, cursorId?: number | null) => {
 
 const useNotification = (size?: number, cursorId?: number | null) => {
   return useQuery({
-    queryKey: ["notificatioin", size, cursorId],
+    queryKey: ["notification"],
     queryFn: () => getNotification(size, cursorId),
   });
 };
@@ -36,7 +36,18 @@ const Notifications = ({ close }: NotificationsProp) => {
   return (
     <div>
       {totalCount === 0 ? (
-        <div>알림이 없습니다.</div>
+        <div className="flex items-center justify-between">
+          <div className="text-lg">알림이 없습니다.</div>
+          <button onClick={handleButtonClose}>
+            <Image
+              src={icon_X}
+              alt="notification off"
+              width={30}
+              height={30}
+              style={{ width: 30, height: 30 }}
+            />
+          </button>
+        </div>
       ) : (
         <div className="flex flex-col gap-4">
           <div className="flex justify-between">
