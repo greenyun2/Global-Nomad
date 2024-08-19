@@ -35,7 +35,7 @@ const Button = ({
       disabled={disabled}
       className={twMerge(
         `${disabled ? "bg-gray-600 text-white" : `${buttonColorVariant[color]}`} ${buttonSizeVariant[size]}`,
-        `${className}`,
+        className,
       )}
       onClick={onClick}
     >
