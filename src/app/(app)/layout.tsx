@@ -11,7 +11,7 @@ export default function AppLayout({
     <div className="flex min-h-screen flex-col">
       <Header />
       <Suspense>
-        <main className="flex flex-grow flex-col">{children}</main>
+        <main className="flex flex-grow flex-col bg-[#FAFAFA]">{children}</main>
       </Suspense>
       <Footer />
     </div>

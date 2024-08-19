@@ -83,7 +83,12 @@ const ActivityCardList = () => {
       router.replace(pathname);
     } else {
       setCurrentCategory(button.value);
-      router.push(pathname + "?" + createQueryString("category", button.value));
+      const query = new URLSearchParams({
+        page: "1",
+        sort: currentSort,
+        category: button.value,
+      });
+      router.push(pathname + "?" + query);
     }
     setCurrentPageNum(0);
   };
