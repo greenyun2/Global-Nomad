@@ -1,10 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import ActivityHeaderKebabMenu from "./ActivityHeaderKebabMenu";
+import ActivityIconWrap from "./ActivityIconWrap";
 import { useAuth } from "@context/AuthContext";
-import locationIcon from "@icons/icon_location.svg";
-import starIcon from "@icons/icon_star_on.svg";
 
 interface ActivityHeaderProps {
   userId: number;
@@ -25,40 +23,33 @@ export default function ActivityHeader({
 }: ActivityHeaderProps) {
   const { user } = useAuth();
 
+  /**
+   * @TODO 이미지, 텍스트 반복되는 부분 컴포넌트로 분리
+   *
+   */
   return (
-    <header className="mb-[1.5625rem] flex h-[7.25rem] w-full justify-between">
-      {/* 헤더 왼쪽 영역 */}
-      <div className="flex flex-col gap-[0.625rem]">
-        {/* 카테고리 영역 */}
+    <header className="flex h-[6.625rem] w-[21.4375rem] justify-between md:mb-[0.9375rem] md:w-[43.5rem] xl:mb-[1.5625rem] xl:w-full">
+      <div className="flex h-full w-[18.25rem] flex-col justify-between md:w-[24.375rem]">
         <p className="text-md font-regular text-primary">{category}</p>
-        {/* 타이틀, 별점, 주소 영역 */}
-        <div className="flex flex-col gap-[1rem]">
-          {/* 타이틀 영역 */}
-          <h1 className="text-3xl font-bold text-primary">{title}</h1>
-          {/* 별점, 주소 영역 */}
-          <div className="flex gap-[0.75rem]">
-            {/* 별점 이미지, 텍스트 영역 */}
-            <div className="flex items-center gap-[0.375rem] text-md font-regular text-[#000]">
-              {/* 별점 이미지 */}
-              <div className="relative h-[1rem] w-[1rem]">
-                <Image fill src={starIcon} alt="별점 아이콘" />
-              </div>
-              {/* 별점 텍스트 */}
-              <span>{`${rating} (${reviewCount})`}</span>
-            </div>
-            {/* 주소 이미지, 텍스트 영역 */}
-            <div className="flex items-center gap-[0.125rem] text-md font-regular text-primary">
-              {/* 주소 이미지 */}
-              <div className="relative h-[1.125rem] w-[1.125rem]">
-                <Image fill src={locationIcon} alt="주소 아이콘" />
-              </div>
-              {/* 주소 텍스트 */}
-              <span>{address}</span>
-            </div>
+        <div className="flex h-[4.5rem] w-full flex-col gap-4 md:h-[5.125rem]">
+          <h1 className="text-2xl font-bold text-primary md:text-3xl">
+            {title}
+          </h1>
+          <div className="flex items-center gap-[0.75rem]">
+            <ActivityIconWrap
+              iconType="star"
+              fontColor="star"
+              text={`${rating} (${reviewCount})`}
+            />
+            <ActivityIconWrap
+              iconType="location"
+              fontColor="location"
+              text={address}
+            />
           </div>
         </div>
       </div>
-      {/* 헤더 케밥 메뉴 영역 */}
+      {/* 케밥 메뉴 영역 */}
       {user?.id === userId && <ActivityHeaderKebabMenu />}
     </header>
   );
