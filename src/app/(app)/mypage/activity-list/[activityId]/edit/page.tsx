@@ -5,41 +5,20 @@ import { getActivityById } from "@api/activities";
 import { updateMyActivity, UpdateActivityBody } from "@api/myActivites";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useParams } from "next/navigation";
-import { EditorSchemaType } from "../../Editor";
 import Editor from "../../Editor";
+import { EditorSchemaType } from "../../Editor";
 
 export default function EditActivity() {
   const router = useRouter();
   const { activityId } = useParams();
   const queryClient = useQueryClient();
-  const [initialData, setInitialData] = useState<EditorSchemaType | null>(null);
+  const [initialData, setInitialData] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchActivity = async () => {
       try {
         const activityData = await getActivityById(Number(activityId));
-
-        const schedules = activityData.schedules.map((schedule) => ({
-          date: schedule.date,
-          startTime: schedule.startTime,
-          endTime: schedule.endTime,
-        }));
-
-        const subImageUrls = activityData.subImages.map(
-          (image) => image.imageUrl,
-        );
-
-        // EditorSchemaType에 맞게 데이터를 변환하여 설정
-        setInitialData({
-          title: activityData.title ?? "",
-          category: activityData.category ?? "",
-          description: activityData.description ?? "",
-          price: activityData.price ?? 0,
-          address: activityData.address ?? "",
-          bannerImageUrl: activityData.bannerImageUrl ?? "",
-          schedules: schedules || [],
-          subImageUrls: subImageUrls || [],
-        });
+        setInitialData(activityData); // getActivityById의 결과를 그대로 사용
       } catch (error) {
         console.error("Error fetching activity data:", error);
       }
@@ -50,9 +29,7 @@ export default function EditActivity() {
 
   const handleSubmit = async (formData: EditorSchemaType) => {
     try {
-      console.log("Updating activity with data:", formData);
-
-      // UpdateMyActivity API를 호출하기 전에 데이터를 UpdateActivityBody 형식으로 변환
+      // 폼 데이터를 UpdateActivityBody 형식으로 변환
       const updateData: UpdateActivityBody = {
         title: formData.title,
         category: formData.category,
@@ -62,8 +39,8 @@ export default function EditActivity() {
         bannerImageUrl: formData.bannerImageUrl,
         schedulesToAdd: formData.schedules,
         subImageUrlsToAdd: formData.subImageUrls,
-        scheduleIdsToRemove: [], // 필요에 따라 수정
-        subImageIdsToRemove: [], // 필요에 따라 수정
+        scheduleIdsToRemove: formData.scheduleIdsToRemove,
+        subImageIdsToRemove: formData.subImageIdsToRemove,
       };
 
       await updateMyActivity(Number(activityId), updateData);

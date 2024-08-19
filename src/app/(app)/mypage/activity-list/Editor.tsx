@@ -25,6 +25,7 @@ const EditorSchema = z.object({
   schedules: z
     .array(
       z.object({
+        id: z.number().optional(),
         date: z.string(),
         startTime: z.string(),
         endTime: z.string(),
@@ -35,12 +36,14 @@ const EditorSchema = z.object({
     .array(z.string())
     .max(4, "최대 4개의 이미지만 등록할 수 있습니다.")
     .optional(),
+  scheduleIdsToRemove: z.array(z.number()).optional(),
+  subImageIdsToRemove: z.array(z.number()).optional(),
 });
 
 export type EditorSchemaType = z.infer<typeof EditorSchema>;
 
 interface EditorProps {
-  initialData?: EditorSchemaType;
+  initialData?: any;
   onSubmit: (formData: EditorSchemaType) => void;
 }
 
@@ -62,6 +65,8 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
       bannerImageUrl: "",
       schedules: [{ date: "", startTime: "", endTime: "" }],
       subImageUrls: [],
+      scheduleIdsToRemove: [],
+      subImageIdsToRemove: [],
     },
   });
 
@@ -79,32 +84,41 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [subImagePreviews, setSubImagePreviews] = useState<string[]>([]);
+  const [scheduleIdsToRemove, setScheduleIdsToRemove] = useState<number[]>([]);
+  const [subImageIdsToRemove, setSubImageIdsToRemove] = useState<number[]>([]);
 
   useEffect(() => {
-    console.log(initialData);
     if (initialData) {
-      // initialData는 EditorSchemaType에 맞게 변환되어야 함
-      const schedules = initialData.schedules?.map((schedule) => ({
+      console.log("Initial Data:", initialData); // 초기 데이터 출력
+
+      const schedules = initialData.schedules.map((schedule: any) => ({
+        id: schedule.id,
         date: schedule.date,
         startTime: schedule.startTime,
         endTime: schedule.endTime,
       }));
+      setValue("schedules", schedules);
+      const subImageUrls = initialData.subImages.map(
+        (image: any) => image.imageUrl,
+      );
 
-      const subImageUrls = initialData.subImageUrls;
-
-      // setValue로 initialData를 form에 설정
       setValue("title", initialData.title);
       setValue("category", initialData.category);
       setValue("description", initialData.description);
       setValue("price", initialData.price);
       setValue("address", initialData.address);
       setValue("bannerImageUrl", initialData.bannerImageUrl);
-      setValue("schedules", schedules || []);
-      setValue("subImageUrls", subImageUrls || []);
+      setValue("schedules", schedules);
+      setValue("subImageUrls", subImageUrls);
+
       setImagePreviewUrl(initialData.bannerImageUrl);
-      setSubImagePreviews(subImageUrls || []);
+      setSubImagePreviews(subImageUrls);
     }
   }, [initialData, setValue]);
+
+  useEffect(() => {
+    console.log("Fields structure:", fields); // fields 구조 출력
+  }, [fields]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -143,8 +157,14 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
   };
 
   const handleRemoveSubImage = (index: number) => {
+    const imageId = initialData?.subImages?.[index]?.id;
+    console.log(imageId);
+    if (imageId) {
+      setSubImageIdsToRemove((prev) => [...prev, imageId]);
+    }
+
     const newSubImagePreviews = [...subImagePreviews];
-    const newSubImageUrls = [...(subImageUrls || [])];
+    const newSubImageUrls = [...(subImageUrls || [])]; // undefined일 경우 빈 배열로 처리
 
     newSubImagePreviews.splice(index, 1);
     newSubImageUrls.splice(index, 1);
@@ -185,30 +205,54 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
     append({ date: "", startTime: "", endTime: "" });
   };
 
+  const handleRemoveSchedule = (index: number, scheduleId?: number) => {
+    console.log("Schedule ID to remove:", scheduleId); // 스케줄 ID 출력
+    remove(index); // useFieldArray의 remove 함수로 해당 인덱스의 스케줄 제거
+    if (scheduleId) {
+      setScheduleIdsToRemove((prev) => [...prev, scheduleId]);
+    }
+  };
+
   const handleFormSubmit = async (data: EditorSchemaType) => {
-    const filteredSchedules = data.schedules?.filter((schedule) => {
-      const isScheduleEmpty =
-        !schedule.date && !schedule.startTime && !schedule.endTime;
-      const isSchedulePartial =
-        (schedule.date && !schedule.startTime && !schedule.endTime) ||
-        (!schedule.date && schedule.startTime && !schedule.endTime) ||
-        (!schedule.date && !schedule.startTime && schedule.endTime);
+    let finalData;
 
-      if (isSchedulePartial) {
-        throw new Error("스케줄의 모든 필드를 채워야 합니다.");
-      }
+    if (initialData) {
+      // 수정 시
+      const filteredSchedules = data.schedules?.map((schedule) => ({
+        date: schedule.date,
+        startTime: schedule.startTime,
+        endTime: schedule.endTime,
+        id: schedule.id, // 기존 ID를 유지
+      }));
 
-      return !isScheduleEmpty;
-    });
+      finalData = {
+        title: data.title,
+        category: data.category,
+        description: data.description,
+        price: data.price,
+        address: data.address,
+        bannerImageUrl: data.bannerImageUrl,
+        schedules: filteredSchedules, // 수정 시에도 schedules로 변경
+        subImageUrls: data.subImageUrls, // 수정 시에도 subImageUrls로 변경
+        scheduleIdsToRemove: scheduleIdsToRemove,
+        subImageIdsToRemove: subImageIdsToRemove,
+      };
+    } else {
+      // 등록 시
+      finalData = {
+        title: data.title,
+        category: data.category,
+        description: data.description,
+        price: data.price,
+        address: data.address,
+        bannerImageUrl: data.bannerImageUrl,
+        schedules: data.schedules, // 그대로 전송
+        subImageUrls: data.subImageUrls, // 그대로 전송
+      };
+    }
 
-    const finalSchedules = filteredSchedules?.length ? filteredSchedules : [];
-
-    const filteredData = {
-      ...data,
-      schedules: finalSchedules,
-    };
-
-    onSubmit(filteredData);
+    console.log("Submitting data:", finalData);
+    onSubmit(finalData);
   };
 
   return (
@@ -313,7 +357,6 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
       <div>
         <label htmlFor="bannerImageUrl">배너 이미지</label>
         <div className="flex items-center gap-4">
-          {/* 이미지 등록 버튼 */}
           <div>
             <input
               type="file"
@@ -331,7 +374,6 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
             </label>
           </div>
 
-          {/* 이미지 미리보기 */}
           {imagePreviewUrl && (
             <div className="relative">
               <div
@@ -350,7 +392,6 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
             </div>
           )}
 
-          {/* 오류 메시지 */}
           {errors.bannerImageUrl && (
             <p className="text-sm text-red-500">
               {errors.bannerImageUrl.message}
@@ -367,7 +408,6 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
           추가 이미지 업로드
         </label>
         <div className="flex flex-wrap items-center gap-4">
-          {/* 이미지 등록 버튼 */}
           <div>
             <input
               type="file"
@@ -384,8 +424,6 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
               <span className="text-gray-500">이미지 등록</span>
             </label>
           </div>
-
-          {/* 추가 이미지 미리보기 */}
 
           {subImagePreviews.map((previewUrl, index) => (
             <div key={index} className="relative">
@@ -460,25 +498,25 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
           </Button>
         </div>
 
-        {fields.slice(1).map((item, index) => (
+        {fields.map((item, index) => (
           <div key={item.id} className="mb-4 flex items-center gap-4">
             <Controller
-              name={`schedules.${index + 1}.date`}
+              name={`schedules.${index}.date`}
               control={control}
               render={({ field }) => (
                 <CalendarInput
-                  id={`schedules-${index + 1}`}
+                  id={`schedules-${index}`}
                   {...field}
                   placeholder="YY/MM/DD"
                 />
               )}
             />
             <Controller
-              name={`schedules.${index + 1}.startTime`}
+              name={`schedules.${index}.startTime`}
               control={control}
               render={({ field }) => (
                 <DropDownInput
-                  id={`schedules-startTime-${index + 1}`}
+                  id={`schedules-startTime-${index}`}
                   setInitialValue={false}
                   dropDownOptions={["00:00", "01:00", "02:00", "03:00"]}
                   {...field}
@@ -488,11 +526,11 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
             />
             <span>~</span>
             <Controller
-              name={`schedules.${index + 1}.endTime`}
+              name={`schedules.${index}.endTime`}
               control={control}
               render={({ field }) => (
                 <DropDownInput
-                  id={`schedules-endTime-${index + 1}`}
+                  id={`schedules-endTime-${index}`}
                   setInitialValue={false}
                   dropDownOptions={["01:00", "02:00", "03:00", "04:00"]}
                   {...field}
@@ -502,7 +540,9 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
             />
             <Button
               type="button"
-              onClick={() => remove(index + 1)}
+              onClick={() =>
+                handleRemoveSchedule(index, Number(schedules?.[index]?.id))
+              } // schedules 배열에서 ID 참조
               size={"sm"}
               color={"dark"}
               className={"ml-2"}
@@ -511,18 +551,18 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
             </Button>
           </div>
         ))}
-      </div>
 
-      <div className="mt-4">
-        <Button
-          size={"sm"}
-          color={"dark"}
-          type="submit"
-          className={""}
-          disabled={isSubmitting || isImageUploading}
-        >
-          {initialData ? "수정하기" : "등록하기"}
-        </Button>
+        <div className="mt-4">
+          <Button
+            size={"sm"}
+            color={"dark"}
+            type="submit"
+            className={""}
+            disabled={isSubmitting || isImageUploading}
+          >
+            {initialData ? "수정하기" : "등록하기"}
+          </Button>
+        </div>
       </div>
     </form>
   );
