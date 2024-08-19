@@ -1,3 +1,5 @@
+import { twMerge } from "tailwind-merge";
+
 const buttonSizeVariant = {
   lg: "w-full h-[48px] py-[14px] rounded-[6px] text-lg font-bold leading-[26px] flex items-center justify-center",
   md: "w-[144px] h-[48px] py-[8px] rounded-[6px] text-lg font-bold leading-[26px] flex items-center justify-center",
@@ -15,7 +17,7 @@ interface ButtonProps {
   size: "lg" | "md" | "sm";
   color: "dark" | "bright";
   onClick?: () => void;
-  className: string;
+  className?: string;
 }
 
 const Button = ({
@@ -31,7 +33,10 @@ const Button = ({
     <button
       type={type}
       disabled={disabled}
-      className={`${disabled ? "bg-gray-600 text-white" : `${buttonColorVariant[color]}`} ${buttonSizeVariant[size]} `}
+      className={twMerge(
+        `${disabled ? "bg-gray-600 text-white" : `${buttonColorVariant[color]}`} ${buttonSizeVariant[size]}`,
+        `${className}`,
+      )}
       onClick={onClick}
     >
       {children}
