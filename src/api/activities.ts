@@ -1,5 +1,4 @@
 import instance from "@api/axios";
-import { MyActivityType } from "@customTypes/MyActivity-Status";
 
 export interface CreateActivityBody {
   title: string;
@@ -7,9 +6,9 @@ export interface CreateActivityBody {
   description: string;
   price: number;
   address: string;
-  schedules: CreateScheduleBody[];
+  schedules?: CreateScheduleBody[];
   bannerImageUrl: string;
-  subImageUrls: string[];
+  subImageUrls?: string[];
 }
 
 export interface CreateScheduleBody {
@@ -20,15 +19,10 @@ export interface CreateScheduleBody {
 
 export const createActivity = async (
   activityData: CreateActivityBody,
-): Promise<MyActivityType> => {
-  // MyActivityType을 반환하도록 변경
+): Promise<void> => {
   try {
-    const { data } = await instance.post<MyActivityType>(
-      "/activities",
-      activityData,
-    );
-    console.log("Activity created successfully:", data);
-    return data; // 생성된 활동 데이터를 반환
+    await instance.post("/activities", activityData);
+    console.log("Activity created successfully");
   } catch (error) {
     console.error("Error creating activity:", error);
     throw error;
@@ -57,6 +51,48 @@ export const uploadActivityImage = async (imageFile: File): Promise<string> => {
     return response.data.activityImageUrl;
   } catch (error) {
     console.error("Error uploading image:", error);
+    throw error;
+  }
+};
+
+export interface SubImage {
+  id: number;
+  imageUrl: string;
+}
+
+export interface Schedule {
+  id: number;
+  date: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface Activity {
+  id: number;
+  userId: number;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  address: string;
+  bannerImageUrl: string;
+  rating: number;
+  reviewCount: number;
+  createdAt: string;
+  updatedAt: string;
+  subImages: SubImage[];
+  schedules: Schedule[];
+}
+
+export const getActivityById = async (
+  activityId: number,
+): Promise<Activity> => {
+  try {
+    const { data } = await instance.get<Activity>(`/activities/${activityId}`);
+    console.log("Fetched activity data:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching activity:", error);
     throw error;
   }
 };

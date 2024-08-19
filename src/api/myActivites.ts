@@ -16,8 +16,10 @@ export interface UpdateActivityBody {
   price: number;
   address: string;
   bannerImageUrl: string;
-  schedules?: CreateScheduleBody[] | null;
-  subImageUrls?: string[] | null;
+  schedulesToAdd?: CreateScheduleBody[] | null;
+  subImageUrlsToAdd?: string[] | null;
+  scheduleIdsToRemove?: number[] | null;
+  subImageIdsToRemove?: number[] | null;
 }
 
 export const updateMyActivity = async (

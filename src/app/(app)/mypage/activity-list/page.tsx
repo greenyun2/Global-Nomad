@@ -1,17 +1,14 @@
 "use client";
 
 import { useContext, useEffect } from "react";
-import {
-  deleteMyActivity,
-  getMyActivities,
-  MyActivity,
-} from "@api/myActivites";
+import { deleteMyActivity, getMyActivities } from "@api/myActivites";
 import Button from "@app/components/Button/Button";
+import { MyActivityType } from "@customTypes/MyActivityStatusType";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import EmptyState from "@components/EmptyState/EmptyState";
 import MyActivityComponent from "./MyActivity";
 import { MyActivityListContext } from "@context/MyActivityListContext";
-import EmptyState from "@components/EmptyState/EmptyState";
 
 export default function ActivityList() {
   const queryClient = useQueryClient();
@@ -28,11 +25,11 @@ export default function ActivityList() {
   const { myActivityList, setMyActivityList } = context;
 
   // useQuery를 사용하여 데이터를 패칭하고 컨텍스트와 동기화
-  const { data, refetch } = useQuery<MyActivity[]>({
+  const { data, refetch } = useQuery<MyActivityType[]>({
     queryKey: ["myActivityList"],
     queryFn: async () => {
       const response = await getMyActivities();
-      return response.activities as MyActivity[]; // MyActivityType으로 캐스팅
+      return response.activities as MyActivityType[]; // MyActivityType으로 캐스팅
     },
     initialData: myActivityList,
   });
@@ -47,12 +44,12 @@ export default function ActivityList() {
     void,
     Error,
     number,
-    { previousData: MyActivity[] }
+    { previousData: MyActivityType[] }
   >({
     mutationFn: deleteMyActivity,
     onMutate: async (activityId: number) => {
       await queryClient.cancelQueries({ queryKey: ["myActivityList"] });
-      const previousData = queryClient.getQueryData<MyActivity[]>([
+      const previousData = queryClient.getQueryData<MyActivityType[]>([
         "myActivityList",
       ]);
 

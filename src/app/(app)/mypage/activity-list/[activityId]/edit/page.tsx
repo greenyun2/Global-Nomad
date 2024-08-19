@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getActivityById } from "@api/activities";
 import { updateMyActivity, UpdateActivityBody } from "@api/myActivites";
-import { MyActivityType } from "@customTypes/MyActivity-Status";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useParams } from "next/navigation";
 import Editor from "../../Editor";
@@ -16,29 +16,43 @@ export default function EditActivity() {
   );
 
   useEffect(() => {
-    const activityList = queryClient.getQueryData<MyActivityType[]>([
-      "myActivityList",
-    ]);
-    const activityData = activityList?.find(
-      (activity) => activity.id === Number(activityId),
-    );
+    const fetchActivity = async () => {
+      try {
+        const activityData = await getActivityById(Number(activityId));
 
-    if (activityData) {
-      setInitialData({
-        title: activityData.title ?? "",
-        category: activityData.category ?? "",
-        description: activityData.description ?? "",
-        price: activityData.price ?? 0,
-        address: activityData.address ?? "",
-        bannerImageUrl: activityData.bannerImageUrl ?? "",
-        // schedules: activityData.schedules, //
-        // subImageUrls: activityData.subImageUrls, //
-      });
-    }
-  }, [activityId, queryClient]);
+        const schedulesToAdd = activityData.schedules.map((schedule) => ({
+          date: schedule.date,
+          startTime: schedule.startTime,
+          endTime: schedule.endTime,
+        }));
+
+        const subImageUrlsToAdd = activityData.subImages.map(
+          (image) => image.imageUrl,
+        );
+
+        setInitialData({
+          title: activityData.title ?? "",
+          category: activityData.category ?? "",
+          description: activityData.description ?? "",
+          price: activityData.price ?? 0,
+          address: activityData.address ?? "",
+          bannerImageUrl: activityData.bannerImageUrl ?? "",
+          schedulesToAdd: schedulesToAdd,
+          subImageUrlsToAdd: subImageUrlsToAdd,
+          scheduleIdsToRemove: [],
+          subImageIdsToRemove: [],
+        });
+      } catch (error) {
+        console.error("Error fetching activity data:", error);
+      }
+    };
+
+    fetchActivity();
+  }, [activityId]);
 
   const handleSubmit = async (formData: UpdateActivityBody) => {
     try {
+      console.log("Updating activity with data:", formData);
       await updateMyActivity(Number(activityId), formData);
       queryClient.invalidateQueries({ queryKey: ["myActivityList"] });
       router.push("/mypage/activity-list");
