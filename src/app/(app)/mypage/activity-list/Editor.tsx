@@ -8,7 +8,6 @@ import BasicInput from "@app/components/Input/BasicInput";
 import CalendarInput from "@app/components/Input/CalendarInput";
 import DropDownInput from "@app/components/Input/DropDownInput";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import * as z from "zod";
 
 const CATEGORIES = ["문화 · 예술", "식음료", "스포츠", "투어", "관광", "웰빙"];
@@ -38,7 +37,7 @@ const EditorSchema = z.object({
     .optional(),
 });
 
-type EditorSchemaType = z.infer<typeof EditorSchema>;
+export type EditorSchemaType = z.infer<typeof EditorSchema>;
 
 interface EditorProps {
   initialData?: EditorSchemaType;
@@ -82,35 +81,42 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
   const [subImagePreviews, setSubImagePreviews] = useState<string[]>([]);
 
   useEffect(() => {
+    console.log(initialData);
     if (initialData) {
+      // initialData는 EditorSchemaType에 맞게 변환되어야 함
+      const schedules = initialData.schedules?.map((schedule) => ({
+        date: schedule.date,
+        startTime: schedule.startTime,
+        endTime: schedule.endTime,
+      }));
+
+      const subImageUrls = initialData.subImageUrls;
+
+      // setValue로 initialData를 form에 설정
       setValue("title", initialData.title);
       setValue("category", initialData.category);
       setValue("description", initialData.description);
       setValue("price", initialData.price);
       setValue("address", initialData.address);
       setValue("bannerImageUrl", initialData.bannerImageUrl);
-      setValue(
-        "schedules",
-        initialData.schedules || [{ date: "", startTime: "", endTime: "" }],
-      );
-      setValue("subImageUrls", initialData.subImageUrls || []);
+      setValue("schedules", schedules || []);
+      setValue("subImageUrls", subImageUrls || []);
       setImagePreviewUrl(initialData.bannerImageUrl);
-      setSubImagePreviews(initialData.subImageUrls || []);
+      setSubImagePreviews(subImageUrls || []);
     }
   }, [initialData, setValue]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      // 배너 이미지가 이미 등록되어 있는 경우 경고 메시지 출력
       if (imagePreviewUrl) {
         alert("배너 이미지는 최대 1개만 등록할 수 있습니다.");
         return;
       }
-  
+
       const file = e.target.files[0];
       const previewUrl = URL.createObjectURL(file);
       setImagePreviewUrl(previewUrl);
-  
+
       setIsImageUploading(true);
       try {
         const imageUrl = await uploadActivityImage(file);
@@ -153,16 +159,13 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
     if (e.target.files) {
       const files = Array.from(e.target.files);
 
-      // 현재 등록된 이미지 수와 추가하려는 이미지 수의 합이 4를 초과하는지 확인
       if (subImagePreviews.length + files.length > 4) {
         alert("최대 4개의 이미지만 등록할 수 있습니다.");
         return;
       }
 
-      // 새로운 미리보기 URL 생성
       const newPreviewUrls = files.map((file) => URL.createObjectURL(file));
 
-      // 기존 미리보기 URL에 새로운 URL 추가
       const updatedPreviews = [...subImagePreviews, ...newPreviewUrls];
       setSubImagePreviews(updatedPreviews);
 
@@ -170,7 +173,6 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
         const uploadPromises = files.map((file) => uploadActivityImage(file));
         const imageUrls = await Promise.all(uploadPromises);
 
-        // 기존 subImageUrls에 새로운 URL 추가
         const updatedSubImageUrls = [...(subImageUrls || []), ...imageUrls];
         setValue("subImageUrls", updatedSubImageUrls);
       } catch (error) {
@@ -184,7 +186,6 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
   };
 
   const handleFormSubmit = async (data: EditorSchemaType) => {
-    // 필터링 로직
     const filteredSchedules = data.schedules?.filter((schedule) => {
       const isScheduleEmpty =
         !schedule.date && !schedule.startTime && !schedule.endTime;
@@ -194,11 +195,10 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
         (!schedule.date && !schedule.startTime && schedule.endTime);
 
       if (isSchedulePartial) {
-        // 유효성 검사 실패시 에러 메시지를 출력
         throw new Error("스케줄의 모든 필드를 채워야 합니다.");
       }
 
-      return !isScheduleEmpty; // 스케줄이 비어있지 않으면 포함
+      return !isScheduleEmpty;
     });
 
     const finalSchedules = filteredSchedules?.length ? filteredSchedules : [];
@@ -386,6 +386,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
           </div>
 
           {/* 추가 이미지 미리보기 */}
+
           {subImagePreviews.map((previewUrl, index) => (
             <div key={index} className="relative">
               <div
