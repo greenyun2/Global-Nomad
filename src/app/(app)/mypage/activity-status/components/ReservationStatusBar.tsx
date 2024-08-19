@@ -12,7 +12,7 @@ export function ReservationStatusBar({
   setActiveTab,
   selectedSchedule,
 }: TReservationStatusBarProps) {
-  console.log("selectedSchedule 👉", selectedSchedule);
+  // console.log("selectedSchedule 👉", selectedSchedule);
 
   const activeTabClassName =
     "translate-y-[2px] rounded-sm border-b-4 border-green-300 font-[600] text-green-300";
