@@ -31,4 +31,6 @@ export const FormErrorMessageModal = forwardRef<
   );
 });
 
+FormErrorMessageModal.displayName = "FormErrorMessageModal";
+
 export default FormErrorMessageModal;
