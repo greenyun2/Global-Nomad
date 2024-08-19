@@ -1,14 +1,8 @@
 "use client";
 
-import React, {
-  ForwardedRef,
-  forwardRef,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { ForwardedRef, forwardRef, useEffect, useState } from "react";
 import Image from "next/image";
-import useMyActivityList from "@hooks/useMyActivityList";
+import { twMerge } from "tailwind-merge";
 import icon_checkmark from "@icons/icon_checkmark.svg";
 import icon_trailing_down from "@icons/icon_trailing_down.svg";
 import icon_trailing_up from "@icons/icon_trailing_up.svg";
@@ -25,6 +19,7 @@ type DropDownPropsType = {
   onBlur?: (e: React.FocusEvent<HTMLInputElement, Element>) => void;
   invalid?: boolean;
   inputLable?: string;
+  className?: string;
 };
 
 const DropDownInput = forwardRef<HTMLInputElement, DropDownPropsType>(
@@ -39,6 +34,7 @@ const DropDownInput = forwardRef<HTMLInputElement, DropDownPropsType>(
       onChange,
       onBlur,
       invalid,
+      className,
     },
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
@@ -75,7 +71,10 @@ const DropDownInput = forwardRef<HTMLInputElement, DropDownPropsType>(
               // <input /> 태그에 표시되는 값은 상위 컴포넌트에서 control되는 value값이 우선순위를 가집니다.
               value={value || selectedOption}
               placeholder={!setInitialValue ? placeholder : ""}
-              className={`w-full cursor-pointer rounded-[6px] border ${invalid ? "border-red-500" : "border-gray-700"} px-[16px] py-[16px] caret-transparent`}
+              className={twMerge(
+                `w-full cursor-pointer rounded-[6px] border ${invalid ? "border-red-500" : "border-gray-700"} px-[16px] py-[16px] caret-transparent`,
+                className,
+              )}
             />
             <button className="cursor-pointer">
               <Image
@@ -92,7 +91,7 @@ const DropDownInput = forwardRef<HTMLInputElement, DropDownPropsType>(
           </div>
         </section>
         {isDropdownOpen && (
-          <section className="absolute top-[60px] z-50 mt-[16px] max-h-[200px] w-full overflow-y-scroll rounded-[6px] bg-white shadow-md">
+          <section className="absolute top-[60px] z-50 mt-[16px] max-h-[200px] w-full overflow-y-scroll rounded-[6px] bg-white shadow-custom-shadow-01">
             <ul>
               {dropDownOptions?.map((option, index) => (
                 <li

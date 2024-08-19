@@ -1,12 +1,10 @@
-import Image from "next/image";
-import subImage from "@images/sub_image-4.png";
-import starIcon from "@icons/icon_star_on.svg";
-
-// 리뷰 아이템 배열 요소
-interface ReviewsItem {}
+import { ReviewsItem } from "../../../types/ActivityDetailTypes";
+import EmptyState from "../EmptyState/EmptyState";
+import ActivityIconWrap from "./ActivityIconWrap";
+import ReviewCard from "./ReviewCard";
 
 interface ActivityDetailReviewsProps {
-  reviews: [];
+  reviews: ReviewsItem[];
   totalCount: number;
   averageRating: number;
 }
@@ -18,55 +16,33 @@ export default function ActivityDetailReviews({
 }: ActivityDetailReviewsProps) {
   return (
     <div className="mb-4 flex w-full flex-col gap-6">
-      <div className="flex w-full flex-col gap-6">
-        <h2 className="text-2lg font-bold text-primary">후기</h2>
+      <div className="flex w-full flex-col gap-[1.125rem] md:gap-6">
+        <h2 className="text-xl font-bold text-primary xl:text-2lg">후기</h2>
         <div className="flex gap-4">
-          <h1 className="text-[3.125rem] font-semibold text-primary">
+          <h1 className="text-averageRating font-semibold text-primary">
             {averageRating}
           </h1>
           <div className="flex flex-col gap-2">
             <p className="text-2lg font-normal text-primary">매우 만족</p>
-            <div className="flex items-center gap-1.5">
-              <Image width={16} height={16} src={starIcon} alt="별점 아이콘" />
-              <span className="text-md font-normal text-black">
-                {totalCount}개 후기
-              </span>
-            </div>
+            <ActivityIconWrap
+              iconType="star"
+              fontColor="star"
+              text={`${totalCount}개 후기`}
+            />
           </div>
         </div>
       </div>
-      <div className="flex h-[43.375rem] w-full flex-col gap-[4.5rem]">
-        <ul className="flex w-full flex-col gap-6">
-          {/**  @TODO 컴포넌트 분리 */}
-          <li className="flex w-full gap-4 border-b border-solid border-primary border-opacity-25 pb-6">
-            {/* 프로필 이미지 */}
-            <div className="relative h-[2.8125rem] w-[2.8125rem]">
-              <Image
-                className="rounded-[50%]"
-                fill
-                src={subImage}
-                alt="프로필 이미지"
-              />
-            </div>
-            {/* 이름, 날짜, 리뷰 */}
-            <div className="flex w-full flex-col gap-2">
-              {/* 이름, 날짜 */}
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-primary">김태현</span>
-                <span className="text-md/[1.066875rem] font-normal text-primary">
-                  |
-                </span>
-                <span className="text-lg font-normal text-[#999]">
-                  2023. 2. 4
-                </span>
-              </div>
-              {/* 리뷰 글 */}
-              <div>
-                <p>리뷰 글</p>
-              </div>
-            </div>
-          </li>
-        </ul>
+
+      <ul className="mb-10 flex w-full flex-col gap-6 md:mb-[5.625rem] xl:mb-[4.5rem]">
+        {reviews.length >= 1 ? (
+          reviews.map((item) => <ReviewCard key={item.id} {...item} />)
+        ) : (
+          <EmptyState>아직 등록된 리뷰가 없어요.</EmptyState>
+        )}
+      </ul>
+
+      {/* 피이지 네이션 버튼 */}
+      <div>
         <button>페이지 네이션 버튼</button>
       </div>
     </div>

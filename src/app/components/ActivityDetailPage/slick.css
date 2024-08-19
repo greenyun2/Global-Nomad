@@ -1,0 +1,9 @@
+/* 기본 버튼의 화살표를 초기화 */
+.slick-next::before,
+.slick-prev::before {
+  display: none;
+}
+/* 슬라이더의 도트 위치 */
+.slick-dots {
+  bottom: 0.5rem;
+}

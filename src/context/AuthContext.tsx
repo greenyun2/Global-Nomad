@@ -27,9 +27,13 @@ type AuthState = {
 };
 
 type AuthContextType = AuthState & {
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<string | undefined>;
   logout: () => void;
-  signup: (email: string, nickname: string, password: string) => Promise<void>;
+  signup: (
+    email: string,
+    nickname: string,
+    password: string,
+  ) => Promise<string | undefined>;
   isLoading: boolean;
 };
 
@@ -92,7 +96,7 @@ export const AuthProvider = ({ children }: AuthProviderPropsType) => {
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       const errorMessage = axiosError.response?.data?.message;
-      alert(errorMessage);
+      return errorMessage;
     }
   };
 
@@ -128,7 +132,7 @@ export const AuthProvider = ({ children }: AuthProviderPropsType) => {
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       const errorMessage = axiosError.response?.data?.message;
-      alert(errorMessage);
+      return errorMessage;
     }
   };
 

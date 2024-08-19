@@ -16,7 +16,7 @@ export default function MyActivityStatusPage() {
 
   return (
     <div>
-      <h2 className="mb-10 text-3xl font-bold text-primary">에약 현황</h2>
+      <h2 className="mb-10 text-3xl font-bold text-primary">예약 현황</h2>
       {totalCount == 0 ? (
         <div>아직 등록한 체험이 없어요</div>
       ) : (

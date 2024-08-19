@@ -19,17 +19,16 @@ export default function ScheduleReservationsList({
         schedules.map((schedule) => (
           <div
             key={schedule.id}
-            className="flex w-full flex-col gap-[6px] rounded-[4px] border-2 px-[16px] py-[12px] text-[16px] text-black"
+            className="flex w-full flex-col gap-[6px] rounded-[12px] border-2 px-[16px] py-[12px] text-[16px] text-black md:rounded-[4px]"
           >
             <section className="flex gap-[10px]">
-              <div className="text-gray-700">닉네임</div>
-              <div>{schedule.nickname}</div>
+              <div className="font-semibold text-gray-700">닉네임</div>
+              <div className="font-medium">{schedule.nickname}</div>
             </section>
             <section className="flex gap-[10px]">
-              <div className="text-gray-700">인원</div>
-              <div>{schedule.headCount}</div>
+              <div className="font-semibold text-gray-700">인원</div>
+              <div className="font-medium">{schedule.headCount}</div>
             </section>
-
             {schedule.status !== "pending" && (
               <section className="place-self-end">
                 {

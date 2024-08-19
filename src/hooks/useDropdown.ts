@@ -7,16 +7,24 @@ export const useDropdown = () => {
   const toggle = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (ref.current && !ref.current.contains(event.target as Node)) {
-      close();
-    }
-  };
-
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        close();
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        close();
+      }
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 

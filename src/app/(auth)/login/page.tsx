@@ -4,7 +4,6 @@ import Link from "next/link";
 import icon_logo from "@icons/icon_logo_big.svg";
 
 export default function Login() {
-
   return (
     <div className="container mt-[104px] max-w-[640px]">
       <div className="flex flex-col items-center">

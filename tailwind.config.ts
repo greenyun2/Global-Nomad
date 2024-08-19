@@ -56,6 +56,7 @@ const config: Config = {
         md: ["0.875rem", { lineHeight: "1.5rem" }], // 14px / 24px
         sm: ["0.8125rem", { lineHeight: "1.375rem" }], // 13px / 22px
         xs: ["0.75rem", { lineHeight: "1.125rem" }], // 12px / 18px
+        averageRating: ["3.125rem", { lineHeight: "3.729375rem" }], // 50px / 59.67px
       },
       fontWeight: {
         regular: "400",
