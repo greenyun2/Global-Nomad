@@ -19,7 +19,7 @@ export const FormErrorMessageModal = forwardRef<
           {errorMessage}
         </div>
         <Button
-          className="md:w-[120px] md:place-self-end"
+          className="text-[14px] md:w-[120px] md:place-self-end md:text-[16px]"
           size="md"
           color="dark"
           onClick={() => toggle()}
