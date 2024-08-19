@@ -6,6 +6,7 @@ import Image from "next/image";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import PopularActivityCard from "./PopularActivityCard";
+import "./Slider.css";
 import Arrow_Left from "@icons/icon_arrow_left_on_44px.svg";
 import Arrow_Right from "@icons/icon_arrow_right_on_44px.svg";
 
@@ -89,7 +90,7 @@ const PopularActivityList = () => {
       <h1 className="container mb-4 text-[18px] font-bold md:mb-8 md:text-[36px]">
         🔥인기 체험
       </h1>
-      <div className="container">
+      <div className="slider-css container">
         <Slider {...settings}>
           {popularActivities.map((activity) => (
             <PopularActivityCard key={activity.id} cardData={activity} />

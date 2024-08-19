@@ -13,7 +13,7 @@ const PopularActivityCard = ({
   return (
     <Link href={`/activities/${id}`}>
       <div
-        className="mx-3 h-[186px] w-[186px] rounded-3xl bg-cover bg-center md:h-[317px] md:w-[317px]"
+        className="mx-3 h-[186px] w-[186px] rounded-3xl bg-cover bg-center md:h-[360px] md:w-[360px]"
         style={{ backgroundImage: `url('${bannerImageUrl}')` }}
       >
         <div className="mb-6 ml-5 flex h-[160px] flex-col justify-end gap-[6px] text-white">

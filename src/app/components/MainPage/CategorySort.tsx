@@ -1,8 +1,15 @@
-import { MouseEvent } from "react";
+import { MouseEvent, useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Sort from "./Sort";
 import { useDropdown } from "@hooks/useDropdown";
+import useOffsetSize from "@hooks/useOffsetSize";
+import icon_arrow_next from "@icons/icon_arrow_button.svg";
+import icon_arrow_prev from "@icons/icon_arrow_button_prev.svg";
 import icon_arrow_filter from "@icons/icon_arrow_filter.svg";
+
+interface WindowSize {
+  width: number;
+}
 
 interface CategorySortProps {
   onSetSort: (e: MouseEvent<HTMLButtonElement>) => void;
@@ -18,21 +25,82 @@ const CategorySort = ({
   currentCategory,
 }: CategorySortProps) => {
   const { ref, isOpen, toggle, close } = useDropdown();
+  const changeSize = useOffsetSize(1, 2, 3);
+  const [categoryState, setCategoryState] = useState(0);
+  const categoryRef = useRef<HTMLDivElement>(null);
+  const [windowSize, setWindowSize] = useState<WindowSize>({
+    width: window.innerWidth,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth });
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+  const handleButtonClick = (value: number) => {
+    const nextCategory = categoryState + value;
+    if (nextCategory >= 0 && nextCategory <= changeSize) {
+      setCategoryState(nextCategory);
+    }
+  };
+  useEffect(() => {
+    if (categoryRef.current !== null) {
+      categoryRef.current.style.transition = "all 0.5s ease-in-out";
+      categoryRef.current.style.transform = `translateX(-${categoryState * 50}%)`;
+    }
+  }, [categoryState, changeSize]);
 
   return (
     <div className="flex justify-between text-[16px] font-medium md:text-[18px]">
       {/* Category */}
-      <div className="flex gap-[8px] md:gap-[14px] xl:gap-[24px]">
-        {CATEGORIES.map((category) => (
+      <div className="flex overflow-hidden">
+        {categoryState !== 0 && (
           <button
-            className={`${category === currentCategory ? "bg-primary text-white" : "bg-white text-primary"} h-[41px] w-[80px] rounded-[15px] border border-primary hover:bg-primary hover:text-white md:h-[58px] md:w-[120px] xl:w-[127px]`}
-            key={category}
-            value={category}
-            onClick={onSetCategory}
+            className="z-10 flex shrink-0 items-center"
+            onClick={() => handleButtonClick(-1)}
           >
-            {category}
+            <Image
+              src={icon_arrow_prev}
+              alt="arrow prev"
+              width={42}
+              height={42}
+              style={{ width: 42, height: 42 }}
+            />
           </button>
-        ))}
+        )}
+        <div
+          ref={categoryRef}
+          className="flex gap-[8px] overflow-hidden md:gap-[14px] xl:gap-[24px]"
+        >
+          {CATEGORIES.map((category) => (
+            <button
+              className={`${category === currentCategory ? "bg-primary text-white" : "bg-white text-primary"} h-[41px] w-[80px] shrink-0 rounded-[15px] border border-primary hover:bg-primary hover:text-white md:h-[58px] md:w-[120px] xl:w-[127px]`}
+              key={category}
+              value={category}
+              onClick={onSetCategory}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+        {categoryState < changeSize && (
+          <button
+            className="flex shrink-0 items-center"
+            onClick={() => handleButtonClick(1)}
+          >
+            <Image
+              src={icon_arrow_next}
+              alt="arrow next"
+              width={42}
+              height={42}
+              style={{ width: 42, height: 42 }}
+            />
+          </button>
+        )}
       </div>
       {/* Sort */}
       <div ref={ref}>
