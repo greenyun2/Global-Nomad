@@ -54,6 +54,22 @@ export default async function ActivityDetailPage({
 
   const { reviews, totalCount, averageRating } = activityDetailReviews;
 
+  /**
+   * 태그 SEO 신경써야함
+   * h1 => h2태그, h3태그로 변경 SEO 신경쓰기
+   * p 태그 span or data 태그
+   * 주소는 adress 태그
+   * SEO에 맞게 태그 변경
+   * p태그는 소개글일때만
+   * 예약카드는 form 태그에, 가격은 span or data
+   * 버튼은 타입=버튼,
+   * 총합계 = h1 x
+   * 메타 태그
+   *
+   * 급한 부분
+   * 예약하기에 대한 기능 구현이 가장 급함
+   */
+
   return (
     <div className="container h-full w-full pt-4 md:pt-6 xl:pt-[4.875rem]">
       <ActivityHeader
@@ -74,7 +90,7 @@ export default async function ActivityDetailPage({
         <div className="h-full md:w-[49.375rem] md:border-t md:border-solid md:border-primary md:border-opacity-25">
           {/* 체험 설명 */}
           <div className="flex h-auto w-full flex-col gap-[1rem] pb-4 md:pb-[2.125rem] md:pt-[2.5rem]">
-            <h2 className="text-xl font-bold text-primary">체험 설명</h2>
+            <h3 className="text-xl font-bold text-primary">체험 설명</h3>
             <p className="text-lg font-normal text-primary text-opacity-75">
               {description}
             </p>

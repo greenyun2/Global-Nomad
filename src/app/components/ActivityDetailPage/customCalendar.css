@@ -143,7 +143,8 @@
 }
 
 .react-calendar__tile--now {
-  background: #ffff76;
+  /* background: #ffff76; */
+  background: #e6e6e6;
 }
 
 .react-calendar__tile--now:enabled:hover,
@@ -197,3 +198,8 @@ body
   width: 15.625rem;
   height: 2rem;
 }
+
+/* 각 날짜 */
+/* .react-calendar__tile react-calendar__month-view__days__day {
+  position: relative;
+} */

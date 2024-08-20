@@ -17,13 +17,13 @@ export default function ActivityDetailReviews({
   return (
     <div className="mb-4 flex w-full flex-col gap-6">
       <div className="flex w-full flex-col gap-[1.125rem] md:gap-6">
-        <h2 className="text-xl font-bold text-primary xl:text-2lg">후기</h2>
+        <h3 className="text-xl font-bold text-primary xl:text-2lg">후기</h3>
         <div className="flex gap-4">
-          <h1 className="text-averageRating font-semibold text-primary">
+          <data className="text-averageRating font-semibold text-primary">
             {averageRating}
-          </h1>
+          </data>
           <div className="flex flex-col gap-2">
-            <p className="text-2lg font-normal text-primary">매우 만족</p>
+            <span className="text-2lg font-normal text-primary">매우 만족</span>
             <ActivityIconWrap
               iconType="star"
               fontColor="star"

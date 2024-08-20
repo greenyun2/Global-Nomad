@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import Calendar from "react-calendar";
+import { useForm } from "react-hook-form";
+import { getActivityDetailSchedule } from "@api/fetchActivityDetail";
 import { format } from "date-fns";
 import Button from "../Button/Button";
 
@@ -19,12 +21,14 @@ interface ReservationCardProps {
   totalPrice: number | string;
   totalNumber: number;
   schedules: Schedules[];
+  activityId: number;
+  disabled: boolean;
 }
 
 interface Schedules {
   id: number;
   date: string;
-  times: Times;
+  times: Times[];
 }
 
 interface Times {
@@ -57,38 +61,91 @@ export default function ReservationCardDesktop({
   totalPrice,
   user,
   schedules,
+  activityId,
+  disabled,
 }: ReservationCardProps) {
   // 날짜 형식 포맷팅
   const formatDate = format(new Date(), "yyyy-MM-dd");
+  // const [times, setTimes] = useState<Times>([])
   const filterTodaySchedules = schedules.filter(
     (item) => item.date === formatDate,
   );
 
   const [filterSchedulesDate, setFilterSchedulesDate] =
     useState(filterTodaySchedules);
-  const [selectedDate, setSelectedDate] = useState<Value>(TODAY);
+  const [value, onChange] = useState<Value>(TODAY);
 
-  // 달력의 날짜를 클릭했을때 값이 변합니다
-  const handleDateChange = (date: Value) => {
-    setSelectedDate(date);
+  const selectedDateChange = (date: Value) => {
     let newFormatDate = "";
-    if (selectedDate instanceof Date) {
-      newFormatDate = format(selectedDate, "yyyy-MM-dd");
+    if (date instanceof Date) {
+      newFormatDate = format(date, "yyyy-MM-dd");
     }
     const newFilterScheduleDate = schedules.filter(
       (item) => item.date === newFormatDate,
     );
-    setFilterSchedulesDate(newFilterScheduleDate);
+    setFilterSchedulesDate(
+      (prevFilterDate) => (prevFilterDate = newFilterScheduleDate),
+    );
   };
 
-  // page로 부터 받은 데이터를 prop으로 내려 받았습니다.
-  console.log(schedules, "page => card => 데스크탑버전");
-  // 받은 데이터를 필터링 했습니다
-  console.log(filterSchedulesDate, "필터링된 스케쥴 데이터");
+  const filter = schedules.map((item) => item.date.split("-")[2]);
+
+  const reservationTile = (date: Date) => {
+    let div;
+    filter.forEach((filterDate) => {
+      if (date.getDate() === Number(filterDate)) {
+        div = <div className="h-full w-full bg-blue-300"></div>;
+      }
+    });
+    return div;
+  };
+
+  // const filter = schedules.map((item) => item.date.split("-")[2]);
+
+  // const reservationTile = (date: Date) => {
+  //   let className = "";
+  //   filter.forEach((filterDate) => {
+  //     if (date.getDate() === Number(filterDate)) {
+  //       className = "bg-blue-300 rounded-md w-[90%]";
+  //     }
+  //   });
+  //   return className;
+  // };
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const value = (e.target as HTMLButtonElement).value;
+    console.log(value);
+  };
+
+  let button;
+  filterSchedulesDate.forEach((item) => {
+    button = item.times.map((time) => (
+      <button
+        key={time.id}
+        className="border border-solid border-gray-600 bg-white focus:bg-blue-200"
+        type="button"
+        onClick={handleOnClick}
+        value={time.id}
+      >
+        {time.startTime}~{time.endTime}
+      </button>
+    ));
+  });
+
+  const {} = useForm();
+
+  // console.log(schedules);
+
+  /**
+   * 요구사항 => 버튼(시간) 클릭(스케쥴 id값 넘겨줘야 함), 인원수 1명 이상 => 에약하기 버튼 활성화
+   */
+  const handleOnSubmit = async (e: React.FormEvent<SubmitEvent>) => {
+    e.preventDefault();
+  };
+
   return (
     <>
       {userId !== user?.id && (
-        <aside className="mt-[1px] flex h-[46.625rem] w-[24rem] flex-col gap-4 rounded-xl border border-solid border-gray-300 pb-[1.125rem] pt-6 shadow-[0_0.25rem_1rem_0_#1122110D]">
+        <form className="mt-[1px] flex h-[46.625rem] w-[24rem] flex-col gap-4 rounded-xl border border-solid border-gray-300 pb-[1.125rem] pt-6 shadow-[0_0.25rem_1rem_0_#1122110D]">
           <section className="flex flex-col gap-4">
             {/* 인당 가격 표시 */}
             <div className="w-full pl-[1.028125rem]">
@@ -100,19 +157,20 @@ export default function ReservationCardDesktop({
             {/* 달력 */}
             <div className="flex justify-center">
               <div className="flex w-[21rem] flex-col gap-4 border-t border-solid border-gray-300 pt-4">
-                <h2 className="text-xl/[1.625rem] font-bold text-primary">
+                <h3 className="text-xl/[1.625rem] font-bold text-primary">
                   날짜
-                </h2>
+                </h3>
                 <div className="flex justify-center">
                   <Calendar
                     locale="ko"
                     calendarType="gregory"
-                    value={selectedDate}
-                    view="month"
+                    value={value}
+                    tileContent={({ date }) => reservationTile(date)}
                     prev2Label={null}
                     next2Label={null}
                     showNeighboringMonth={false}
-                    onChange={handleDateChange}
+                    onChange={onChange}
+                    onClickDay={(date) => selectedDateChange(date)}
                   />
                 </div>
               </div>
@@ -128,15 +186,11 @@ export default function ReservationCardDesktop({
                 </h3>
                 <div className="flex gap-3">
                   {/** @TODO map() 메서드 사용 */}
-                  {/* {filterSchedulesDate.length > 0 ? (
-                    filterSchedulesDate.map((item) => (
-                      <button
-                        key={item.id}
-                      >{`${item.times.startTime}~${item.times.endTime}`}</button>
-                    ))
+                  {filterSchedulesDate.length > 0 ? (
+                    button
                   ) : (
-                    <p>예약이 없습니다.</p>
-                  )} */}
+                    <p>예약 가능한 시간이 없습니다.</p>
+                  )}
                 </div>
               </div>
               {/* 참여 인원 수 */}
@@ -146,6 +200,7 @@ export default function ReservationCardDesktop({
                 </h3>
                 <div className="flex w-[7.5rem] justify-start rounded-md border border-solid border-[#CDD0DC]">
                   <button
+                    type="button"
                     onClick={onMinusClick}
                     className="h-[2.5rem] w-[2.5rem]"
                   >
@@ -153,11 +208,12 @@ export default function ReservationCardDesktop({
                   </button>
                   <input
                     className="h-[2.5rem] w-[2.5rem] text-center"
-                    type="text"
+                    type="number"
                     value={totalNumber}
                     onChange={onChangeTotalNumber}
                   />
                   <button
+                    type="button"
                     onClick={onPlusClick}
                     className="h-[2.5rem] w-[2.5rem]"
                   >
@@ -166,16 +222,22 @@ export default function ReservationCardDesktop({
                 </div>
               </div>
             </div>
-            <Button size="lg" color="dark" className="">
+            <Button
+              disabled={disabled}
+              type="submit"
+              size="lg"
+              color={disabled ? "bright" : "dark"}
+              className=""
+            >
               예약하기
             </Button>
             {/* 총 합계 */}
             <div className="flex w-full items-center justify-between border-t border-solid border-gray-300 pt-4">
-              <h1 className="text-xl font-bold text-primary">총 합계</h1>
-              <p className="text-xl font-bold text-primary">{`₩ ${totalPrice}`}</p>
+              <span className="text-xl font-bold text-primary">총 합계</span>
+              <data className="text-xl font-bold text-primary">{`₩ ${totalPrice}`}</data>
             </div>
           </section>
-        </aside>
+        </form>
       )}
     </>
   );

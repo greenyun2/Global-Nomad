@@ -24,7 +24,7 @@ interface ReservationCardProps {
 interface Schedules {
   id: number;
   date: string;
-  times: Times;
+  times: Times[];
 }
 
 interface Times {
@@ -58,6 +58,7 @@ export default function ReservationCard({
   });
 
   const [selectedDate, setSelectedDate] = useState<Value>(TODAY);
+  const [isDisabled, setIsDisabled] = useState(true);
 
   // const [year, setYear] = useState(TODAY_YEAR);
   // const [month, setMonth] = useState(TODAY_MONTH);
@@ -97,6 +98,7 @@ export default function ReservationCard({
         totalPrice: value * price,
         totalNumber: value,
       });
+      setIsDisabled(false);
     }
   };
 
@@ -106,6 +108,13 @@ export default function ReservationCard({
    * 갑자기 데이터가 잘 나오다가 JSON.stringify() 형태로 변경됨
    *
    * 어디서, 데이터를 불러와야 하는지?
+   *
+   * 멘토링: 초기데이터는 서버에서 (서버 컴포넌트) => 데이터 새로 패칭시 커스텀훅 + useQuery (클라이언트 컴포넌트)
+   * 예약이 다 차있기 때문에, 렌더링이 안된거 => 예약 가능일 조회
+   * 사용자 경험: 에러를 발생표시도 좋지만, 에러를 발생하지 않게 한다 => HTML min값 같이 강제할수 있는 속성을 활용
+   *
+   * 데스크탑, 모바일 버전에서 각자 다음 월을 눌렀을때, 예약 가능한 스케쥴 불러올 커스텀훅 제작
+   *
    */
 
   return (
@@ -130,6 +139,8 @@ export default function ReservationCard({
         />
       ) : (
         <ReservationCardDesktop
+          disabled={isDisabled}
+          activityId={activityId}
           schedules={schedules}
           user={user}
           userId={userId}
