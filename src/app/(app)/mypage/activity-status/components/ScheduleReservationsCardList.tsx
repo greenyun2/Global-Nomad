@@ -1,6 +1,7 @@
 import { updateScheduleReservationStatus } from "@api/MyActivityStatusApi";
 import Button from "@app/components/Button/Button";
 import { ScheduleReservationsListPropType } from "@customTypes/MyActivityStatusType";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import ReservationStatusBadge from "./ReservationStatusBadge";
 import no_notification from "@images/no_notification2.gif";
@@ -9,10 +10,34 @@ export default function ScheduleReservationsList({
   scheduleReservations,
 }: ScheduleReservationsListPropType) {
   const schedules = scheduleReservations?.reservations;
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: async ({
+      selectedActivityId,
+      scheduleId,
+      confirmOrDecline,
+    }: {
+      selectedActivityId: string;
+      scheduleId: string;
+      confirmOrDecline: string;
+    }) => {
+      return updateScheduleReservationStatus(
+        selectedActivityId,
+        scheduleId,
+        confirmOrDecline,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["scheduleReservationsStatus"],
+      });
+    },
+  });
 
   return (
     <>
-      {scheduleReservations?.totalCount == 0 && (
+      {scheduleReservations?.totalCount === 0 && (
         <Image height={132} src={no_notification} alt="no_schedules" />
       )}
       {schedules &&
@@ -31,29 +56,26 @@ export default function ScheduleReservationsList({
             </section>
             {schedule.status !== "pending" && (
               <section className="place-self-end">
-                {
-                  <ReservationStatusBadge
-                    text={
-                      schedule.status == "confirmed" ? "예약 승인" : "예약 거절"
-                    }
-                    type={
-                      schedule.status == "confirmed" ? "confirmed" : "declined"
-                    }
-                  />
-                }
+                <ReservationStatusBadge
+                  text={
+                    schedule.status === "confirmed" ? "예약 승인" : "예약 거절"
+                  }
+                  type={
+                    schedule.status === "confirmed" ? "confirmed" : "declined"
+                  }
+                />
               </section>
             )}
 
-            {schedule.status == "pending" && (
+            {schedule.status === "pending" && (
               <section className="flex gap-[6px] place-self-end text-[14px]">
                 <Button
                   onClick={() =>
-                    // useMutation함수를 사용하여 onSuccess 업데이트 되도록 refactoring하기
-                    updateScheduleReservationStatus(
-                      schedule.activityId.toString(),
-                      schedule.id.toString(),
-                      "confirmed",
-                    )
+                    mutate({
+                      selectedActivityId: schedule.activityId.toString(),
+                      scheduleId: schedule.id.toString(),
+                      confirmOrDecline: "confirmed",
+                    })
                   }
                   color="dark"
                   size="sm"
@@ -63,11 +85,11 @@ export default function ScheduleReservationsList({
                 </Button>
                 <Button
                   onClick={() =>
-                    updateScheduleReservationStatus(
-                      schedule.activityId.toString(),
-                      schedule.id.toString(),
-                      "declined",
-                    )
+                    mutate({
+                      selectedActivityId: schedule.activityId.toString(),
+                      scheduleId: schedule.id.toString(),
+                      confirmOrDecline: "declined",
+                    })
                   }
                   color="bright"
                   size="sm"
