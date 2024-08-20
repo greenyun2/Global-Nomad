@@ -1,5 +1,5 @@
 import instance from "@api/axios";
-import { useMutation, QueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import useUpdatedAt from "@hooks/useUpdatedAt";
 import icon_X from "@icons/icon_x_medium_24px.svg";
@@ -19,7 +19,7 @@ const NotificationCard = ({
   updatedAt,
   notificationId,
 }: NotificationCardProp) => {
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: deleteNotification,
     onSuccess: () => {
