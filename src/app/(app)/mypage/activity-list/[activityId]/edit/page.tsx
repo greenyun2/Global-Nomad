@@ -5,43 +5,20 @@ import { getActivityById } from "@api/activities";
 import { updateMyActivity, UpdateActivityBody } from "@api/myActivites";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useParams } from "next/navigation";
-import Editor from "../../Editor";
+import Editor, { ModifiedEditorSchemaType } from "../../Editor";
+import { EditorSchemaType } from "../../Editor";
 
 export default function EditActivity() {
   const router = useRouter();
   const { activityId } = useParams();
   const queryClient = useQueryClient();
-  const [initialData, setInitialData] = useState<UpdateActivityBody | null>(
-    null,
-  );
+  const [initialData, setInitialData] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchActivity = async () => {
       try {
         const activityData = await getActivityById(Number(activityId));
-
-        const schedulesToAdd = activityData.schedules.map((schedule) => ({
-          date: schedule.date,
-          startTime: schedule.startTime,
-          endTime: schedule.endTime,
-        }));
-
-        const subImageUrlsToAdd = activityData.subImages.map(
-          (image) => image.imageUrl,
-        );
-
-        setInitialData({
-          title: activityData.title ?? "",
-          category: activityData.category ?? "",
-          description: activityData.description ?? "",
-          price: activityData.price ?? 0,
-          address: activityData.address ?? "",
-          bannerImageUrl: activityData.bannerImageUrl ?? "",
-          schedulesToAdd: schedulesToAdd,
-          subImageUrlsToAdd: subImageUrlsToAdd,
-          scheduleIdsToRemove: [],
-          subImageIdsToRemove: [],
-        });
+        setInitialData(activityData);
       } catch (error) {
         console.error("Error fetching activity data:", error);
       }
@@ -50,10 +27,23 @@ export default function EditActivity() {
     fetchActivity();
   }, [activityId]);
 
-  const handleSubmit = async (formData: UpdateActivityBody) => {
+  const handleSubmit = async (formData: ModifiedEditorSchemaType) => {
     try {
-      console.log("Updating activity with data:", formData);
-      await updateMyActivity(Number(activityId), formData);
+      const updateData: UpdateActivityBody = {
+        title: formData.title,
+        category: formData.category,
+        description: formData.description,
+        price: formData.price,
+        address: formData.address,
+        bannerImageUrl: formData.bannerImageUrl,
+        schedulesToAdd: formData.schedulesToAdd,
+        subImageUrlsToAdd: formData.subImageUrlsToAdd,
+        scheduleIdsToRemove: formData.scheduleIdsToRemove,
+        subImageIdsToRemove: formData.subImageIdsToRemove,
+      };
+
+      console.log(updateData);
+      await updateMyActivity(Number(activityId), updateData);
       queryClient.invalidateQueries({ queryKey: ["myActivityList"] });
       router.push("/mypage/activity-list");
     } catch (error) {

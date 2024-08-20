@@ -24,7 +24,7 @@ type CalendarInputPropsType = {
 
 const CalendarInput = forwardRef<HTMLInputElement, CalendarInputPropsType>(
   (
-    { id, onChange, onBlur, invalid, placeholder },
+    { id, onChange, onBlur, invalid, placeholder, value },
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const [isCalenderOpen, setIsDayPickerOpen] = useState(false);
@@ -54,13 +54,17 @@ const CalendarInput = forwardRef<HTMLInputElement, CalendarInputPropsType>(
     return (
       <div className="relative flex items-center">
         <input
+          onClick={() => {
+            setIsDayPickerOpen((prev) => !prev);
+          }}
+          readOnly
           placeholder={placeholder}
           id={id}
           onChange={(e) => onChange(e.target.value)}
           onBlur={onBlur}
-          value={dateformat2}
+          value={(value && format(value, "yy/MM/dd")) || dateformat2}
           ref={ref}
-          className={`${invalid ? "border-red-100" : "border-gray-700"} h-[58px] w-full rounded-[6px] border px-[16px] py-[20px] text-[16px] font-[400] text-black`}
+          className={`${invalid ? "border-red-100" : "border-gray-700"} h-[58px] w-full cursor-pointer rounded-[6px] border px-[16px] py-[20px] text-[16px] font-[400] text-black`}
         />
         <div
           onClick={() => {
