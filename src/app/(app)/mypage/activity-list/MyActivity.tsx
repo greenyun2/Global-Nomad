@@ -49,14 +49,20 @@ const MyActivity: React.FC<MyActivityProps> = ({
           <Image
             src={bannerImageUrl}
             alt={title}
-            layout="fill"
-            objectFit="cover"
+            fill
+            sizes="100%"
+            style={{ objectFit: "cover" }}
           />
         </div>
         <div className="flex min-w-0 flex-1 flex-col p-3 md:px-4 md:py-3 xl:px-6 xl:py-4">
           <div className="overflow-hidden">
             <div className="mb-[0.375rem] flex gap-1 text-md font-normal text-black md:text-lg">
-              <Image src={Star} alt={"별점"} width={18} />
+              <Image
+                src={Star}
+                alt={"별점"}
+                width={18}
+                height={18}
+              />
               <span>{rating}</span>
               <span>&#40;{reviewCount}&#41;</span>
             </div>
