@@ -11,7 +11,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
 const CATEGORIES = ["문화 · 예술", "식음료", "스포츠", "투어", "관광", "웰빙"];
-
+export type ModifiedEditorSchemaType = EditorSchemaType & {
+  schedulesToAdd?: {
+    date: string;
+    startTime: string;
+    endTime: string;
+    id?: number;
+  }[];
+  subImageUrlsToAdd?: string[];
+};
 const EditorSchema = z.object({
   title: z.string().nonempty("체험 이름을 입력해 주세요"),
   category: z.string().nonempty("카테고리를 입력해 주세요"),
@@ -54,7 +62,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
     setValue,
     clearErrors,
     formState: { errors, isSubmitting },
-  } = useForm<EditorSchemaType>({
+  } = useForm<ModifiedEditorSchemaType>({
     resolver: zodResolver(EditorSchema),
     defaultValues: {
       title: "",
@@ -213,17 +221,18 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
     }
   };
 
-  const handleFormSubmit = async (data: EditorSchemaType) => {
-    let finalData;
+  const handleFormSubmit = async (data: ModifiedEditorSchemaType) => {
+    let finalData: ModifiedEditorSchemaType;
 
     if (initialData) {
-      // 수정 시
-      const filteredSchedules = data.schedules?.map((schedule) => ({
-        date: schedule.date,
-        startTime: schedule.startTime,
-        endTime: schedule.endTime,
-        id: schedule.id, // 기존 ID를 유지
-      }));
+      // 수정 시, 새롭게 추가된 스케줄과 이미지를 필터링
+      const filteredSchedulesToAdd =
+        data.schedules?.filter((schedule) => !schedule.id) || [];
+      const filteredSubImageUrlsToAdd =
+        data.subImageUrls?.filter(
+          (url) =>
+            !initialData.subImages.some((img: any) => img.imageUrl === url),
+        ) || [];
 
       finalData = {
         title: data.title,
@@ -232,8 +241,8 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
         price: data.price,
         address: data.address,
         bannerImageUrl: data.bannerImageUrl,
-        schedules: filteredSchedules, // 수정 시에도 schedules로 변경
-        subImageUrls: data.subImageUrls, // 수정 시에도 subImageUrls로 변경
+        schedulesToAdd: filteredSchedulesToAdd, // 새롭게 추가된 스케줄만
+        subImageUrlsToAdd: filteredSubImageUrlsToAdd, // 새롭게 추가된 이미지 URL만
         scheduleIdsToRemove: scheduleIdsToRemove,
         subImageIdsToRemove: subImageIdsToRemove,
       };

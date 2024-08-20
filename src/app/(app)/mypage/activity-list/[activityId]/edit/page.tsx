@@ -5,7 +5,7 @@ import { getActivityById } from "@api/activities";
 import { updateMyActivity, UpdateActivityBody } from "@api/myActivites";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useParams } from "next/navigation";
-import Editor from "../../Editor";
+import Editor, { ModifiedEditorSchemaType } from "../../Editor";
 import { EditorSchemaType } from "../../Editor";
 
 export default function EditActivity() {
@@ -18,7 +18,7 @@ export default function EditActivity() {
     const fetchActivity = async () => {
       try {
         const activityData = await getActivityById(Number(activityId));
-        setInitialData(activityData); // getActivityById의 결과를 그대로 사용
+        setInitialData(activityData);
       } catch (error) {
         console.error("Error fetching activity data:", error);
       }
@@ -27,9 +27,8 @@ export default function EditActivity() {
     fetchActivity();
   }, [activityId]);
 
-  const handleSubmit = async (formData: EditorSchemaType) => {
+  const handleSubmit = async (formData: ModifiedEditorSchemaType) => {
     try {
-      // 폼 데이터를 UpdateActivityBody 형식으로 변환
       const updateData: UpdateActivityBody = {
         title: formData.title,
         category: formData.category,
@@ -37,12 +36,13 @@ export default function EditActivity() {
         price: formData.price,
         address: formData.address,
         bannerImageUrl: formData.bannerImageUrl,
-        schedulesToAdd: formData.schedules,
-        subImageUrlsToAdd: formData.subImageUrls,
+        schedulesToAdd: formData.schedulesToAdd,
+        subImageUrlsToAdd: formData.subImageUrlsToAdd,
         scheduleIdsToRemove: formData.scheduleIdsToRemove,
         subImageIdsToRemove: formData.subImageIdsToRemove,
       };
 
+      console.log(updateData);
       await updateMyActivity(Number(activityId), updateData);
       queryClient.invalidateQueries({ queryKey: ["myActivityList"] });
       router.push("/mypage/activity-list");
