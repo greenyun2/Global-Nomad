@@ -92,7 +92,7 @@ const DropDownInput = forwardRef<HTMLInputElement, DropDownPropsType>(
           )}
         </section>
         {isDropdownOpen && (
-          <section className="absolute top-[60px] z-50 mt-[16px] max-h-[200px] w-full overflow-y-scroll rounded-[6px] bg-white shadow-custom-shadow-01">
+          <section className="absolute top-[50px] z-50 mt-[16px] max-h-[200px] w-full overflow-y-scroll rounded-[6px] bg-white shadow-custom-shadow-01">
             <ul>
               {dropDownOptions?.map((option, index) => (
                 <li
