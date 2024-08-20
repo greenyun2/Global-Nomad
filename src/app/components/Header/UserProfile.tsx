@@ -38,16 +38,16 @@ export default function UserProfile({ onLogout }: { onLogout: () => void }) {
               src={DefaultUserImage}
               alt="기본 프로필 이미지"
               className="rounded-full object-cover"
-              layout="fill"
-              objectFit="cover"
+              fill
+              style={{ objectFit: 'cover' }}
             />
           ) : (
             <Image
               src={data.profileImageUrl}
               alt="사용자 설정 프로필 이미지"
               className="rounded-full object-cover"
-              layout="fill"
-              objectFit="cover"
+              fill
+              style={{ objectFit: 'cover' }}
             />
           )}
         </div>

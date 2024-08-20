@@ -7,10 +7,6 @@ import icon_arrow_next from "@icons/icon_arrow_button.svg";
 import icon_arrow_prev from "@icons/icon_arrow_button_prev.svg";
 import icon_arrow_filter from "@icons/icon_arrow_filter.svg";
 
-interface WindowSize {
-  width: number;
-}
-
 interface CategorySortProps {
   onSetSort: (e: MouseEvent<HTMLButtonElement>) => void;
   onSetCategory: (e: MouseEvent<HTMLButtonElement>) => void;
@@ -28,19 +24,7 @@ const CategorySort = ({
   const changeSize = useOffsetSize(1, 2, 3);
   const [categoryState, setCategoryState] = useState(0);
   const categoryRef = useRef<HTMLDivElement>(null);
-  const [windowSize, setWindowSize] = useState<WindowSize>({
-    width: window.innerWidth,
-  });
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({ width: window.innerWidth });
-    };
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
   const handleButtonClick = (value: number) => {
     const nextCategory = categoryState + value;
     if (nextCategory >= 0 && nextCategory <= changeSize) {

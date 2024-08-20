@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Notifications from "../Notification/Notifications";
 import { useDropdown } from "@hooks/useDropdown";
 import Notification from "@icons/icon_notification.svg";
 
@@ -14,16 +15,14 @@ export default function NotificationMenu() {
         <Image src={Notification} alt="알림" width={24} height={24} />
       </button>
       {isOpen && (
-        <div className="absolute right-0 top-full z-10 mt-2 w-full min-w-40 rounded-lg border border-gray-400 bg-white">
+        <div className="fixed inset-0 z-10 rounded-lg border border-gray-400 bg-[#CBD8D5] px-5 py-6 shadow-custom-shadow-01 md:absolute md:bottom-auto md:left-auto md:right-0 md:top-full md:mt-2 md:w-[368px] md:min-w-40">
           <div
             className="py-1"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="options-menu"
           >
-            <div className="block px-4 py-2 text-sm text-gray-700">알림 1</div>
-            <div className="block px-4 py-2 text-sm text-gray-700">알림 2</div>
-            <div className="block px-4 py-2 text-sm text-gray-700">알림 3</div>
+            <Notifications close={close} />
           </div>
         </div>
       )}
