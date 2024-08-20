@@ -1,6 +1,7 @@
 import {
   getActivityDetailList,
   getActivityDetailReviews,
+  getActivityDetailSchedule,
 } from "@api/fetchActivityDetail";
 import ActivityDetailReviews from "@app/components/ActivityDetailPage/ActivityDetailReviews";
 import ActivityHeader from "@app/components/ActivityDetailPage/ActivityHeader";
@@ -15,17 +16,28 @@ interface ActivityDetailPageProps {
   };
 }
 
+const TODAY = new Date();
+const TODAY_DATE = TODAY.toISOString().split("T").join("").split("-");
+const TODAY_YEAR = TODAY_DATE[0];
+const TODAY_MONTH = TODAY_DATE[1];
+
 export default async function ActivityDetailPage({
   params,
 }: ActivityDetailPageProps) {
   const activityId = Number(params.activityId);
 
-  const [activityDetailList, activityDetailReviews] = await Promise.all([
-    getActivityDetailList({
-      activityId,
-    }),
-    getActivityDetailReviews({ activityId }),
-  ]);
+  const [activityDetailList, activityDetailReviews, activityDetailSchedules] =
+    await Promise.all([
+      getActivityDetailList({
+        activityId,
+      }),
+      getActivityDetailReviews({ activityId }),
+      getActivityDetailSchedule({
+        activityId,
+        year: TODAY_YEAR,
+        month: TODAY_MONTH,
+      }),
+    ]);
 
   const {
     category,
@@ -88,7 +100,12 @@ export default async function ActivityDetailPage({
           </div>
         </div>
         {/* 예약 카드 */}
-        <ReservationCard price={price} userId={userId} />
+        <ReservationCard
+          schedules={activityDetailSchedules}
+          activityId={activityId}
+          price={price}
+          userId={userId}
+        />
       </div>
     </div>
   );

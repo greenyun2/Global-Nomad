@@ -4,6 +4,11 @@ interface ActivityId {
   activityId: number;
 }
 
+interface ScheduleParams extends ActivityId {
+  year: string;
+  month: string;
+}
+
 export const getActivityDetailList = async ({ activityId }: ActivityId) => {
   try {
     const response = await instance.get(`/activities/${activityId}`);
@@ -28,15 +33,20 @@ export const getActivityDetailReviews = async ({ activityId }: ActivityId) => {
   }
 };
 
-export const getActivityDetailSchedule = async ({ activityId }: ActivityId) => {
+export const getActivityDetailSchedule = async ({
+  activityId,
+  year,
+  month,
+}: ScheduleParams) => {
   try {
     const response = await instance.get(
-      `/activities/${activityId}/available-schedule`,
+      `/activities/${activityId}/available-schedule?year=${year}&month=${month}`,
     );
     if (response.status !== 200) {
       throw new Error(`스케쥴 응답 상태 코드: ${response.status}`);
     }
-    return response.data;
+    const { data } = response;
+    return data;
   } catch (error) {
     console.error(error);
   }

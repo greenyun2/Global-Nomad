@@ -73,8 +73,6 @@
 
 /* month 커스텀 */
 .react-calendar__month-view__weekdays {
-  width: 15.625rem;
-  height: 2rem;
   text-align: center;
   font: inherit;
   font-size: 0.875rem;

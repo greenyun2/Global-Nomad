@@ -1,3 +1,8 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Calendar from "react-calendar";
+import { format } from "date-fns";
 import Button from "../Button/Button";
 
 type ValuePiece = Date | null;
@@ -7,14 +12,26 @@ type Value = ValuePiece | [ValuePiece, ValuePiece];
 interface ReservationCardProps {
   price: number | string;
   userId: number;
-  Calendar: React.ReactNode;
   onPlusClick: () => void;
   onMinusClick: () => void;
   onChangeTotalNumber: (e: React.ChangeEvent<HTMLInputElement>) => void;
-
   user: User | null;
   totalPrice: number | string;
   totalNumber: number;
+  schedules: Schedules[];
+}
+
+interface Schedules {
+  id: number;
+  date: string;
+  times: Times;
+}
+
+interface Times {
+  id: number;
+  date: string;
+  startTime: string;
+  endTime: string;
 }
 
 type User = {
@@ -25,7 +42,7 @@ type User = {
   createdAt: string;
   updatedAt: string;
 };
-
+const TODAY = new Date();
 /**
  *
  * 테블릿, 데스크탑 사이즈 일때
@@ -33,14 +50,41 @@ type User = {
 export default function ReservationCardDesktop({
   price,
   userId,
-  Calendar,
   onPlusClick,
   onMinusClick,
   onChangeTotalNumber,
   totalNumber,
   totalPrice,
   user,
+  schedules,
 }: ReservationCardProps) {
+  // 날짜 형식 포맷팅
+  const formatDate = format(new Date(), "yyyy-MM-dd");
+  const filterTodaySchedules = schedules.filter(
+    (item) => item.date === formatDate,
+  );
+
+  const [filterSchedulesDate, setFilterSchedulesDate] =
+    useState(filterTodaySchedules);
+  const [selectedDate, setSelectedDate] = useState<Value>(TODAY);
+
+  // 달력의 날짜를 클릭했을때 값이 변합니다
+  const handleDateChange = (date: Value) => {
+    setSelectedDate(date);
+    let newFormatDate = "";
+    if (selectedDate instanceof Date) {
+      newFormatDate = format(selectedDate, "yyyy-MM-dd");
+    }
+    const newFilterScheduleDate = schedules.filter(
+      (item) => item.date === newFormatDate,
+    );
+    setFilterSchedulesDate(newFilterScheduleDate);
+  };
+
+  // page로 부터 받은 데이터를 prop으로 내려 받았습니다.
+  console.log(schedules, "page => card => 데스크탑버전");
+  // 받은 데이터를 필터링 했습니다
+  console.log(filterSchedulesDate, "필터링된 스케쥴 데이터");
   return (
     <>
       {userId !== user?.id && (
@@ -59,7 +103,18 @@ export default function ReservationCardDesktop({
                 <h2 className="text-xl/[1.625rem] font-bold text-primary">
                   날짜
                 </h2>
-                <div className="flex justify-center">{Calendar}</div>
+                <div className="flex justify-center">
+                  <Calendar
+                    locale="ko"
+                    calendarType="gregory"
+                    value={selectedDate}
+                    view="month"
+                    prev2Label={null}
+                    next2Label={null}
+                    showNeighboringMonth={false}
+                    onChange={handleDateChange}
+                  />
+                </div>
               </div>
             </div>
           </section>
@@ -72,12 +127,16 @@ export default function ReservationCardDesktop({
                   예약 가능한 시간
                 </h3>
                 <div className="flex gap-3">
-                  <Button size="md" color="dark" className="">
-                    14:00~15:00
-                  </Button>
-                  <Button size="md" color="bright" className="">
-                    14:00~15:00
-                  </Button>
+                  {/** @TODO map() 메서드 사용 */}
+                  {/* {filterSchedulesDate.length > 0 ? (
+                    filterSchedulesDate.map((item) => (
+                      <button
+                        key={item.id}
+                      >{`${item.times.startTime}~${item.times.endTime}`}</button>
+                    ))
+                  ) : (
+                    <p>예약이 없습니다.</p>
+                  )} */}
                 </div>
               </div>
               {/* 참여 인원 수 */}

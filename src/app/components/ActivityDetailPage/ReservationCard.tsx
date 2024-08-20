@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import { useMediaQuery } from "react-responsive";
+import { getActivityDetailSchedule } from "@api/fetchActivityDetail";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ReservationCardDesktop from "./ReservationCardDesktop";
 import ReservationCardMobile from "./ReservationCardMobile";
 import "./customCalendar.css";
@@ -13,8 +15,23 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 interface ReservationCardProps {
+  activityId: number;
   price: number;
   userId: number;
+  schedules: Schedules[];
+}
+
+interface Schedules {
+  id: number;
+  date: string;
+  times: Times;
+}
+
+interface Times {
+  id: number;
+  date: string;
+  startTime: string;
+  endTime: string;
 }
 
 interface TotalInfo {
@@ -22,21 +39,41 @@ interface TotalInfo {
   totalNumber: number;
 }
 
+const TODAY = new Date();
+const TODAY_DATE = TODAY.toISOString().split("T").join("").split("-");
+const TODAY_YEAR = TODAY_DATE[0];
+const TODAY_MONTH = TODAY_DATE[1];
+
 export default function ReservationCard({
+  activityId,
   price,
   userId,
+  schedules,
 }: ReservationCardProps) {
   const { user } = useAuth();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const today = new Date();
-  const [date, setDate] = useState<Value>(today);
-
-  /** @TODO 서버 사이드 렌더링에서 유저 정보 가져오는 함수  */
-
   const [totalInfo, setTotalInfo] = useState<TotalInfo>({
     totalPrice: price,
     totalNumber: 1,
   });
+
+  const [selectedDate, setSelectedDate] = useState<Value>(TODAY);
+
+  // const [year, setYear] = useState(TODAY_YEAR);
+  // const [month, setMonth] = useState(TODAY_MONTH);
+  // const [monthSchedules, setMonthSchedules] = useState(schedules);
+  // const [isSchedule, setIsSchedule] = useState(false);
+  // const [scheduleItem, setScheduleItem] = useState([]);
+
+  // const { data, isLoading, isError } = useQuery({
+  //   queryKey: ["available-schedule", year, month],
+  //   queryFn: () =>
+  //     getActivityDetailSchedule({
+  //       activityId,
+  //       year,
+  //       month,
+  //     }),
+  // });
 
   const updateTotalInfo = (modifier: number) => {
     setTotalInfo((prevTotalInfo) => ({
@@ -62,13 +99,13 @@ export default function ReservationCard({
       });
     }
   };
+
   /**
-   * 예약 카드 조건
-   * 1. 모바일, (데스크탑, 테블릿) 사이즈의 렌더링
-   * 데스크탑, 테블릿 || 모바일 사이즈
-   * : useMediaQuery => isMobile ? 모바일 사이즈 : 데스크탑, 테블릿 사이즈
-   * 2. userId 와 현재 로그인중인 유저의 Id 값을 비교해서 렌더링 결정
-   * userId !== 현재 로그인중인 유저 Id && <ReservationCard />
+   * 이해가 안가는 부분
+   * 서버 컴포넌트에서 => 클라이언트 컴포넌트로 데이터를 넘겨줄떄
+   * 갑자기 데이터가 잘 나오다가 JSON.stringify() 형태로 변경됨
+   *
+   * 어디서, 데이터를 불러와야 하는지?
    */
 
   return (
@@ -78,14 +115,25 @@ export default function ReservationCard({
           user={user}
           userId={userId}
           price={price.toLocaleString()}
-          Calendar={<Calendar locale="ko" calendarType="hebrew" value={date} />}
+          Calendar={
+            <Calendar
+              locale="ko"
+              calendarType="gregory"
+              value={selectedDate}
+              view="month"
+              prev2Label={null}
+              next2Label={null}
+              showNeighboringMonth={false}
+              onChange={setSelectedDate}
+            />
+          }
         />
       ) : (
         <ReservationCardDesktop
+          schedules={schedules}
           user={user}
           userId={userId}
           price={price.toLocaleString()}
-          Calendar={<Calendar locale="ko" calendarType="hebrew" value={date} />}
           totalNumber={totalInfo.totalNumber}
           totalPrice={totalInfo.totalPrice.toLocaleString()}
           onPlusClick={handleOnPlus}
