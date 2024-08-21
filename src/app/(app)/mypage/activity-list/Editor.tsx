@@ -92,6 +92,18 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
   const [subImageIdsToRemove, setSubImageIdsToRemove] = useState<number[]>([]);
   const [isAddressModalOpen, setAddressModalOpen] = useState(false); // 중복 선언 제거
 
+  // 주소 필드의 변화를 감지하고 오류를 지우는 로직 추가
+  const addressValue = useWatch({
+    control,
+    name: "address",
+  });
+
+  useEffect(() => {
+    if (addressValue) {
+      clearErrors("address");
+    }
+  }, [addressValue, clearErrors]);
+
   useEffect(() => {
     if (initialData) {
       console.log("Initial Data:", initialData); // 초기 데이터 출력
