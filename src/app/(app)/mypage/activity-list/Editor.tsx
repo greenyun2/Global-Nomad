@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import DaumPostcode from "react-daum-postcode";
 import { useForm, Controller, useFieldArray, useWatch } from "react-hook-form";
 import { uploadActivityImage } from "@api/activities";
 import Button from "@app/components/Button/Button";
@@ -9,6 +10,7 @@ import CalendarInput from "@app/components/Input/CalendarInput";
 import DropDownInput from "@app/components/Input/DropDownInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import Modal from "@components/Modal/Modal";
 
 const CATEGORIES = ["문화 · 예술", "식음료", "스포츠", "투어", "관광", "웰빙"];
 export type ModifiedEditorSchemaType = EditorSchemaType & {
@@ -83,17 +85,12 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
     name: "schedules",
   });
 
-  const schedules = useWatch({
-    control,
-    name: "schedules",
-    defaultValue: [],
-  });
-
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [subImagePreviews, setSubImagePreviews] = useState<string[]>([]);
   const [scheduleIdsToRemove, setScheduleIdsToRemove] = useState<number[]>([]);
   const [subImageIdsToRemove, setSubImageIdsToRemove] = useState<number[]>([]);
+  const [isAddressModalOpen, setAddressModalOpen] = useState(false); // 중복 선언 제거
 
   useEffect(() => {
     if (initialData) {
@@ -264,6 +261,11 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
     onSubmit(finalData);
   };
 
+  const handleCompleteAddress = (data: { address: string }) => {
+    setValue("address", data.address);
+    setAddressModalOpen(false); // 모달을 닫음
+  };
+
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div>
@@ -345,23 +347,43 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
 
       <div>
         <label htmlFor="address">주소</label>
-        <Controller
-          name="address"
-          control={control}
-          render={({ field, fieldState: { invalid } }) => (
-            <BasicInput
-              id="address"
-              {...field}
-              type="text"
-              placeholder="주소를 입력해 주세요"
-              invalid={invalid}
-            />
-          )}
-        />
+        <div className="flex items-center gap-2">
+          <Controller
+            name="address"
+            control={control}
+            render={({ field, fieldState: { invalid } }) => (
+              <BasicInput
+                id="address"
+                {...field}
+                type="text"
+                placeholder="주소를 입력해 주세요"
+                invalid={invalid}
+                readOnly
+              />
+            )}
+          />
+          <Button
+            type="button"
+            onClick={() => setAddressModalOpen(true)}
+            size="sm"
+            color={"dark"}
+          >
+            주소 찾기
+          </Button>
+        </div>
         {errors.address && (
           <p className="text-red-500">{errors.address.message}</p>
         )}
       </div>
+
+      {isAddressModalOpen && (
+        <Modal onClose={() => setAddressModalOpen(false)}>
+          <DaumPostcode
+            onComplete={handleCompleteAddress}
+            onClose={() => setAddressModalOpen(false)}
+          />
+        </Modal>
+      )}
 
       <div>
         <label htmlFor="bannerImageUrl">배너 이미지</label>
@@ -550,8 +572,8 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
             <Button
               type="button"
               onClick={() =>
-                handleRemoveSchedule(index, Number(schedules?.[index]?.id))
-              } // schedules 배열에서 ID 참조
+                handleRemoveSchedule(index, Number(fields?.[index]?.id))
+              }
               size={"sm"}
               color={"dark"}
               className={"ml-2"}
