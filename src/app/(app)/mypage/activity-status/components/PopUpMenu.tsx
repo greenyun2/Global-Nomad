@@ -35,19 +35,6 @@ const PopUpMenu = ({
     activeTab,
   );
 
-  console.log("activeTab", activeTab);
-
-  /**
-   * 각 스케쥴에 대해서 confirmed, declined, pending 상태값이 모두 0인 예약건들을 담고있는 배열
-   * 팝업 메뉴에 표시할 내용이 있는지 없는지 판단하는데 사용됩니다.
-   * */
-  // const filteredReservations = dailyReservations.filter(
-  //   (x) =>
-  //     x.count.confirmed === 0 &&
-  //     x.count.declined === 0 &&
-  //     x.count.pending === 0,
-  // );
-
   // 자료 구조 : dailyReservations에 다수의 schedule(reservations)가 존재함
   // dailyReservations의 load(date-fetching)가 완료되면 스케쥴 초기값을 설정해줍니다. (비동기함수, client-side data-fetching의 한계...)
   useEffect(() => {
@@ -70,6 +57,7 @@ const PopUpMenu = ({
         (x) => x.scheduleId == Number(selectedScheduleId),
       )?.count;
 
+      // schedule을 선택 했을 떄 어떤 tab을 보여줄지 정하는 Logic
       if (scheduleStatusCounts) {
         let busiestStatus;
         if (scheduleStatusCounts.pending > 0) {
@@ -124,7 +112,7 @@ const PopUpMenu = ({
 
   return (
     <div
-      className={`flex h-full w-full flex-col gap-[27px] border border-[#DDDDDD] bg-white p-[24px] shadow-custom-shadow-01 md:h-auto md:max-h-[568px] md:rounded-[24px] ${activeTab == "신청" && "pb-[89px]"} text-[20px] text-black shadow`}
+      className={`flex h-full w-full flex-col gap-[27px] overflow-y-scroll border border-[#DDDDDD] bg-white p-[24px] shadow-custom-shadow-01 md:max-h-[568px] md:rounded-[24px] ${activeTab == "신청" && "pb-[89px]"} text-[20px] text-black shadow`}
     >
       <section className="flex items-center justify-between">
         <h1 className="text-2xl font-[700]">예약 정보</h1>
@@ -161,7 +149,7 @@ const PopUpMenu = ({
       </section>
       <section className="flex flex-col gap-[16px]">
         <h2 className="font-[600]">예약 내역</h2>
-        <div className="flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-[10px]">
           <ScheduleReservationsList
             scheduleReservations={scheduleReservationsStatus}
           />
