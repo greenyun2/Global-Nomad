@@ -29,7 +29,6 @@ const BasicInput = forwardRef<
     ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-    console.log("Props:", props); // readOnly가 포함되어 있는지 확인
 
     return (
       <section>

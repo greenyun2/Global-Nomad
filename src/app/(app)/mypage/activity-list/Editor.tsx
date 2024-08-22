@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import DaumPostcode from "react-daum-postcode";
 import { useForm, Controller, useFieldArray, useWatch } from "react-hook-form";
 import { uploadActivityImage } from "@api/activities";
 import Button from "@app/components/Button/Button";
@@ -10,7 +9,8 @@ import CalendarInput from "@app/components/Input/CalendarInput";
 import DropDownInput from "@app/components/Input/DropDownInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import Modal from "@components/Modal/Modal";
+import AddressModal from "./AddressModal";
+import { useDropdown } from "@hooks/useDropdown";
 
 const CATEGORIES = ["문화 · 예술", "식음료", "스포츠", "투어", "관광", "웰빙"];
 export type ModifiedEditorSchemaType = EditorSchemaType & {
@@ -97,7 +97,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
     control,
     name: "address",
   });
-
+  const { isOpen: isModalOpen, ref, toggle } = useDropdown(); // Modal 로직
   useEffect(() => {
     if (addressValue) {
       clearErrors("address");
@@ -374,12 +374,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
               />
             )}
           />
-          <Button
-            type="button"
-            onClick={() => setAddressModalOpen(true)}
-            size="sm"
-            color={"dark"}
-          >
+          <Button type="button" onClick={toggle} size="sm" color={"dark"}>
             주소 찾기
           </Button>
         </div>
@@ -388,13 +383,12 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
         )}
       </div>
 
-      {isAddressModalOpen && (
-        <Modal onClose={() => setAddressModalOpen(false)}>
-          <DaumPostcode
-            onComplete={handleCompleteAddress}
-            onClose={() => setAddressModalOpen(false)}
-          />
-        </Modal>
+      {isModalOpen && (
+        <AddressModal
+          ref={ref}
+          toggle={toggle}
+          onComplete={handleCompleteAddress}
+        ></AddressModal>
       )}
 
       <div>
