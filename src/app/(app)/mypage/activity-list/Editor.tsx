@@ -9,8 +9,11 @@ import CalendarInput from "@app/components/Input/CalendarInput";
 import DropDownInput from "@app/components/Input/DropDownInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import AddressModal from "./AddressModal";
+import { useDropdown } from "@hooks/useDropdown";
 
 const CATEGORIES = ["문화 · 예술", "식음료", "스포츠", "투어", "관광", "웰빙"];
+
 export type ModifiedEditorSchemaType = EditorSchemaType & {
   schedulesToAdd?: {
     date: string;
@@ -20,13 +23,15 @@ export type ModifiedEditorSchemaType = EditorSchemaType & {
   }[];
   subImageUrlsToAdd?: string[];
 };
+
 const EditorSchema = z.object({
   title: z.string().nonempty("체험 이름을 입력해 주세요"),
   category: z.string().nonempty("카테고리를 입력해 주세요"),
   description: z.string().nonempty("설명을 입력해 주세요"),
   price: z.preprocess(
     (value) => (typeof value === "string" ? parseFloat(value) : value),
-    z.number().min(0, "가격은 0보다 작을 수 없습니다."),
+    z.number().min(0, "최소 0원 설정 간으합니다.")
+    .max(5000000, "최대 500만원 설정 가능합니다.")
   ),
   address: z.string().nonempty("주소를 입력해 주세요"),
   bannerImageUrl: z.string().nonempty("배너 이미지를 등록해 주세요"),
@@ -83,17 +88,25 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
     name: "schedules",
   });
 
-  const schedules = useWatch({
-    control,
-    name: "schedules",
-    defaultValue: [],
-  });
-
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [subImagePreviews, setSubImagePreviews] = useState<string[]>([]);
   const [scheduleIdsToRemove, setScheduleIdsToRemove] = useState<number[]>([]);
   const [subImageIdsToRemove, setSubImageIdsToRemove] = useState<number[]>([]);
+  const [isAddressModalOpen, setAddressModalOpen] = useState(false);
+
+  // 주소 필드의 변화를 감지하고 오류를 지우는 로직 추가
+  const addressValue = useWatch({
+    control,
+    name: "address",
+  });
+  const { isOpen: isModalOpen, ref, toggle } = useDropdown();
+
+  useEffect(() => {
+    if (addressValue) {
+      clearErrors("address");
+    }
+  }, [addressValue, clearErrors]);
 
   useEffect(() => {
     if (initialData) {
@@ -105,6 +118,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
         startTime: schedule.startTime,
         endTime: schedule.endTime,
       }));
+
       setValue("schedules", schedules);
       const subImageUrls = initialData.subImages.map(
         (image: any) => image.imageUrl,
@@ -241,8 +255,8 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
         price: data.price,
         address: data.address,
         bannerImageUrl: data.bannerImageUrl,
-        schedulesToAdd: filteredSchedulesToAdd, // 새롭게 추가된 스케줄만
-        subImageUrlsToAdd: filteredSubImageUrlsToAdd, // 새롭게 추가된 이미지 URL만
+        schedulesToAdd: filteredSchedulesToAdd,
+        subImageUrlsToAdd: filteredSubImageUrlsToAdd,
         scheduleIdsToRemove: scheduleIdsToRemove,
         subImageIdsToRemove: subImageIdsToRemove,
       };
@@ -262,6 +276,11 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
 
     console.log("Submitting data:", finalData);
     onSubmit(finalData);
+  };
+
+  const handleCompleteAddress = (data: { address: string }) => {
+    setValue("address", data.address);
+    setAddressModalOpen(false);
   };
 
   return (
@@ -345,23 +364,37 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
 
       <div>
         <label htmlFor="address">주소</label>
-        <Controller
-          name="address"
-          control={control}
-          render={({ field, fieldState: { invalid } }) => (
-            <BasicInput
-              id="address"
-              {...field}
-              type="text"
-              placeholder="주소를 입력해 주세요"
-              invalid={invalid}
-            />
-          )}
-        />
+        <div className="flex items-center gap-2">
+          <Controller
+            name="address"
+            control={control}
+            render={({ field, fieldState: { invalid } }) => (
+              <BasicInput
+                id="address"
+                {...field}
+                type="text"
+                placeholder="주소를 입력해 주세요"
+                invalid={invalid}
+                readOnly
+              />
+            )}
+          />
+          <Button type="button" onClick={toggle} size="sm" color={"dark"}>
+            주소 찾기
+          </Button>
+        </div>
         {errors.address && (
           <p className="text-red-500">{errors.address.message}</p>
         )}
       </div>
+
+      {isModalOpen && (
+        <AddressModal
+          ref={ref}
+          toggle={toggle}
+          onComplete={handleCompleteAddress}
+        ></AddressModal>
+      )}
 
       <div>
         <label htmlFor="bannerImageUrl">배너 이미지</label>
@@ -457,109 +490,68 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
       <div>
         <label>예약 가능한 시간대</label>
 
-        <div className="mb-4 flex items-center gap-4">
-          <Controller
-            name={`schedules.${0}.date`}
-            control={control}
-            render={({ field }) => (
-              <CalendarInput
-                id={`schedules-date`}
-                {...field}
-                placeholder="YY/MM/DD"
+        <div className="mb-4 flex flex-col items-center gap-4">
+          {fields.map((item, index) => (
+            <div key={item.id} className="mb-4 flex items-center gap-4">
+              <Controller
+                name={`schedules.${index}.date`}
+                control={control}
+                render={({ field }) => (
+                  <CalendarInput
+                    id={`schedules-${index}`}
+                    {...field}
+                    placeholder="YY/MM/DD"
+                  />
+                )}
               />
-            )}
-          />
-          <Controller
-            name={`schedules.${0}.startTime`}
-            control={control}
-            render={({ field }) => (
-              <DropDownInput
-                id={`schedules-startTime`}
-                setInitialValue={false}
-                dropDownOptions={["00:00", "01:00", "02:00", "03:00"]}
-                {...field}
-                placeholder="0:00"
+              <Controller
+                name={`schedules.${index}.startTime`}
+                control={control}
+                render={({ field }) => (
+                  <DropDownInput
+                    id={`schedules-startTime-${index}`}
+                    setInitialValue={false}
+                    dropDownOptions={["00:00", "01:00", "02:00", "03:00"]}
+                    {...field}
+                    placeholder="0:00"
+                  />
+                )}
               />
-            )}
-          />
-          <span>~</span>
-          <Controller
-            name={`schedules.${0}.endTime`}
-            control={control}
-            render={({ field }) => (
-              <DropDownInput
-                id={`schedules-endTime`}
-                setInitialValue={false}
-                dropDownOptions={["01:00", "02:00", "03:00", "04:00"]}
-                {...field}
-                placeholder="0:00"
+              <span>~</span>
+              <Controller
+                name={`schedules.${index}.endTime`}
+                control={control}
+                render={({ field }) => (
+                  <DropDownInput
+                    id={`schedules-endTime-${index}`}
+                    setInitialValue={false}
+                    dropDownOptions={["01:00", "02:00", "03:00", "04:00"]}
+                    {...field}
+                    placeholder="0:00"
+                  />
+                )}
               />
-            )}
-          />
-          <Button
-            type="button"
-            onClick={handleAddSchedule}
-            size={"sm"}
-            color={"dark"}
-            className={"ml-2"}
-          >
-            +
-          </Button>
+              <Button
+                type="button"
+                onClick={() => handleRemoveSchedule(index)}
+                size={"sm"}
+                color={"dark"}
+                className={"ml-2"}
+              >
+                -
+              </Button>
+            </div>
+          ))}
         </div>
 
-        {fields.map((item, index) => (
-          <div key={item.id} className="mb-4 flex items-center gap-4">
-            <Controller
-              name={`schedules.${index}.date`}
-              control={control}
-              render={({ field }) => (
-                <CalendarInput
-                  id={`schedules-${index}`}
-                  {...field}
-                  placeholder="YY/MM/DD"
-                />
-              )}
-            />
-            <Controller
-              name={`schedules.${index}.startTime`}
-              control={control}
-              render={({ field }) => (
-                <DropDownInput
-                  id={`schedules-startTime-${index}`}
-                  setInitialValue={false}
-                  dropDownOptions={["00:00", "01:00", "02:00", "03:00"]}
-                  {...field}
-                  placeholder="0:00"
-                />
-              )}
-            />
-            <span>~</span>
-            <Controller
-              name={`schedules.${index}.endTime`}
-              control={control}
-              render={({ field }) => (
-                <DropDownInput
-                  id={`schedules-endTime-${index}`}
-                  setInitialValue={false}
-                  dropDownOptions={["01:00", "02:00", "03:00", "04:00"]}
-                  {...field}
-                  placeholder="0:00"
-                />
-              )}
-            />
-            <Button
-              type="button"
-              onClick={() =>
-                handleRemoveSchedule(index, Number(schedules?.[index]?.id))
-              } // schedules 배열에서 ID 참조
-              size={"sm"}
-              color={"dark"}
-              className={"ml-2"}
-            >
-              -
-            </Button>
-          </div>
-        ))}
+        <Button
+          type="button"
+          onClick={handleAddSchedule}
+          size={"sm"}
+          color={"dark"}
+        >
+          +
+        </Button>
 
         <div className="mt-4">
           <Button

@@ -25,7 +25,7 @@ export default function ActivityList() {
   const { myActivityList, setMyActivityList } = context;
 
   // useQuery를 사용하여 데이터를 패칭하고 컨텍스트와 동기화
-  const { data, refetch } = useQuery<MyActivityType[]>({
+  const { data } = useQuery<MyActivityType[]>({
     queryKey: ["myActivityList"],
     queryFn: async () => {
       const response = await getMyActivities();
@@ -66,7 +66,6 @@ export default function ActivityList() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["myActivityList"] });
-      refetch();
     },
   });
 

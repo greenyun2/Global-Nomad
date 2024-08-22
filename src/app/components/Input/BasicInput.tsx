@@ -17,14 +17,15 @@ type BasicInputPropsType = {
   onBlur?: (
     e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
   ) => void;
-};
+} & React.InputHTMLAttributes<HTMLInputElement> &
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 const BasicInput = forwardRef<
   HTMLInputElement | HTMLTextAreaElement,
   BasicInputPropsType
 >(
   (
-    { placeholder, id, type, onChange, onBlur, invalid, value },
+    { placeholder, id, type, onChange, onBlur, invalid, value, ...props },
     ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -34,6 +35,7 @@ const BasicInput = forwardRef<
         <div className="relative flex items-center">
           {type === "textarea" ? (
             <textarea
+              {...props}
               placeholder={placeholder}
               id={id}
               onChange={onChange}
@@ -44,6 +46,7 @@ const BasicInput = forwardRef<
             />
           ) : (
             <input
+              {...props}
               placeholder={placeholder}
               id={id}
               type={isPasswordVisible ? "text" : type}
@@ -51,7 +54,7 @@ const BasicInput = forwardRef<
               onBlur={onBlur}
               ref={ref as ForwardedRef<HTMLInputElement>}
               value={value}
-              className={`${invalid ? "border-red-100" : "border-gray-700"} h-[58px] w-full rounded-[6px] border px-[16px] py-[20px] text-[16px] font-[400] text-black`}
+              className={` ${invalid ? "border-red-100" : "border-gray-700"} h-[58px] w-full rounded-[6px] border px-[16px] py-[20px] text-[16px] font-[400] text-black ${props.readOnly ? "bg-gray-200" : ""} `}
             />
           )}
 

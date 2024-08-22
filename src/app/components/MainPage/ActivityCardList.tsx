@@ -89,7 +89,7 @@ const ActivityCardList = () => {
     const button = e.target as HTMLButtonElement;
     if (currentCategory === button.value) {
       setCurrentCategory("");
-      router.replace(pathname);
+      router.replace(pathname, { scroll: false });
     } else {
       setCurrentCategory(button.value);
       const query = new URLSearchParams({

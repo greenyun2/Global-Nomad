@@ -1,7 +1,13 @@
 "use client";
 
-import { Map } from "react-kakao-maps-sdk";
+import { Map, MapTypeControl, ZoomControl } from "react-kakao-maps-sdk";
 import useKakaoLoader from "@/hooks/useKakaoLoader";
+
+/**
+ * 카카오맵의 초기 렌더링시, 주소에 맞게 화면을 보여줌
+ * 주소에 맞는 위치에 마크업 표시
+ *
+ */
 
 export default function KakaoMap() {
   useKakaoLoader();
@@ -21,6 +27,9 @@ export default function KakaoMap() {
         borderRadius: "1rem",
       }}
       level={3} // 지도의 확대 레벨
-    />
+    >
+      <MapTypeControl position={"TOPRIGHT"} />
+      <ZoomControl position={"RIGHT"} />
+    </Map>
   );
 }

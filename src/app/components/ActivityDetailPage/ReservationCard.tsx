@@ -8,13 +8,34 @@ import ReservationCardMobile from "./ReservationCardMobile";
 import "./customCalendar.css";
 import { useAuth } from "@context/AuthContext";
 
-type ValuePiece = Date | null;
-
-type Value = ValuePiece | [ValuePiece, ValuePiece];
-
 interface ReservationCardProps {
+  activityId: number;
   price: number;
   userId: number;
+  schedules: Schedules[];
+  userData: User | null;
+}
+
+type User = {
+  id: number;
+  email: string;
+  nickname?: string;
+  profileImageUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+interface Schedules {
+  id: number;
+  date: string;
+  times: Times[];
+}
+
+interface Times {
+  id: number;
+  date: string;
+  startTime: string;
+  endTime: string;
 }
 
 interface TotalInfo {
@@ -23,13 +44,14 @@ interface TotalInfo {
 }
 
 export default function ReservationCard({
+  activityId,
   price,
   userId,
+  schedules,
+  userData,
 }: ReservationCardProps) {
-  const { user } = useAuth();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const today = new Date();
-  const [date, setDate] = useState<Value>(today);
 
   /** @TODO 서버 사이드 렌더링에서 유저 정보 가져오는 함수  */
 
@@ -73,7 +95,7 @@ export default function ReservationCard({
 
   return (
     <>
-      {isMobile ? (
+      {/* {isMobile ? (
         <ReservationCardMobile
           user={user}
           userId={userId}
@@ -81,18 +103,20 @@ export default function ReservationCard({
           Calendar={<Calendar locale="ko" calendarType="hebrew" value={date} />}
         />
       ) : (
-        <ReservationCardDesktop
-          user={user}
-          userId={userId}
-          price={price.toLocaleString()}
-          Calendar={<Calendar locale="ko" calendarType="hebrew" value={date} />}
-          totalNumber={totalInfo.totalNumber}
-          totalPrice={totalInfo.totalPrice.toLocaleString()}
-          onPlusClick={handleOnPlus}
-          onMinusClick={handleOnMinus}
-          onChangeTotalNumber={handleChange}
-        />
-      )}
+        
+      )} */}
+      <ReservationCardDesktop
+        userData={userData}
+        schedules={schedules}
+        activityId={activityId}
+        userId={userId}
+        price={price.toLocaleString()}
+        totalNumber={totalInfo.totalNumber}
+        totalPrice={totalInfo.totalPrice.toLocaleString()}
+        onPlusClick={handleOnPlus}
+        onMinusClick={handleOnMinus}
+        onChangeTotalNumber={handleChange}
+      />
     </>
   );
 }
