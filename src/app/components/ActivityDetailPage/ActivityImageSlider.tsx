@@ -106,8 +106,6 @@ export default function ActivityImageSlider({
             className="rounded-md"
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            objectFit="cover"
-            objectPosition="center"
             src={bannerImageUrl}
             alt="Main banner image"
           />
@@ -123,8 +121,6 @@ export default function ActivityImageSlider({
                 fill
                 className="rounded-md"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                objectFit="cover"
-                objectPosition="center"
                 src={image.imageUrl}
                 alt="서브 이미지"
               />

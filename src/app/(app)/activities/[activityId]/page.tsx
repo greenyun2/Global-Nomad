@@ -3,6 +3,7 @@ import {
   getActivityDetailReviews,
   getActivityDetailSchedule,
 } from "@api/fetchActivityDetail";
+import { getUserMe } from "@api/user";
 import ActivityDetailReviews from "@app/components/ActivityDetailPage/ActivityDetailReviews";
 import ActivityHeader from "@app/components/ActivityDetailPage/ActivityHeader";
 import ActivityIconWrap from "@app/components/ActivityDetailPage/ActivityIconWrap";
@@ -79,6 +80,7 @@ export default async function ActivityDetailPage({
         rating={rating}
         reviewCount={reviewCount}
         address={address}
+        activityId={activityId}
       />
 
       <ActivityImageSlider

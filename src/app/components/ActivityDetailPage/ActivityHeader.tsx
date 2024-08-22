@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { getUserMe } from "@api/user";
+import { useQuery } from "@tanstack/react-query";
 import ActivityHeaderKebabMenu from "./ActivityHeaderKebabMenu";
 import ActivityIconWrap from "./ActivityIconWrap";
-import { useAuth } from "@context/AuthContext";
 
 interface ActivityHeaderProps {
   userId: number;
@@ -11,7 +13,17 @@ interface ActivityHeaderProps {
   rating: number;
   reviewCount: number;
   address: string;
+  activityId: number;
 }
+
+type User = {
+  id: number;
+  email: string;
+  nickname?: string;
+  profileImageUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export default function ActivityHeader({
   category,
@@ -20,8 +32,12 @@ export default function ActivityHeader({
   reviewCount,
   address,
   userId,
+  activityId,
 }: ActivityHeaderProps) {
-  const { user } = useAuth();
+  const { data: userData } = useQuery({
+    queryKey: ["me"],
+    queryFn: () => getUserMe(),
+  });
 
   /**
    * @TODO 이미지, 텍스트 반복되는 부분 컴포넌트로 분리
@@ -53,7 +69,9 @@ export default function ActivityHeader({
         </div>
       </div>
       {/* 케밥 메뉴 영역 */}
-      {user?.id === userId && <ActivityHeaderKebabMenu />}
+      {userId === userData?.id && (
+        <ActivityHeaderKebabMenu activityId={activityId} />
+      )}
     </header>
   );
 }
