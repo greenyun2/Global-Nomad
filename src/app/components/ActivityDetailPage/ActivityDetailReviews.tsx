@@ -15,10 +15,6 @@ export default function ActivityDetailReviews({
   totalCount,
   averageRating,
 }: ActivityDetailReviewsProps) {
-  let paginationButton = [];
-  for (let i = 1; i >= totalCount; i++) {
-    paginationButton.push(i);
-  }
   return (
     <div className="mb-4 flex w-full flex-col gap-6">
       <div className="flex w-full flex-col gap-[1.125rem] md:gap-6">
@@ -55,14 +51,7 @@ export default function ActivityDetailReviews({
         <button className="flex h-[55px] w-[55px] items-center justify-center border border-solid border-gray-500">
           {"<"}
         </button>
-        {paginationButton.map((item) => (
-          <button
-            key={item}
-            className="flex h-[55px] w-[55px] items-center justify-center border border-solid border-gray-500"
-          >
-            {item}
-          </button>
-        ))}
+
         <button className="flex h-[55px] w-[55px] items-center justify-center border border-solid border-gray-500">
           {">"}
         </button>

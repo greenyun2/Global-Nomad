@@ -4,6 +4,7 @@ import {
   getActivityDetailSchedule,
 } from "@api/fetchActivityDetail";
 import { getUserMe } from "@api/user";
+import { getUserMeServer } from "@app/apiServer/getUserMeServer";
 import ActivityDetailReviews from "@app/components/ActivityDetailPage/ActivityDetailReviews";
 import ActivityHeader from "@app/components/ActivityDetailPage/ActivityHeader";
 import ActivityIconWrap from "@app/components/ActivityDetailPage/ActivityIconWrap";
@@ -27,18 +28,23 @@ export default async function ActivityDetailPage({
 }: ActivityDetailPageProps) {
   const activityId = Number(params.activityId);
 
-  const [activityDetailList, activityDetailReviews, activityDetailSchedules] =
-    await Promise.all([
-      getActivityDetailList({
-        activityId,
-      }),
-      getActivityDetailReviews({ activityId }),
-      getActivityDetailSchedule({
-        activityId,
-        year: TODAY_YEAR,
-        month: TODAY_MONTH,
-      }),
-    ]);
+  const [
+    activityDetailList,
+    activityDetailReviews,
+    activityDetailSchedules,
+    userData,
+  ] = await Promise.all([
+    getActivityDetailList({
+      activityId,
+    }),
+    getActivityDetailReviews({ activityId }),
+    getActivityDetailSchedule({
+      activityId,
+      year: TODAY_YEAR,
+      month: TODAY_MONTH,
+    }),
+    getUserMeServer(),
+  ]);
 
   const {
     category,
@@ -66,14 +72,12 @@ export default async function ActivityDetailPage({
    * 버튼은 타입=버튼,
    * 총합계 = h1 x
    * 메타 태그
-   *
-   * 급한 부분
-   * 예약하기에 대한 기능 구현이 가장 급함
    */
 
   return (
     <div className="container h-full w-full pt-4 md:pt-6 xl:pt-[4.875rem]">
       <ActivityHeader
+        userData={userData}
         userId={userId}
         category={category}
         title={title}
@@ -119,6 +123,7 @@ export default async function ActivityDetailPage({
         </div>
         {/* 예약 카드 */}
         <ReservationCard
+          userData={userData}
           schedules={activityDetailSchedules}
           activityId={activityId}
           price={price}

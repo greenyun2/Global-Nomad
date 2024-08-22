@@ -14,6 +14,7 @@ interface ActivityHeaderProps {
   reviewCount: number;
   address: string;
   activityId: number;
+  userData: User | null;
 }
 
 type User = {
@@ -33,12 +34,8 @@ export default function ActivityHeader({
   address,
   userId,
   activityId,
+  userData,
 }: ActivityHeaderProps) {
-  const { data: userData } = useQuery({
-    queryKey: ["me"],
-    queryFn: () => getUserMe(),
-  });
-
   /**
    * @TODO 이미지, 텍스트 반복되는 부분 컴포넌트로 분리
    * p 태그 span or data 태그

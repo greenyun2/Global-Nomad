@@ -13,7 +13,17 @@ interface ReservationCardProps {
   price: number;
   userId: number;
   schedules: Schedules[];
+  userData: User | null;
 }
+
+type User = {
+  id: number;
+  email: string;
+  nickname?: string;
+  profileImageUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 interface Schedules {
   id: number;
@@ -38,6 +48,7 @@ export default function ReservationCard({
   price,
   userId,
   schedules,
+  userData,
 }: ReservationCardProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const today = new Date();
@@ -95,6 +106,7 @@ export default function ReservationCard({
         
       )} */}
       <ReservationCardDesktop
+        userData={userData}
         schedules={schedules}
         activityId={activityId}
         userId={userId}

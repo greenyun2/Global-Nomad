@@ -31,11 +31,18 @@ export default function ActivityHeaderKebabMenu({
     setIsModal(true);
   };
 
+  /**
+   * 삭제 기능 => 삭제시 useQuery로 클라이언트측에 렌더링되는 데이터 invalidDateQueries 데이터 무효화 해주기
+   * popularActivities, queryKey: ["activities", pageNum, size, category, sort], myActivityList
+   */
+
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: deleteMyActivityPage,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-activities"] });
+      queryClient.invalidateQueries({
+        queryKey: ["activities", "myActivityList", "popularActivities"],
+      });
       router.replace("/");
     },
     onError: (error) => {
@@ -87,6 +94,7 @@ export default function ActivityHeaderKebabMenu({
           {isOpen && (
             <ul className="absolute right-0 top-[2.5rem] z-[9999] flex h-[7.125rem] w-[10rem] flex-col items-center justify-center rounded-md bg-white shadow-[0_0.25rem_1rem_0_#1122110D]">
               <Link
+                rel="preload"
                 className="flex h-full w-full items-center justify-center rounded-t-md border border-solid border-gray-300 hover:bg-primary hover:text-white"
                 href={`/mypage/activity-list/${activityId}/edit`}
               >

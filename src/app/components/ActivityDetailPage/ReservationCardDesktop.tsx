@@ -13,6 +13,7 @@ import {
   postApplicationReservation,
 } from "@api/fetchActivityDetail";
 import { getUserMe } from "@api/user";
+import { getUserMeServer } from "@app/apiServer/getUserMeServer";
 import {
   QueryClient,
   useMutation,
@@ -41,6 +42,7 @@ interface ReservationCardProps {
   totalNumber: number;
   schedules: Schedules[];
   activityId: number;
+  userData: User | null;
 }
 
 interface Schedules {
@@ -94,6 +96,7 @@ export default function ReservationCardDesktop({
   totalPrice,
   schedules,
   activityId,
+  userData,
 }: ReservationCardProps) {
   const formatDate = format(new Date(), "yyyy-MM-dd");
   const filterTodaySchedules = schedules.filter(
@@ -104,6 +107,7 @@ export default function ReservationCardDesktop({
     useState(filterTodaySchedules);
   const [value, onChange] = useState<Value>(TODAY);
 
+  // const [userData, setUserData] = useState<User | null>(null);
   const [scheduleId, setScheduleId] = useState(0);
   const [isModal, setIsModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -113,10 +117,6 @@ export default function ReservationCardDesktop({
   const modalRef = useRef(null);
 
   // 유저 정보 요청
-  const { data: userData } = useQuery({
-    queryKey: ["me"],
-    queryFn: () => getUserMe(),
-  });
 
   const queryClient = useQueryClient();
 
@@ -124,8 +124,9 @@ export default function ReservationCardDesktop({
     mutationFn: postApplicationReservation,
     onSuccess: () => {
       setIsModal(true);
-      setMessage(`${totalNumber}명 ${selectedTime}시간에 예약이 완료됐습니다.`);
-      queryClient.invalidateQueries({ queryKey: ["reservations"] });
+      setMessage(`${selectedTime}시간에 ${totalNumber}명 예약이 완료됐습니다.`);
+      // 데이터 캐싱 무효화의 기준은 useQuery를 사용한 쿼리키
+      queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
     },
     onError: (error) => {
       setIsModal(true);
@@ -143,6 +144,7 @@ export default function ReservationCardDesktop({
       (item) => item.date === newFormatDate,
     );
     setFilterSchedulesDate(newFilterScheduleDate);
+    setSelectedTime(newFormatDate);
     setIsDisabled(true);
   };
 
@@ -183,7 +185,10 @@ export default function ReservationCardDesktop({
         if (time.id === Number(value)) {
           setScheduleId(Number(value));
           setIsDisabled(false);
-          setSelectedTime(`${time.startTime}~${time.endTime}`);
+          setSelectedTime(
+            (selectedDate) =>
+              `${selectedDate} ${time.startTime}~${time.endTime}`,
+          );
         } else {
           setIsDisabled(true);
         }
@@ -207,6 +212,8 @@ export default function ReservationCardDesktop({
       </button>
     ));
   });
+
+  console.log(schedules);
 
   return (
     <>

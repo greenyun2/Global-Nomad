@@ -78,10 +78,10 @@ export const postApplicationReservation = async ({
     console.log(response);
     return response.data;
   } catch (error) {
+    console.error(error);
     if (axios.isAxiosError(error)) {
       throw error.response?.data.message;
     }
-    console.error(error);
   }
 };
 
@@ -89,6 +89,7 @@ export const deleteMyActivityPage = async ({ activityId }: ActivityId) => {
   try {
     await instance.delete(`/my-activities/${activityId}`);
   } catch (error) {
+    console.error(error);
     if (axios.isAxiosError(error)) {
       throw error.response?.data.message;
     }
