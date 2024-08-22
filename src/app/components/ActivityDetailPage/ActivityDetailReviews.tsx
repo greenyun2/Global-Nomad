@@ -1,5 +1,6 @@
 import { ReviewsItem } from "../../../types/ActivityDetailTypes";
 import EmptyState from "../EmptyState/EmptyState";
+import Pagination from "../MainPage/Pagination";
 import ActivityIconWrap from "./ActivityIconWrap";
 import ReviewCard from "./ReviewCard";
 
@@ -17,13 +18,13 @@ export default function ActivityDetailReviews({
   return (
     <div className="mb-4 flex w-full flex-col gap-6">
       <div className="flex w-full flex-col gap-[1.125rem] md:gap-6">
-        <h2 className="text-xl font-bold text-primary xl:text-2lg">후기</h2>
+        <h3 className="text-xl font-bold text-primary xl:text-2lg">후기</h3>
         <div className="flex gap-4">
-          <h1 className="text-averageRating font-semibold text-primary">
+          <data className="text-averageRating font-semibold text-primary">
             {averageRating}
-          </h1>
+          </data>
           <div className="flex flex-col gap-2">
-            <p className="text-2lg font-normal text-primary">매우 만족</p>
+            <span className="text-2lg font-normal text-primary">매우 만족</span>
             <ActivityIconWrap
               iconType="star"
               fontColor="star"
@@ -41,9 +42,19 @@ export default function ActivityDetailReviews({
         )}
       </ul>
 
-      {/* 피이지 네이션 버튼 */}
-      <div>
-        <button>페이지 네이션 버튼</button>
+      {/**피이지 네이션 버튼
+       * 조건: 한 페이지에 3개씩
+       * 토탈 개수 / 3 = button의 개수
+       * 1번 버튼 클릭
+       *  */}
+      <div className="flex h-[55px] w-full items-center justify-center gap-[10px]">
+        <button className="flex h-[55px] w-[55px] items-center justify-center border border-solid border-gray-500">
+          {"<"}
+        </button>
+
+        <button className="flex h-[55px] w-[55px] items-center justify-center border border-solid border-gray-500">
+          {">"}
+        </button>
       </div>
     </div>
   );

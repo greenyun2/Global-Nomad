@@ -3,9 +3,9 @@
   width: 19rem;
   height: 15.0625rem;
   max-width: 100%;
-
+  /* 
   padding-top: 0.625rem;
-  padding-bottom: 0.625rem;
+  padding-bottom: 0.625rem; */
 
   display: flex;
   flex-direction: column;
@@ -73,8 +73,6 @@
 
 /* month 커스텀 */
 .react-calendar__month-view__weekdays {
-  width: 15.625rem;
-  height: 2rem;
   text-align: center;
   font: inherit;
   font-size: 0.875rem;
@@ -145,7 +143,8 @@
 }
 
 .react-calendar__tile--now {
-  background: #ffff76;
+  /* background: #ffff76; */
+  background: #e6e6e6;
 }
 
 .react-calendar__tile--now:enabled:hover,
@@ -180,22 +179,18 @@
 } */
 
 /* days 컨테이너 영역 너비, 높이 커스텀 */
-body
-  > div.flex.min-h-screen.flex-col
-  > main
-  > div
-  > div.mb-\[2\.5rem\].flex.w-full.gap-\[0\.875rem\]
-  > div.h-\[46\.625rem\].w-\[24rem\].rounded-xl.border.border-solid.border-gray-300.pb-\[1\.125rem\].pt-6.shadow-\[0_0\.25rem_1rem_0_\#1122110D\]
-  > section.flex.flex-col.gap-4
-  > div.flex.justify-center
-  > div
-  > div
-  > div
-  > div.react-calendar__viewContainer
-  > div
-  > div
-  > div
-  > div.react-calendar__month-view__days {
+.react-calendar__month-view__days {
   width: 15.625rem;
   height: 2rem;
+}
+
+/* 각 날짜 */
+/* .react-calendar__tile react-calendar__month-view__days__day {
+  position: relative;
+} */
+
+.react-calendar__year-view .react-calendar__tile,
+.react-calendar__decade-view .react-calendar__tile,
+.react-calendar__century-view .react-calendar__tile {
+  padding: 1.0625rem;
 }
