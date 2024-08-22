@@ -5,7 +5,11 @@ import EmptyState from "@app/components/EmptyState/EmptyState";
 import { useQuery } from "@tanstack/react-query";
 import MyReservationCard from "./components/MyReservationCard";
 
-const useMyReservation = (status: string, cursorId?: number, size?: number) => {
+const useMyReservation = (
+  status?: string,
+  cursorId?: number,
+  size?: number,
+) => {
   return useQuery({
     queryKey: ["my-reservations"],
     queryFn: () => getMyReservation(),
@@ -13,7 +17,7 @@ const useMyReservation = (status: string, cursorId?: number, size?: number) => {
 };
 
 export default function MyReservationPage() {
-  const { data } = useMyReservation(status);
+  const { data } = useMyReservation();
   const reservations = data?.reservations || [];
   const totalCount = data?.totalCount || 0;
   return (
