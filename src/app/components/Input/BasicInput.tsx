@@ -6,7 +6,7 @@ import icon_visibility_off from "@icons/icon_visibility_off.svg";
 import icon_visibility_on from "@icons/icon_visibility_on.svg";
 
 type BasicInputPropsType = {
-  placeholder: string;
+  placeholder?: string;
   type: "email" | "password" | "text" | "number" | "textarea"; // textarea 추가
   id: string;
   onChange?: (
