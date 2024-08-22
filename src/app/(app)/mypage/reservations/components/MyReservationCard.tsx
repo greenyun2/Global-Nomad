@@ -1,6 +1,7 @@
 import { ReservationData } from "@api/myReservation";
 import Image from "next/image";
 import ReservationCancelModal from "./ReservationCancelModal";
+import ReservationReviewModal from "./ReservationReviewModal";
 import { useDropdown } from "@hooks/useDropdown";
 import { formatPriceKorean } from "@utils/formatPrice";
 
@@ -11,6 +12,7 @@ interface MyReservationCardProp {
 
 const MyReservationCard = ({
   reservationId,
+  cardData,
   cardData: {
     status,
     activity,
@@ -21,7 +23,16 @@ const MyReservationCard = ({
     totalPrice,
   },
 }: MyReservationCardProp) => {
-  const { isOpen, ref, toggle } = useDropdown();
+  const {
+    isOpen: isReservationCancelModalOpen,
+    ref: cancelModalRef,
+    toggle: toggleCancelModal,
+  } = useDropdown();
+  const {
+    isOpen: isReviewModalOpen,
+    ref: reviewModalRef,
+    toggle: toggleReviewModal,
+  } = useDropdown();
   const getStatus = (status: string) => {
     switch (status) {
       case "pending":
@@ -57,11 +68,18 @@ const MyReservationCard = ({
 
   return (
     <>
-      {isOpen && (
+      {isReservationCancelModalOpen && (
         <ReservationCancelModal
-          ref={ref}
-          toggle={toggle}
+          ref={cancelModalRef}
+          toggle={toggleCancelModal}
           reservationId={reservationId}
+        />
+      )}
+      {isReviewModalOpen && (
+        <ReservationReviewModal
+          cardData={cardData}
+          toggle={toggleReviewModal}
+          ref={reviewModalRef}
         />
       )}
       <li className="h-32 rounded-3xl bg-white shadow-custom-shadow-01 md:h-[9.75rem] xl:h-[12.75rem]">
@@ -97,14 +115,17 @@ const MyReservationCard = ({
               </div>
               {status === "pending" && (
                 <button
-                  onClick={toggle}
+                  onClick={toggleCancelModal}
                   className="flex h-[32px] w-[80px] items-center justify-center rounded-md border-2 border-primary px-3 py-2 text-md font-bold md:h-[42px] md:w-[112px] md:text-lg xl:w-[144px]"
                 >
                   예약 취소
                 </button>
               )}
               {status === "completed" && (
-                <button className="flex h-[32px] w-[80px] items-center justify-center rounded-md bg-primary px-3 py-2 text-md font-bold text-white md:h-[42px] md:w-[112px] md:text-lg xl:w-[144px]">
+                <button
+                  className="flex h-[32px] w-[80px] items-center justify-center rounded-md bg-primary px-3 py-2 text-md font-bold text-white md:h-[42px] md:w-[112px] md:text-lg xl:w-[144px]"
+                  onClick={() => toggleReviewModal()}
+                >
                   후기 작성
                 </button>
               )}
