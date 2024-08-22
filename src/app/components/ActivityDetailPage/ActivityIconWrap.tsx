@@ -34,7 +34,7 @@ export default function ActivityIconWrap({
           <Image fill sizes="1.125rem" src={locationIcon} alt="주소 아이콘" />
         )}
       </div>
-      <span>{text}</span>
+      <span className="whitespace-nowrap">{text}</span>
     </div>
   );
 }
