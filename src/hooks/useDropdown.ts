@@ -14,7 +14,7 @@ export const useDropdown = () => {
       }
     };
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" || event.key === "Enter") {
         close();
       }
     };
