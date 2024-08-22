@@ -82,13 +82,13 @@ const Pagination = ({
       <button
         onClick={handleLeftClick}
         className={
-          currentPage === 0
+          currentPage === 0 || totalCount === 0
             ? ARROW_BUTTON_STYLE.disabled
             : ARROW_BUTTON_STYLE.active
         }
-        disabled={currentPage === 0}
+        disabled={currentPage === 0 || totalCount === 0}
       >
-        {currentPage === 0 ? (
+        {currentPage === 0 || totalCount === 0 ? (
           <Image src={Arrow_Left} alt="arrow left" />
         ) : (
           <LeftArrowOn />
@@ -110,13 +110,18 @@ const Pagination = ({
       <button
         onClick={handleRightClick}
         className={
-          currentPage === pageNumberArray[pageNumberArray.length - 1]
+          currentPage === pageNumberArray[pageNumberArray.length - 1] ||
+          totalCount === 0
             ? ARROW_BUTTON_STYLE.disabled
             : ARROW_BUTTON_STYLE.active
         }
-        disabled={currentPage === pageNumberArray[pageNumberArray.length - 1]}
+        disabled={
+          currentPage === pageNumberArray[pageNumberArray.length - 1] ||
+          totalCount === 0
+        }
       >
-        {currentPage === pageNumberArray[pageNumberArray.length - 1] ? (
+        {currentPage === pageNumberArray[pageNumberArray.length - 1] ||
+        totalCount === 0 ? (
           <RightArrowOff />
         ) : (
           <Image src={Arrow_Right} alt="arrow right" />

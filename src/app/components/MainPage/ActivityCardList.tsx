@@ -66,13 +66,16 @@ const ActivityCardList = () => {
     setCurrentPageNum(pageNum);
     router.push(
       pathname + "?" + createQueryString("page", String(pageNum + 1)),
+      { scroll: false },
     );
   };
 
   const handleSort = (e: MouseEvent<HTMLButtonElement>) => {
     const button = e.target as HTMLButtonElement;
     setCurrentSort(button.value);
-    router.push(pathname + "?" + createQueryString("sort", button.value));
+    router.push(pathname + "?" + createQueryString("sort", button.value), {
+      scroll: false,
+    });
     setCurrentPageNum(0);
   };
 
@@ -88,7 +91,7 @@ const ActivityCardList = () => {
         sort: currentSort,
         category: button.value,
       });
-      router.push(pathname + "?" + query);
+      router.push(pathname + "?" + query, { scroll: false });
     }
     setCurrentPageNum(0);
   };
