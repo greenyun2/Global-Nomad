@@ -87,6 +87,4 @@ export const updateScheduleReservationStatus = async (
       status: confirmOrDecline,
     },
   );
-
-  console.log(response);
 };
