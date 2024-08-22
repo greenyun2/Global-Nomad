@@ -12,20 +12,18 @@ type AddressModalProps = {
 
 export const AddressModal = forwardRef<HTMLDivElement, AddressModalProps>(
   ({ toggle, onComplete }, ref: ForwardedRef<HTMLDivElement>) => {
+    const handleComplete = (data: any) => {
+      onComplete(data);
+      toggle();
+    };
+
     return (
       <Modal ref={ref}>
         <div className="flex flex-col">
-          <div className="flex h-14 place-content-between items-center bg-gray-200 px-4">
-            <h2 className="font-bold text-gray-800">주소찾기</h2>
-            <button onClick={toggle}>
-              <Image src={IconClose} alt="닫기 버튼" width={28} height={28} />
-            </button>
-          </div>
-
           <div className="w-full text-[16px] font-[500] text-[#333236] md:text-[18px]">
             <DaumPostcode
-              style={{ width: "100%", height: 480 }}
-              onComplete={onComplete}
+              style={{ width: "100%", height: 450 }}
+              onComplete={handleComplete}
             ></DaumPostcode>
           </div>
         </div>
