@@ -52,6 +52,7 @@ const ActivityCardList = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  // const sortParams = searchParams.get("sort");
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -73,7 +74,12 @@ const ActivityCardList = () => {
   const handleSort = (e: MouseEvent<HTMLButtonElement>) => {
     const button = e.target as HTMLButtonElement;
     setCurrentSort(button.value);
-    router.push(pathname + "?" + createQueryString("sort", button.value), {
+    const query = new URLSearchParams({
+      page: "1",
+      sort: button.value,
+      category: currentCategory,
+    });
+    router.push(`/?${query}`, {
       scroll: false,
     });
     setCurrentPageNum(0);
@@ -91,7 +97,7 @@ const ActivityCardList = () => {
         sort: currentSort,
         category: button.value,
       });
-      router.push(pathname + "?" + query, { scroll: false });
+      router.push(`/?${query}`, { scroll: false });
     }
     setCurrentPageNum(0);
   };
