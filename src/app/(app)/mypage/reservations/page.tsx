@@ -24,7 +24,7 @@ export default function MyReservationPage() {
     <div>
       <h2 className="mb-6 text-3xl font-bold text-primary">예약 내역</h2>
       {totalCount === 0 ? (
-        <EmptyState>아직 등록한 체험이 없어요</EmptyState>
+        <EmptyState>체험 예약 내역이 없어요</EmptyState>
       ) : (
         <ul className="flex flex-col gap-4 xl:gap-6">
           {reservations.map((reservation) => (
