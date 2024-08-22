@@ -109,12 +109,6 @@ export default function CalendarSection() {
 
   const disabledTiles: TileDisabledFunc = ({ date }: TileArgs) => {
     const today = new Date();
-    // const reservation = monthlyReservations?.find(
-    //   (dailyReservation) => dailyReservation.date == format(date, "yyyy-MM-dd"),
-    // );
-    // if (reservation) {
-    //   return false;
-    // }
     if (format(date, "yyyy-MM-dd") < format(today, "yyyy-MM-dd")) {
       return true;
     }
