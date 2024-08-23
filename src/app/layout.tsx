@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
+import { Toaster } from "sonner";
 import "./globals.css";
 import ReactQueryProvider from "@utils/provider";
 import { AuthProvider } from "@context/AuthContext";
@@ -18,7 +19,10 @@ export default function RootLayout({
     <html lang="ko">
       <body className="min-w-80 antialiased">
         <AuthProvider>
-          <ReactQueryProvider>{children}</ReactQueryProvider>
+          <ReactQueryProvider>
+            <Toaster position="top-right" richColors />
+            {children}
+          </ReactQueryProvider>
         </AuthProvider>
       </body>
     </html>

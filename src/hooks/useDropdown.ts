@@ -4,7 +4,9 @@ export const useDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const toggle = () => setIsOpen(!isOpen);
+  const toggle = () => {
+    setIsOpen(!isOpen);
+  };
   const close = () => setIsOpen(false);
 
   useEffect(() => {
@@ -14,7 +16,7 @@ export const useDropdown = () => {
       }
     };
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" || event.key === "Enter") {
+      if (event.key === "Escape") {
         close();
       }
     };

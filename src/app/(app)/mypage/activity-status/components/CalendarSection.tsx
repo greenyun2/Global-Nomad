@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Calendar, { OnArgs, TileArgs, TileDisabledFunc } from "react-calendar";
 import Chips from "@app/components/Chips";
-import MyPageLoading from "@app/components/Loading/MypageLoading";
 import { format } from "date-fns";
 import NextMonthIcon from "./NextMonthIcon";
 import PopUpMenu from "./PopUpMenu";
@@ -114,9 +113,6 @@ export default function CalendarSection() {
     }
     return false;
   };
-
-  if (error) return <p>Error fetching data</p>;
-  if (isLoading) return <MyPageLoading />;
 
   return (
     <div className="relative flex items-center">

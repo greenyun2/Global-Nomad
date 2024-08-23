@@ -16,10 +16,10 @@ const ActivityCard = ({
     <div>
       <Link href={`/activities/${id}`}>
         <div className="mb-[10px] flex flex-col gap-[16px] md:mb-[30px] xl:mb-[48px]">
-          <div className="relative h-[168px] w-[168px] md:h-[221px] md:w-[221px] xl:h-[283px] xl:w-[283px]">
+          <div className="relative aspect-square h-full w-full">
             <Image
               src={`${bannerImageUrl}`}
-              alt="card image"
+              alt={`${title}`}
               fill
               sizes="(min-width: 1280px) 283px,
               (min-width: 768px) 221px"
@@ -27,21 +27,21 @@ const ActivityCard = ({
             />
           </div>
           <div>
-            <div className="flex">
+            <div className="flex gap-1">
               <Image
                 src={icon_star}
                 alt="star icon"
                 style={{ width: 20, height: 20 }}
               />
               <p>
-                {rating}
+                {rating.toFixed(1)}
                 <span className="text-[#A1A1A1]">{` (${reviewCount})`}</span>
               </p>
             </div>
             <div className="text-[18px] font-semibold md:text-2xl">{title}</div>
             <div className="text-xl font-bold md:text-[24px]">
               {formatPriceKorean(price)}
-              <span className="text-lg text-gray-800 md:text-xl">/ 인</span>
+              <span className="text-lg text-gray-800 md:text-xl"> / 인</span>
             </div>
           </div>
         </div>
