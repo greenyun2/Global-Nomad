@@ -52,7 +52,7 @@ export default function EditActivity() {
   };
 
   return (
-    <div>
+    <div className="relative">
       <h2 className="text-3xl font-bold text-primary">내 체험 수정</h2>
       {initialData ? (
         <Editor initialData={initialData} onSubmit={handleSubmit} />

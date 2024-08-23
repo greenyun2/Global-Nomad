@@ -29,7 +29,7 @@ export default function RegisterActivity() {
   };
 
   return (
-    <div>
+    <div className="relative">
       <h2 className="text-3xl font-bold text-primary">내 체험 등록</h2>
       <Editor onSubmit={handleSubmit} />
     </div>

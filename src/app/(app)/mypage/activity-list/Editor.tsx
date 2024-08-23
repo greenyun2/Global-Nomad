@@ -8,18 +8,21 @@ import BasicInput from "@app/components/Input/BasicInput";
 import CalendarInput from "@app/components/Input/CalendarInput";
 import DropDownInput from "@app/components/Input/DropDownInput";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import * as z from "zod";
 import AddressModal from "./AddressModal";
 import { useDropdown } from "@hooks/useDropdown";
+import IconAdd from "@icons/icon_add_img.svg";
+import IconDel from "@icons/icon_delete_40px.svg";
+import IconMinus from "@icons/icon_minus_time.svg";
+import IconPlus from "@icons/icon_plus_time.svg";
 
 const CATEGORIES = ["문화 · 예술", "식음료", "스포츠", "투어", "관광", "웰빙"];
 
-const TIME_OPTIONS = [
-  "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", 
-  "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", 
-  "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", 
-  "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"
-];
+const TIME_OPTIONS = Array.from(
+  { length: 24 },
+  (_, i) => `${i.toString().padStart(2, "0")}:00`,
+);
 
 export type ModifiedEditorSchemaType = EditorSchemaType & {
   schedulesToAdd?: {
@@ -37,7 +40,7 @@ const EditorSchema = z.object({
   description: z
     .string()
     .nonempty("설명을 입력해 주세요")
-    .max(1000, "설명은 최대 100자까지 입력할 수 있습니다."),
+    .max(500, "설명은 최대 500자까지 입력할 수 있습니다."),
   price: z.preprocess(
     (value) => (typeof value === "string" ? parseFloat(value) : value),
     z
@@ -189,7 +192,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
 
   const handleRemoveImage = () => {
     if (imagePreviewUrl) {
-      URL.revokeObjectURL(imagePreviewUrl);  // URL 메모리 해제
+      URL.revokeObjectURL(imagePreviewUrl); // URL 메모리 해제
       setImagePreviewUrl(null);
       setValue("bannerImageUrl", "");
     }
@@ -319,9 +322,14 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)}>
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="mt-6 flex flex-col gap-6"
+    >
       <div>
-        <label htmlFor="title">체험 이름</label>
+        <label htmlFor="title" className="sr-only">
+          체험 이름
+        </label>
         <Controller
           name="title"
           control={control}
@@ -339,7 +347,9 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
       </div>
 
       <div>
-        <label htmlFor="category">카테고리</label>
+        <label htmlFor="category" className="sr-only">
+          카테고리
+        </label>
         <Controller
           name="category"
           control={control}
@@ -360,7 +370,9 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
       </div>
 
       <div>
-        <label htmlFor="description">설명</label>
+        <label htmlFor="description" className="sr-only">
+          설명
+        </label>
         <Controller
           name="description"
           control={control}
@@ -371,6 +383,8 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
               invalid={invalid}
               placeholder="설명을 입력해 주세요"
               type="textarea"
+              maxLength={500}
+              className="h-96 resize-none overflow-hidden"
             />
           )}
         />
@@ -380,7 +394,9 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
       </div>
 
       <div>
-        <label htmlFor="price">가격</label>
+        <h2 className="mb-3 text-xl font-bold text-black md:mb-4 md:text-2xl">
+          가격
+        </h2>
         <Controller
           name="price"
           control={control}
@@ -398,26 +414,29 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
       </div>
 
       <div>
-        <label htmlFor="address">주소</label>
-        <div className="flex items-center gap-2">
-          <Controller
-            name="address"
-            control={control}
-            render={({ field, fieldState: { invalid } }) => (
-              <BasicInput
-                id="address"
-                {...field}
-                type="text"
-                placeholder="주소를 입력해 주세요"
-                invalid={invalid}
-                readOnly
-              />
-            )}
-          />
+        <div className="mb-3 flex place-content-between md:mb-4">
+          <h2 className="content-center text-xl font-bold text-black md:text-2xl">
+            주소
+          </h2>
           <Button type="button" onClick={toggle} size="sm" color={"dark"}>
             주소 찾기
           </Button>
         </div>
+        <Controller
+          name="address"
+          control={control}
+          render={({ field, fieldState: { invalid } }) => (
+            <BasicInput
+              className="flex-1"
+              id="address"
+              {...field}
+              type="text"
+              placeholder="주소를 입력해 주세요"
+              invalid={invalid}
+              readOnly
+            />
+          )}
+        />
         {errors.address && (
           <p className="text-red-500">{errors.address.message}</p>
         )}
@@ -432,7 +451,92 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
       )}
 
       <div>
-        <label htmlFor="bannerImageUrl">배너 이미지</label>
+        <div className="mb-3 flex place-content-between md:mb-4">
+          <h2 className="content-center text-xl font-bold text-black md:text-2xl">
+            예약 가능한 시간대
+          </h2>
+          <button type="button" onClick={handleAddSchedule}>
+            <Image
+              src={IconPlus}
+              alt={"예약시간 추가"}
+              height={56}
+              width={56}
+            ></Image>
+          </button>
+        </div>
+        <div className="mb-4 flex flex-col items-center gap-4">
+          {fields.map((item, index) => (
+            <div
+              key={item._internalId}
+              className="mb-5 flex w-full items-center gap-4 md:mb-4 xl:mb-5"
+            >
+              <div className="w-4/6 flex-grow">
+                <Controller
+                  name={`schedules.${index}.date`}
+                  control={control}
+                  render={({ field }) => (
+                    <CalendarInput
+                      id={`schedules-${index}`}
+                      {...field}
+                      placeholder="YY/MM/DD"
+                    />
+                  )}
+                />
+              </div>
+              <div className="flex-[3 0 0]">
+                <Controller
+                  name={`schedules.${index}.startTime`}
+                  control={control}
+                  render={({ field }) => (
+                    <DropDownInput
+                      id={`schedules-startTime-${index}`}
+                      setInitialValue={false}
+                      dropDownOptions={TIME_OPTIONS}
+                      {...field}
+                      placeholder="0:00"
+                    />
+                  )}
+                />
+              </div>
+              <div className="flex-[1 0 0]">
+                <Controller
+                  name={`schedules.${index}.endTime`}
+                  control={control}
+                  render={({ field }) => (
+                    <DropDownInput
+                      id={`schedules-endTime-${index}`}
+                      setInitialValue={false}
+                      dropDownOptions={TIME_OPTIONS}
+                      {...field}
+                      placeholder="0:00"
+                    />
+                  )}
+                />
+              </div>
+              <button
+                type="button"
+                className="flex-shrink-0"
+                onClick={() => handleRemoveSchedule(index)}
+              >
+                <Image
+                  src={IconMinus}
+                  alt={"예약시간 삭제"}
+                  height={56}
+                  width={56}
+                ></Image>
+              </button>
+            </div>
+          ))}
+        </div>
+        {errors.schedules && (
+          <p className="text-sm text-red-500">{errors.schedules.message}</p>
+        )}
+      </div>
+
+      <div>
+        <h2 className="mb-3 text-xl font-bold text-black md:mb-4 md:text-2xl">
+          배너 이미지
+        </h2>
         <div className="flex items-center gap-4">
           <div>
             <input
@@ -442,19 +546,15 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
               id="image-upload-input"
               className="hidden"
             />
-            <label
-              htmlFor="image-upload-input"
-              className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300"
-            >
-              <span className="text-2xl text-gray-300">+</span>
-              <span className="text-gray-500">이미지 등록</span>
+            <label htmlFor="image-upload-input" className="cursor-pointer">
+              <Image src={IconAdd} alt={"이미지 등록"}></Image>
             </label>
           </div>
 
           {imagePreviewUrl && (
             <div className="relative">
               <div
-                className="h-24 w-24 rounded-lg bg-cover bg-center"
+                className="h-[11.25rem] w-[11.25rem] rounded-3xl bg-cover bg-center"
                 style={{
                   backgroundImage: `url(${imagePreviewUrl})`,
                 }}
@@ -462,9 +562,9 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
               <button
                 type="button"
                 onClick={handleRemoveImage}
-                className="absolute right-0 top-0 flex h-6 w-6 -translate-y-2 translate-x-2 transform items-center justify-center rounded-full bg-black text-white"
+                className="absolute right-0 top-0 -translate-y-1/2 translate-x-1/2"
               >
-                X
+                <Image src={IconDel} alt={"이미지 삭제"}></Image>
               </button>
             </div>
           )}
@@ -478,12 +578,9 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
       </div>
 
       <div>
-        <label
-          htmlFor="subImageUrls"
-          className="mb-2 block text-sm font-medium text-gray-700"
-        >
-          추가 이미지 업로드
-        </label>
+        <h2 className="mb-3 text-xl font-bold text-black md:mb-4 md:text-2xl">
+          나머지 이미지
+        </h2>
         <div className="flex flex-wrap items-center gap-4">
           <div>
             <input
@@ -493,19 +590,15 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
               id="sub-image-upload-input"
               className="hidden"
             />
-            <label
-              htmlFor="sub-image-upload-input"
-              className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300"
-            >
-              <span className="text-2xl text-gray-300">+</span>
-              <span className="text-gray-500">이미지 등록</span>
+            <label htmlFor="sub-image-upload-input" className="cursor-pointer">
+              <Image src={IconAdd} alt={"이미지 등록"}></Image>
             </label>
           </div>
 
           {subImagePreviews.map((previewUrl, index) => (
             <div key={index} className="relative">
               <div
-                className="h-24 w-24 rounded-lg bg-cover bg-center"
+                className="h-[11.25rem] w-[11.25rem] rounded-3xl bg-cover bg-center"
                 style={{
                   backgroundImage: `url(${previewUrl})`,
                 }}
@@ -513,89 +606,19 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
               <button
                 type="button"
                 onClick={() => handleRemoveSubImage(index)}
-                className="absolute right-0 top-0 flex h-6 w-6 -translate-y-2 translate-x-2 transform items-center justify-center rounded-full bg-black text-white"
+                className="absolute right-0 top-0 -translate-y-1/2 translate-x-1/2"
               >
-                X
+                <Image src={IconDel} alt={"이미지 삭제"}></Image>
               </button>
             </div>
           ))}
         </div>
+        <p className="mt-6 text-2lg font-normal text-gray-800">
+          *이미지를 최소 4개 이상 제출해주세요.
+        </p>
       </div>
 
-      <div>
-        <label>예약 가능한 시간대</label>
-
-        <div className="mb-4 flex flex-col items-center gap-4">
-          {fields.map((item, index) => (
-            <div
-              key={item._internalId}
-              className="mb-4 flex items-center gap-4"
-            >
-              <Controller
-                name={`schedules.${index}.date`}
-                control={control}
-                render={({ field }) => (
-                  <CalendarInput
-                    id={`schedules-${index}`}
-                    {...field}
-                    placeholder="YY/MM/DD"
-                  />
-                )}
-              />
-              <Controller
-                name={`schedules.${index}.startTime`}
-                control={control}
-                render={({ field }) => (
-                  <DropDownInput
-                    id={`schedules-startTime-${index}`}
-                    setInitialValue={false}
-                    dropDownOptions={TIME_OPTIONS}
-                    {...field}
-                    placeholder="0:00"
-                  />
-                )}
-              />
-              <span>~</span>
-              <Controller
-                name={`schedules.${index}.endTime`}
-                control={control}
-                render={({ field }) => (
-                  <DropDownInput
-                    id={`schedules-endTime-${index}`}
-                    setInitialValue={false}
-                    dropDownOptions={TIME_OPTIONS}
-                    {...field}
-                    placeholder="0:00"
-                  />
-                )}
-              />
-              <Button
-                type="button"
-                onClick={() => handleRemoveSchedule(index)}
-                size={"sm"}
-                color={"dark"}
-                className={"ml-2"}
-              >
-                -
-              </Button>
-            </div>
-          ))}
-        </div>
-
-        <Button
-          type="button"
-          onClick={handleAddSchedule}
-          size={"sm"}
-          color={"dark"}
-        >
-          +
-        </Button>
-        {errors.schedules && (
-          <p className="text-sm text-red-500">{errors.schedules.message}</p>
-        )}
-      </div>
-
-      <div className="mt-4">
+      <div className="absolute right-0 top-0">
         <Button
           size={"sm"}
           color={"dark"}
