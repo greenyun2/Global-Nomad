@@ -27,11 +27,16 @@ export type ModifiedEditorSchemaType = EditorSchemaType & {
 const EditorSchema = z.object({
   title: z.string().nonempty("체험 이름을 입력해 주세요"),
   category: z.string().nonempty("카테고리를 입력해 주세요"),
-  description: z.string().nonempty("설명을 입력해 주세요"),
+  description: z
+    .string()
+    .nonempty("설명을 입력해 주세요")
+    .max(1000, "설명은 최대 100자까지 입력할 수 있습니다."),
   price: z.preprocess(
     (value) => (typeof value === "string" ? parseFloat(value) : value),
-    z.number().min(0, "최소 0원 설정 간으합니다.")
-    .max(5000000, "최대 500만원 설정 가능합니다.")
+    z
+      .number()
+      .min(0, "최소 0원 설정 가능합니다.")
+      .max(5000000, "최대 500만원 설정 가능합니다."),
   ),
   address: z.string().nonempty("주소를 입력해 주세요"),
   bannerImageUrl: z.string().nonempty("배너 이미지를 등록해 주세요"),
@@ -44,7 +49,7 @@ const EditorSchema = z.object({
         endTime: z.string(),
       }),
     )
-    .optional(),
+    .min(1, "최소 하나의 스케줄을 추가해야 합니다."),
   subImageUrls: z
     .array(z.string())
     .max(4, "최대 4개의 이미지만 등록할 수 있습니다.")
@@ -65,6 +70,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
     control,
     handleSubmit,
     setValue,
+    setError,
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<ModifiedEditorSchemaType>({
@@ -86,7 +92,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "schedules",
-    keyName: '_internalId', // 'id' 대신 내부적으로 사용할 고유 ID 키를 설정
+    keyName: "_internalId", // 'id' 대신 내부적으로 사용할 고유 ID 키를 설정
   });
 
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
@@ -228,6 +234,13 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
     append({ date: "", startTime: "", endTime: "" });
   };
   const handleRemoveSchedule = (index: number) => {
+    if (fields.length === 1) {
+      // 스케줄이 하나일 때는 삭제를 막기 위해 아무 작업도 하지 않음
+
+      alert("최소 하나의 스케줄이 있어야 합니다.");
+      return;
+    }
+
     const scheduleId = fields[index].id; // 서버에서 제공된 고유 ID 값
     const internalId = fields[index]._internalId; // useFieldArray에서 관리하는 내부 식별자
 
@@ -239,9 +252,9 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
 
     // 만약 서버에서 제공된 고유 ID가 있다면, 삭제 대상 ID 목록에 추가합니다.
     if (scheduleId) {
-        setScheduleIdsToRemove((prev) => [...prev, scheduleId]);
+      setScheduleIdsToRemove((prev) => [...prev, scheduleId]);
     }
-};
+  };
 
   const handleFormSubmit = async (data: ModifiedEditorSchemaType) => {
     let finalData: ModifiedEditorSchemaType;
@@ -262,6 +275,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
         description: data.description,
         price: data.price,
         address: data.address,
+        schedules: [], // 빈 배열을 포함하여 전송
         bannerImageUrl: data.bannerImageUrl,
         schedulesToAdd: filteredSchedulesToAdd,
         subImageUrlsToAdd: filteredSubImageUrlsToAdd,
@@ -500,7 +514,10 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
 
         <div className="mb-4 flex flex-col items-center gap-4">
           {fields.map((item, index) => (
-            <div key={item._internalId} className="mb-4 flex items-center gap-4">
+            <div
+              key={item._internalId}
+              className="mb-4 flex items-center gap-4"
+            >
               <Controller
                 name={`schedules.${index}.date`}
                 control={control}
@@ -560,18 +577,21 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
         >
           +
         </Button>
+        {errors.schedules && (
+          <p className="text-sm text-red-500">{errors.schedules.message}</p>
+        )}
+      </div>
 
-        <div className="mt-4">
-          <Button
-            size={"sm"}
-            color={"dark"}
-            type="submit"
-            className={""}
-            disabled={isSubmitting || isImageUploading}
-          >
-            {initialData ? "수정하기" : "등록하기"}
-          </Button>
-        </div>
+      <div className="mt-4">
+        <Button
+          size={"sm"}
+          color={"dark"}
+          type="submit"
+          className={""}
+          disabled={isSubmitting || isImageUploading}
+        >
+          {initialData ? "수정하기" : "등록하기"}
+        </Button>
       </div>
     </form>
   );
