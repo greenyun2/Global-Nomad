@@ -19,7 +19,7 @@ const ActivityCard = ({
           <div className="relative h-[168px] w-[168px] md:h-[221px] md:w-[221px] xl:h-[283px] xl:w-[283px]">
             <Image
               src={`${bannerImageUrl}`}
-              alt="카드 이미지"
+              alt={`${title}`}
               fill
               sizes="(min-width: 1280px) 283px,
               (min-width: 768px) 221px"
