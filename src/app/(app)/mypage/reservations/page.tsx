@@ -10,24 +10,21 @@ import ReservationFilter from "./components/ReservationFilter";
 import { useDropdown } from "@hooks/useDropdown";
 import icon_arrow_filter from "@icons/icon_arrow_filter.svg";
 
-const useMyReservation = (
-  status?: string,
-  cursorId?: number,
-  size?: number,
-) => {
+const useMyReservation = (size: 500, cursorId?: number, status?: string) => {
   return useQuery({
     queryKey: ["my-reservations"],
-    queryFn: () => getMyReservation(),
+    queryFn: () => getMyReservation(size),
   });
 };
+
+const currentSize = 500;
 
 export default function MyReservationPage() {
   const { ref, isOpen, toggle, close } = useDropdown();
   const [filter, setFilter] = useState("");
-  const { data } = useMyReservation();
+  const { data } = useMyReservation(currentSize);
   const reservations = data?.reservations || [];
   const totalCount = data?.totalCount || 0;
-
   const handleFilter = (e: MouseEvent<HTMLButtonElement>) => {
     const button = e.target as HTMLButtonElement;
     setFilter(button.value);
