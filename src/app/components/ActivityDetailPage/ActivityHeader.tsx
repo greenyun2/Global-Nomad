@@ -1,6 +1,3 @@
-import { useState, useEffect } from "react";
-import { getUserMe } from "@api/user";
-import { useQuery } from "@tanstack/react-query";
 import ActivityHeaderKebabMenu from "./ActivityHeaderKebabMenu";
 import ActivityIconWrap from "./ActivityIconWrap";
 
