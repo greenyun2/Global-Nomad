@@ -86,6 +86,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "schedules",
+    keyName: '_internalId', // 'id' 대신 내부적으로 사용할 고유 ID 키를 설정
   });
 
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
@@ -226,14 +227,21 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
   const handleAddSchedule = () => {
     append({ date: "", startTime: "", endTime: "" });
   };
+  const handleRemoveSchedule = (index: number) => {
+    const scheduleId = fields[index].id; // 서버에서 제공된 고유 ID 값
+    const internalId = fields[index]._internalId; // useFieldArray에서 관리하는 내부 식별자
 
-  const handleRemoveSchedule = (index: number, scheduleId?: number) => {
     console.log("Schedule ID to remove:", scheduleId); // 스케줄 ID 출력
-    remove(index); // useFieldArray의 remove 함수로 해당 인덱스의 스케줄 제거
+    console.log("Internal ID to remove:", internalId); // 내부 식별자 출력
+
+    // 필드를 삭제합니다.
+    remove(index);
+
+    // 만약 서버에서 제공된 고유 ID가 있다면, 삭제 대상 ID 목록에 추가합니다.
     if (scheduleId) {
-      setScheduleIdsToRemove((prev) => [...prev, scheduleId]);
+        setScheduleIdsToRemove((prev) => [...prev, scheduleId]);
     }
-  };
+};
 
   const handleFormSubmit = async (data: ModifiedEditorSchemaType) => {
     let finalData: ModifiedEditorSchemaType;
@@ -492,7 +500,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
 
         <div className="mb-4 flex flex-col items-center gap-4">
           {fields.map((item, index) => (
-            <div key={item.id} className="mb-4 flex items-center gap-4">
+            <div key={item._internalId} className="mb-4 flex items-center gap-4">
               <Controller
                 name={`schedules.${index}.date`}
                 control={control}
