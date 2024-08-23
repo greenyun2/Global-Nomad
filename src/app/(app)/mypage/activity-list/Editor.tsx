@@ -181,8 +181,11 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
   });
 
   const handleRemoveImage = () => {
-    setImagePreviewUrl(null);
-    setValue("bannerImageUrl", "");
+    if (imagePreviewUrl) {
+      URL.revokeObjectURL(imagePreviewUrl);  // URL 메모리 해제
+      setImagePreviewUrl(null);
+      setValue("bannerImageUrl", "");
+    }
   };
 
   const handleRemoveSubImage = (index: number) => {
@@ -194,6 +197,9 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
 
     const newSubImagePreviews = [...subImagePreviews];
     const newSubImageUrls = [...(subImageUrls || [])]; // undefined일 경우 빈 배열로 처리
+
+    // URL 메모리 해제
+    URL.revokeObjectURL(newSubImagePreviews[index]);
 
     newSubImagePreviews.splice(index, 1);
     newSubImageUrls.splice(index, 1);
