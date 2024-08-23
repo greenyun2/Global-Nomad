@@ -6,6 +6,7 @@ import instance from "@api/axios";
 import { ActivityResponse } from "@customTypes/MainPage";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import EmptyState from "../EmptyState/EmptyState";
 import ActivityCard from "./ActivityCard";
 import CategorySort from "./CategorySort";
 import Pagination from "./Pagination";
@@ -123,11 +124,16 @@ const ActivityCardList = () => {
         {currentCategory || "🎯모든 체험"}
       </h1>
       <div className="flex flex-col gap-[38px] md:gap-[72px] xl:gap-[64px]">
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-          {activities.map((activity) => (
-            <ActivityCard key={activity.id} cardData={activity} />
-          ))}
-        </div>
+        {totalCount === 0 ? (
+          <EmptyState>등록된 체험이 없습니다.</EmptyState>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+            {activities.map((activity) => (
+              <ActivityCard key={activity.id} cardData={activity} />
+            ))}
+          </div>
+        )}
+
         <div className="mb-[83px] flex items-center justify-center">
           <Pagination
             currentPage={currentPageNum}
