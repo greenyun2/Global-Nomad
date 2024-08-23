@@ -1,3 +1,4 @@
+import { getRatingEvaluation } from "@utils/getRatingEvaluation";
 import { ReviewsItem } from "../../../types/ActivityDetailTypes";
 import EmptyState from "../EmptyState/EmptyState";
 import Pagination from "../MainPage/Pagination";
@@ -24,7 +25,7 @@ export default function ActivityDetailReviews({
             {averageRating}
           </data>
           <div className="flex flex-col gap-2">
-            <span className="text-2lg font-normal text-primary">매우 만족</span>
+            <span className="text-2lg font-normal text-primary">{getRatingEvaluation(averageRating)}</span>
             <ActivityIconWrap
               iconType="star"
               fontColor="star"
