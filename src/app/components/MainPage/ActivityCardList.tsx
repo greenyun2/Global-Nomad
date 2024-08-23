@@ -127,7 +127,7 @@ const ActivityCardList = () => {
         {totalCount === 0 ? (
           <EmptyState>등록된 체험이 없습니다.</EmptyState>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
             {activities.map((activity) => (
               <ActivityCard key={activity.id} cardData={activity} />
             ))}

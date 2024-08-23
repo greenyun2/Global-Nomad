@@ -87,7 +87,7 @@ const PopularActivityList = () => {
 
   return (
     <div className="md:mb-15 mb-10 mt-32 md:mt-40">
-      <h1 className="container mb-4 text-[18px] font-bold md:mb-8 md:text-[36px]">
+      <h1 className="mb-4 text-[18px] font-bold md:mb-8 md:text-[36px]">
         🔥인기 체험
       </h1>
       <div className="slider-css container">
