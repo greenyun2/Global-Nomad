@@ -14,6 +14,13 @@ import { useDropdown } from "@hooks/useDropdown";
 
 const CATEGORIES = ["문화 · 예술", "식음료", "스포츠", "투어", "관광", "웰빙"];
 
+const TIME_OPTIONS = [
+  "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", 
+  "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", 
+  "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", 
+  "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"
+];
+
 export type ModifiedEditorSchemaType = EditorSchemaType & {
   schedulesToAdd?: {
     date: string;
@@ -542,7 +549,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
                   <DropDownInput
                     id={`schedules-startTime-${index}`}
                     setInitialValue={false}
-                    dropDownOptions={["00:00", "01:00", "02:00", "03:00"]}
+                    dropDownOptions={TIME_OPTIONS}
                     {...field}
                     placeholder="0:00"
                   />
@@ -556,7 +563,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
                   <DropDownInput
                     id={`schedules-endTime-${index}`}
                     setInitialValue={false}
-                    dropDownOptions={["01:00", "02:00", "03:00", "04:00"]}
+                    dropDownOptions={TIME_OPTIONS}
                     {...field}
                     placeholder="0:00"
                   />
