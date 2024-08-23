@@ -7,6 +7,7 @@ import "react-calendar/dist/Calendar.css";
 // date객체를 쉽게 format할 수 있는 library를 설치 했습니다.
 import { format } from "date-fns";
 import Image from "next/image";
+import { twMerge } from "tailwind-merge";
 import { useDropdown } from "@hooks/useDropdown";
 import icon_calendar from "@icons/icon_calendar.svg";
 
@@ -21,11 +22,12 @@ type CalendarInputPropsType = {
   invalid?: boolean;
   value?: string;
   onBlur?: (e: React.FocusEvent<HTMLInputElement, Element>) => void;
+  className?: string;
 };
 
 const CalendarInput = forwardRef<HTMLInputElement, CalendarInputPropsType>(
   (
-    { id, onChange, onBlur, invalid, placeholder, value },
+    { id, onChange, onBlur, invalid, placeholder, value, className },
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const {
@@ -74,7 +76,10 @@ const CalendarInput = forwardRef<HTMLInputElement, CalendarInputPropsType>(
           onBlur={onBlur}
           value={(value && format(value, "yy/MM/dd")) || dateformat2}
           ref={ref}
-          className={`${invalid ? "border-red-100" : "border-gray-700"} h-[58px] w-full cursor-pointer rounded-[6px] border px-[16px] py-[20px] text-[16px] font-[400] text-black`}
+          className={twMerge(
+            `${invalid ? "border-red-100" : "border-gray-700"} h-[58px] w-full cursor-pointer rounded-[6px] border px-[16px] py-[20px] md:px-[16px] md:py-[20px] text-[16px] font-[400] text-black`,
+            className,
+          )}
           onClick={() => toggle()}
         />
         <Image

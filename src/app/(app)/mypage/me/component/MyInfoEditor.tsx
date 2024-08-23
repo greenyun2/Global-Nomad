@@ -10,8 +10,10 @@ import { TUpdateMyInfoSchema, updateMyInfoSchema } from "@customTypes/Me";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import Image from "next/image";
 import { toast } from "sonner";
 import { useDropdown } from "@hooks/useDropdown";
+import IconAdd from "@icons/icon_add_img.svg";
 
 type MyInfoEditorProps = {
   data: UserMe | null;
@@ -119,7 +121,7 @@ export default function MyInfoEditor({ data }: MyInfoEditorProps) {
               프로필 이미지
             </label>
             <div className="flex items-center gap-4">
-              <div>
+              <div className="h-36 w-36 md:h-[11.25rem] md:w-[11.25rem]">
                 <input
                   type="file"
                   accept="image/*"
@@ -127,12 +129,8 @@ export default function MyInfoEditor({ data }: MyInfoEditorProps) {
                   id="image-upload-input"
                   className="hidden"
                 />
-                <label
-                  htmlFor="image-upload-input"
-                  className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300"
-                >
-                  <span className="text-2xl text-gray-300">+</span>
-                  <span className="text-gray-500">이미지 등록</span>
+                <label htmlFor="image-upload-input" className="cursor-pointer">
+                  <Image src={IconAdd} alt={"이미지 등록"}></Image>
                 </label>
               </div>
 

@@ -464,13 +464,13 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
             ></Image>
           </button>
         </div>
-        <div className="mb-4 flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-3 md:gap-4">
           {fields.map((item, index) => (
             <div
               key={item._internalId}
-              className="mb-5 flex w-full items-center gap-4 md:mb-4 xl:mb-5"
+              className="flex w-full items-center gap-1 md:gap-2 xl:gap-4"
             >
-              <div className="w-4/6 flex-grow">
+              <div className="w-9/12 flex-grow">
                 <Controller
                   name={`schedules.${index}.date`}
                   control={control}
@@ -479,11 +479,12 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
                       id={`schedules-${index}`}
                       {...field}
                       placeholder="YY/MM/DD"
+                      className="px-2"
                     />
                   )}
                 />
               </div>
-              <div className="flex-[3 0 0]">
+              <div>
                 <Controller
                   name={`schedules.${index}.startTime`}
                   control={control}
@@ -494,11 +495,12 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
                       dropDownOptions={TIME_OPTIONS}
                       {...field}
                       placeholder="0:00"
+                      className="px-2"
                     />
                   )}
                 />
               </div>
-              <div className="flex-[1 0 0]">
+              <div>
                 <Controller
                   name={`schedules.${index}.endTime`}
                   control={control}
@@ -509,6 +511,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
                       dropDownOptions={TIME_OPTIONS}
                       {...field}
                       placeholder="0:00"
+                      className="px-2"
                     />
                   )}
                 />
@@ -537,8 +540,8 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
         <h2 className="mb-3 text-xl font-bold text-black md:mb-4 md:text-2xl">
           배너 이미지
         </h2>
-        <div className="flex items-center gap-4">
-          <div>
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="h-36 w-36 md:h-[11.25rem] md:w-[11.25rem]">
             <input
               type="file"
               accept=".jpg, .jpeg, .png"
@@ -554,7 +557,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
           {imagePreviewUrl && (
             <div className="relative">
               <div
-                className="h-[11.25rem] w-[11.25rem] rounded-3xl bg-cover bg-center"
+                className="h-36 w-36 rounded-3xl bg-cover bg-center md:h-[11.25rem] md:w-[11.25rem]"
                 style={{
                   backgroundImage: `url(${imagePreviewUrl})`,
                 }}
@@ -568,11 +571,10 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
               </button>
             </div>
           )}
-
+        </div>
+        <div>
           {errors.bannerImageUrl && (
-            <p className="text-sm text-red-500">
-              {errors.bannerImageUrl.message}
-            </p>
+            <p className="mt-2 text-red-500">{errors.bannerImageUrl.message}</p>
           )}
         </div>
       </div>
@@ -581,8 +583,8 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
         <h2 className="mb-3 text-xl font-bold text-black md:mb-4 md:text-2xl">
           나머지 이미지
         </h2>
-        <div className="flex flex-wrap items-center gap-4">
-          <div>
+        <div className="flex flex-wrap items-center gap-4 gap-y-9">
+          <div className="h-36 w-36 md:h-[11.25rem] md:w-[11.25rem]">
             <input
               type="file"
               accept=".jpg, .jpeg, .png"
@@ -598,7 +600,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
           {subImagePreviews.map((previewUrl, index) => (
             <div key={index} className="relative">
               <div
-                className="h-[11.25rem] w-[11.25rem] rounded-3xl bg-cover bg-center"
+                className="h-36 w-36 rounded-3xl bg-cover bg-center md:h-[11.25rem] md:w-[11.25rem]"
                 style={{
                   backgroundImage: `url(${previewUrl})`,
                 }}
@@ -614,16 +616,16 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
           ))}
         </div>
         <p className="mt-6 text-2lg font-normal text-gray-800">
-          *이미지를 최소 4개 이상 제출해주세요.
+          * 이미지는 최대 4개까지 등록 가능합니다.
         </p>
       </div>
 
-      <div className="absolute right-0 top-0">
+      <div>
         <Button
-          size={"sm"}
+          size={"md"}
           color={"dark"}
           type="submit"
-          className={""}
+          className={"absolute right-0 top-0 w-[120px]"}
           disabled={isSubmitting || isImageUploading}
         >
           {initialData ? "수정하기" : "등록하기"}
