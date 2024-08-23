@@ -27,7 +27,7 @@ const PopularActivityCard = ({
               style={{ width: 20, height: 20 }}
             />
             <p className="text-lg">
-              {rating}
+              {rating.toFixed(1)}
               <span>{` (${reviewCount})`}</span>
             </p>
           </div>

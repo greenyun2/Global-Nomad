@@ -34,7 +34,7 @@ const ActivityCard = ({
                 style={{ width: 20, height: 20 }}
               />
               <p>
-                {rating}
+                {rating.toFixed(1)}
                 <span className="text-[#A1A1A1]">{` (${reviewCount})`}</span>
               </p>
             </div>
