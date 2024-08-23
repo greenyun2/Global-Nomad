@@ -1,5 +1,6 @@
 import { ReservationData } from "@api/myReservation";
 import Image from "next/image";
+import Link from "next/link";
 import ReservationCancelModal from "./ReservationCancelModal";
 import ReservationReviewModal from "./ReservationReviewModal";
 import { useDropdown } from "@hooks/useDropdown";
@@ -86,22 +87,26 @@ const MyReservationCard = ({
       <li className="h-32 rounded-3xl bg-white shadow-custom-shadow-01 md:h-[9.75rem] xl:h-[12.75rem]">
         <div className="flex h-full w-full">
           <div className="relative aspect-square h-full overflow-hidden rounded-l-3xl">
-            <Image
-              src={`${activity.bannerImageUrl}`}
-              alt="activity bannerImage"
-              fill
-              sizes="100%"
-              style={{ objectFit: "cover" }}
-            />
+            <Link href={`/activities/${activity.id}`}>
+              <Image
+                src={`${activity.bannerImageUrl}`}
+                alt="activity bannerImage"
+                fill
+                sizes="100%"
+                style={{ objectFit: "cover" }}
+              />
+            </Link>
           </div>
           <div className="flex min-w-0 flex-1 flex-col p-3 md:px-4 md:py-3 xl:px-6 xl:py-4">
             <div className="overflow-hidden">
               <h4 className={`text-lg font-bold ${getStatusColor(status)}`}>
                 {getStatus(status)}
               </h4>
-              <h3 className="truncate text-md font-bold text-primary md:text-2lg xl:text-xl">
-                {activity.title}
-              </h3>
+              <Link href={`/activities/${activity.id}`}>
+                <h3 className="truncate text-md font-bold text-primary md:text-2lg xl:text-xl">
+                  {activity.title}
+                </h3>
+              </Link>
               <div className="flex gap-3">
                 <span>{date}</span>
                 <span>
