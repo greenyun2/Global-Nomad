@@ -16,7 +16,7 @@ export const useDropdown = () => {
       }
     };
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" || event.key === "Enter") {
+      if (event.key === "Escape") {
         close();
       }
     };
@@ -29,15 +29,6 @@ export const useDropdown = () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-
-  // dropdown이 open됐을 경우 뒷배경 스크롤을 막습니다.
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-  }, [isOpen]);
 
   return { ref, isOpen, toggle, close };
 };

@@ -1,9 +1,9 @@
 "use client";
 
 import { ForwardedRef, forwardRef, useEffect, useState } from "react";
-import Calendar from "react-calendar";
-// react-calendar 기본 css
+import Calendar, { TileArgs, TileDisabledFunc } from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+// react-calendar 기본 css
 // date객체를 쉽게 format할 수 있는 library를 설치 했습니다.
 import { format } from "date-fns";
 import Image from "next/image";
@@ -28,7 +28,6 @@ const CalendarInput = forwardRef<HTMLInputElement, CalendarInputPropsType>(
     { id, onChange, onBlur, invalid, placeholder, value },
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
-    // const [isCalenderOpen, setIsDayPickerOpen] = useState(false);
     const {
       isOpen: isDayPickerOpen,
       toggle,
@@ -53,18 +52,21 @@ const CalendarInput = forwardRef<HTMLInputElement, CalendarInputPropsType>(
 
         // input tag에 보여줄 date값을 formatting 해줍니다.
         setDate2(format(selectedDate as Date, "yy/MM/dd"));
-
-        // Calender를 닫습니다.
-        close();
       }
     }, [selectedDate, onChange, dateformat1, close]);
+
+    // 비활성화 시킬 date를 결정하는 함수
+    const disabledTiles: TileDisabledFunc = ({ date }: TileArgs) => {
+      const today = new Date();
+      if (format(date, "yyyy-MM-dd") < format(today, "yyyy-MM-dd")) {
+        return true;
+      }
+      return false;
+    };
 
     return (
       <div ref={CalendarRef} className="relative flex items-center">
         <input
-          onClick={() => {
-            toggle();
-          }}
           readOnly
           placeholder={placeholder}
           id={id}
@@ -73,6 +75,7 @@ const CalendarInput = forwardRef<HTMLInputElement, CalendarInputPropsType>(
           value={(value && format(value, "yy/MM/dd")) || dateformat2}
           ref={ref}
           className={`${invalid ? "border-red-100" : "border-gray-700"} h-[58px] w-full cursor-pointer rounded-[6px] border px-[16px] py-[20px] text-[16px] font-[400] text-black`}
+          onClick={() => toggle()}
         />
         <Image
           src={icon_calendar}
@@ -82,9 +85,13 @@ const CalendarInput = forwardRef<HTMLInputElement, CalendarInputPropsType>(
           onClick={() => toggle()}
         />
         {isDayPickerOpen ? (
-          <div className="absolute right-[10px] top-[70px] z-50">
+          <div className="absolute left-[210px] top-[15px] z-50">
             {/* 1. 유저가 날짜를 선택하면 selectedDate에 값을 저장합니다. */}
-            <Calendar onChange={setSelectedDate} />
+            <Calendar
+              onChange={setSelectedDate}
+              onClickDay={() => toggle()}
+              tileDisabled={disabledTiles}
+            />
           </div>
         ) : null}
       </div>
