@@ -32,8 +32,8 @@ type CustomArrowProps = React.HTMLAttributes<HTMLDivElement> & {
 };
 
 export default function ActivityImageSlider({
-  bannerImageUrl = "",
-  subImages = [],
+  bannerImageUrl,
+  subImages,
 }: Images) {
   const CustomNextButton: React.FC<CustomArrowProps> = (props) => {
     const { className, style, onClick } = props;

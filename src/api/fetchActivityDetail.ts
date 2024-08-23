@@ -1,3 +1,4 @@
+import { getUserMeServer } from "@app/apiServer/getUserMeServer";
 import axios, { AxiosError } from "axios";
 import { error } from "console";
 import instance from "./axios";
@@ -64,6 +65,19 @@ export const getActivityDetailSchedule = async ({
     console.error(error);
   }
 };
+
+// export const isLoginUser = async () => {
+//   let isLogin = false;
+//   try {
+//     const isLoginUser = await instance.get(`/user/me`);
+//     if(isLoginUser.status === 200) {
+//       isLogin = true;
+//     }
+//   } catch(error) {
+
+//   }
+//   const isLoginUserData = await getUserMeServer();
+// };
 
 export const postApplicationReservation = async ({
   activityId,

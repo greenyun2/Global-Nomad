@@ -42,7 +42,7 @@ interface ReservationCardProps {
   totalNumber: number;
   schedules: Schedules[];
   activityId: number;
-  userData: User | null;
+  isLoginUserData: User | null;
 }
 
 interface Schedules {
@@ -96,7 +96,7 @@ export default function ReservationCardDesktop({
   totalPrice,
   schedules,
   activityId,
-  userData,
+  isLoginUserData,
 }: ReservationCardProps) {
   const formatDate = format(new Date(), "yyyy-MM-dd");
   const filterTodaySchedules = schedules.filter(
@@ -156,11 +156,11 @@ export default function ReservationCardDesktop({
   const handlePostSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
     // 로그인 검사
-    if (userData?.id === null) {
-      setIsModal(true);
-      setIsDisabled(true);
-      return;
-    }
+    // if (userData?.id === null) {
+    //   setIsModal(true);
+    //   setIsDisabled(true);
+    //   return;
+    // }
     mutation.mutate({ activityId, scheduleId, headCount: totalNumber });
     setIsDisabled(true);
   };
@@ -213,17 +213,19 @@ export default function ReservationCardDesktop({
     ));
   });
 
-  console.log(schedules);
-
   return (
     <>
       {isModal && (
         <Modal ref={modalRef}>
           <div className="relative flex h-[250px] flex-col items-center justify-center">
             <div>
-              <data className="flex items-center justify-center text-2lg font-medium text-[#333236]">
-                {!userData?.id ? "로그인후 예약 신청해주세요" : message}
-              </data>
+              <p className="flex items-center justify-center text-2lg font-medium text-[#333236]">
+                {/* {!userData?.id ? (
+                  "로그인후 예약 신청해주세요"
+                ) : (
+                  <time>{message}</time>
+                )} */}
+              </p>
             </div>
             <div className="absolute bottom-7 right-7 flex justify-end">
               <Button
@@ -238,7 +240,9 @@ export default function ReservationCardDesktop({
           </div>
         </Modal>
       )}
-      {userId !== userData?.id && (
+
+      {/* {userData === null ? null : userData.id === userId ? ( */}
+      {isLoginUserData?.id !== userId && (
         <form
           // @TODO onSubmit 이벤트헨들러 수정
           onSubmit={handlePostSubmit}
