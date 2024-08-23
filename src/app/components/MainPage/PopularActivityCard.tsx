@@ -19,7 +19,7 @@ const PopularActivityCard = ({
           objectFit: "cover",
         }}
       >
-        <div className="absolute bottom-2 mb-6 ml-5 flex flex-col gap-[6px]">
+        <div className="absolute bottom-2 mb-3 ml-2 flex flex-col gap-[6px] xl:mb-6 xl:ml-5">
           <div className="flex gap-1">
             <Image
               src={icon_star}
@@ -31,12 +31,12 @@ const PopularActivityCard = ({
               <span>{` (${reviewCount})`}</span>
             </p>
           </div>
-          <div className="max-w-[310px] text-[18px] font-semibold md:text-3xl">
+          <div className="max-w-[140px] text-[18px] font-semibold md:max-w-[240px] md:text-3xl">
             {title}
           </div>
           <div className="text-lg font-bold md:text-xl">
             {formatPriceKorean(price)}
-            <span className="text-lg text-gray-800 md:text-xl"> / 인</span>
+            <span className="text-lg md:text-xl"> / 인</span>
           </div>
         </div>
       </div>
