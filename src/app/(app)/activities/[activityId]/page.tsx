@@ -18,6 +18,15 @@ interface ActivityDetailPageProps {
   };
 }
 
+type User = {
+  id: number;
+  email: string;
+  nickname?: string;
+  profileImageUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 const TODAY = new Date();
 const TODAY_DATE = TODAY.toISOString().split("T").join("").split("-");
 const TODAY_YEAR = TODAY_DATE[0];
@@ -29,11 +38,12 @@ export default async function ActivityDetailPage({
   const activityId = Number(params.activityId);
 
   const [
+    isLoginUserData = null,
     activityDetailList,
     activityDetailReviews,
     activityDetailSchedules,
-    userData,
   ] = await Promise.all([
+    getUserMeServer(),
     getActivityDetailList({
       activityId,
     }),
@@ -43,7 +53,6 @@ export default async function ActivityDetailPage({
       year: TODAY_YEAR,
       month: TODAY_MONTH,
     }),
-    getUserMeServer(),
   ]);
 
   const {
@@ -60,24 +69,12 @@ export default async function ActivityDetailPage({
   } = activityDetailList;
 
   const { reviews, totalCount, averageRating } = activityDetailReviews;
-
-  /**
-   * 태그 SEO 신경써야함
-   * h1 => h2태그, h3태그로 변경 SEO 신경쓰기
-   * p 태그 span or data 태그
-   * 주소는 adress 태그
-   * SEO에 맞게 태그 변경
-   * p태그는 소개글일때만
-   * 예약카드는 form 태그에, 가격은 span or data
-   * 버튼은 타입=버튼,
-   * 총합계 = h1 x
-   * 메타 태그
-   */
+  const averageRatingFixed = averageRating === 0 ? 0 : averageRating.toFixed(1);
 
   return (
     <div className="container h-full w-full pt-4 md:pt-6 xl:pt-[4.875rem]">
       <ActivityHeader
-        userData={userData}
+        isLoginUserData={isLoginUserData}
         userId={userId}
         category={category}
         title={title}
@@ -97,7 +94,8 @@ export default async function ActivityDetailPage({
           {/* 체험 설명 */}
           <div className="flex h-auto w-full flex-col gap-[1rem] pb-4 md:pb-[2.125rem] md:pt-[2.5rem]">
             <h3 className="text-xl font-bold text-primary">체험 설명</h3>
-            <p className="text-lg font-normal text-primary text-opacity-75">
+            {/* white-spce: pre-line, 워드브레이크 */}
+            <p className="whitespace-pre-line break-words text-lg font-normal text-primary text-opacity-75">
               {description}
             </p>
           </div>
@@ -117,13 +115,13 @@ export default async function ActivityDetailPage({
             <ActivityDetailReviews
               reviews={reviews}
               totalCount={totalCount}
-              averageRating={averageRating}
+              averageRating={averageRatingFixed}
             />
           </div>
         </div>
         {/* 예약 카드 */}
         <ReservationCard
-          userData={userData}
+          isLoginUserData={isLoginUserData}
           schedules={activityDetailSchedules}
           activityId={activityId}
           price={price}
