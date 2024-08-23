@@ -1,3 +1,4 @@
+import { MouseEvent, useState } from "react";
 import Slider from "react-slick";
 import instance from "@api/axios";
 import { ActivityResponse } from "@customTypes/MainPage";
@@ -84,13 +85,37 @@ const PopularActivityList = () => {
   const totalCount = data?.totalCount || 0;
   const activities = data?.activities || [];
   const popularActivities = activities.slice(0, 6);
-
+  const [color, setColor] = useState("");
+  const handleTextColor = (e: MouseEvent<HTMLButtonElement>) => {
+    const button = e.target as HTMLButtonElement;
+    setColor(button.value);
+  };
   return (
     <div className="md:mb-15 mb-10 mt-32 md:mt-40">
-      <h1 className="container mb-4 text-[18px] font-bold md:mb-8 md:text-[36px]">
-        🔥인기 체험
-      </h1>
-      <div className="slider-css container">
+      <div className="flex justify-between">
+        <h1 className="mb-4 text-[18px] font-bold md:mb-8 md:text-[36px]">
+          🔥인기 체험
+        </h1>
+        <div className="flex gap-2">
+          <button
+            value={"bright"}
+            onClick={handleTextColor}
+            className="h-5 w-5 rounded-lg border-2 border-primary bg-white text-md font-bold text-primary md:h-10 md:w-10 md:text-2xl"
+          >
+            T
+          </button>
+          <button
+            value={"dark"}
+            onClick={handleTextColor}
+            className="h-5 w-5 rounded-lg border-2 border-primary bg-primary text-md font-bold text-white md:h-10 md:w-10 md:text-2xl"
+          >
+            T
+          </button>
+        </div>
+      </div>
+      <div
+        className={`slider-css container ${color === "bright" ? "text-white" : "text-primary"}`}
+      >
         <Slider {...settings}>
           {popularActivities.map((activity) => (
             <PopularActivityCard key={activity.id} cardData={activity} />

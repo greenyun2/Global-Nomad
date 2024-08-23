@@ -13,25 +13,30 @@ const PopularActivityCard = ({
   return (
     <Link href={`/activities/${id}`}>
       <div
-        className="mx-3 h-[186px] w-[186px] rounded-3xl bg-cover bg-center md:h-[360px] md:w-[360px]"
-        style={{ backgroundImage: `url('${bannerImageUrl}')` }}
+        className="aspect-square rounded-3xl bg-cover bg-center"
+        style={{
+          backgroundImage: `url('${bannerImageUrl}')`,
+          objectFit: "cover",
+        }}
       >
-        <div className="mb-6 ml-5 flex h-[160px] flex-col justify-end gap-[6px] text-white">
-          <div className="flex">
+        <div className="absolute bottom-2 mb-3 ml-2 flex flex-col gap-[6px] xl:mb-6 xl:ml-5">
+          <div className="flex gap-1">
             <Image
               src={icon_star}
               alt="star icon"
               style={{ width: 20, height: 20 }}
             />
             <p className="text-lg">
-              {rating}
+              {rating.toFixed(1)}
               <span>{` (${reviewCount})`}</span>
             </p>
           </div>
-          <div className="text-[18px] font-semibold md:text-3xl">{title}</div>
+          <div className="max-w-[140px] text-[18px] font-semibold md:max-w-[240px] md:text-2xl xl:text-3xl">
+            {title}
+          </div>
           <div className="text-lg font-bold md:text-xl">
             {formatPriceKorean(price)}
-            <span className="text-lg text-gray-400 md:text-xl">/ 인</span>
+            <span className="text-lg md:text-xl"> / 인</span>
           </div>
         </div>
       </div>

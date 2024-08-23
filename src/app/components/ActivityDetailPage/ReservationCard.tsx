@@ -6,14 +6,13 @@ import { useMediaQuery } from "react-responsive";
 import ReservationCardDesktop from "./ReservationCardDesktop";
 import ReservationCardMobile from "./ReservationCardMobile";
 import "./customCalendar.css";
-import { useAuth } from "@context/AuthContext";
 
 interface ReservationCardProps {
   activityId: number;
   price: number;
   userId: number;
   schedules: Schedules[];
-  userData: User | null;
+  isLoginUserData: User | null;
 }
 
 type User = {
@@ -48,7 +47,7 @@ export default function ReservationCard({
   price,
   userId,
   schedules,
-  userData,
+  isLoginUserData,
 }: ReservationCardProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const today = new Date();
@@ -106,7 +105,7 @@ export default function ReservationCard({
         
       )} */}
       <ReservationCardDesktop
-        userData={userData}
+        isLoginUserData={isLoginUserData}
         schedules={schedules}
         activityId={activityId}
         userId={userId}

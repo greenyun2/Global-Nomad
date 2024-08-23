@@ -1,8 +1,3 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { getUserMe } from "@api/user";
-import { useQuery } from "@tanstack/react-query";
 import ActivityHeaderKebabMenu from "./ActivityHeaderKebabMenu";
 import ActivityIconWrap from "./ActivityIconWrap";
 
@@ -14,7 +9,7 @@ interface ActivityHeaderProps {
   reviewCount: number;
   address: string;
   activityId: number;
-  userData: User | null;
+  isLoginUserData: User | null;
 }
 
 type User = {
@@ -34,7 +29,7 @@ export default function ActivityHeader({
   address,
   userId,
   activityId,
-  userData,
+  isLoginUserData,
 }: ActivityHeaderProps) {
   /**
    * @TODO 이미지, 텍스트 반복되는 부분 컴포넌트로 분리
@@ -48,7 +43,8 @@ export default function ActivityHeader({
         {/* span or data */}
         <data className="text-md font-regular text-primary">{category}</data>
         <div className="flex h-[4.5rem] w-full flex-col gap-4 md:h-[5.125rem]">
-          <h2 className="text-2xl font-bold text-primary md:text-3xl">
+          {/* white-space: nowrap title 스타일 수정 */}
+          <h2 className="whitespace-nowrap text-2xl font-bold text-primary md:text-3xl">
             {title}
           </h2>
           <div className="flex items-center gap-[0.75rem]">
@@ -66,7 +62,7 @@ export default function ActivityHeader({
         </div>
       </div>
       {/* 케밥 메뉴 영역 */}
-      {userId === userData?.id && (
+      {isLoginUserData?.id === userId && (
         <ActivityHeaderKebabMenu activityId={activityId} />
       )}
     </header>

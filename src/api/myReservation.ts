@@ -30,8 +30,8 @@ export interface MyReservationsData {
 }
 
 export const getMyReservation = async (
+  size: 500,
   cursorId?: number,
-  size?: number,
   status?: string,
 ) => {
   const params = new URLSearchParams();
