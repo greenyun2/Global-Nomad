@@ -18,7 +18,7 @@ const GROUP_LIMIT = 5; // 페이지 한 그룹 당 개수 - 5 개
 const LeftArrowOn = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width={21} height={21} fill="none">
     <path
-      fill="#0B3B2D"
+      fill="#112211"
       d="m7.144 10.176 5.802-5.626c.362-.351 1.054-.138 1.054.324v11.252c0 .462-.692.675-1.054.324l-5.802-5.626a.436.436 0 0 1 0-.648Z"
     />
   </svg>
@@ -37,7 +37,7 @@ const RightArrowOff = () => (
 // 페이지네이션 arrow button className 지정
 const ARROW_BUTTON_STYLE = {
   active:
-    "flex h-[40px] w-[40px] items-center justify-center rounded-[15px] border border-[#0B3B2D] md:w-[55px] md:h-[55px]",
+    "flex h-[40px] w-[40px] items-center justify-center rounded-[15px] border border-primary md:w-[55px] md:h-[55px]",
   disabled:
     "flex h-[40px] w-[40px] items-center justify-center rounded-[15px] border border-[#A1A1A1] md:w-[55px] md:h-[55px]",
 };
@@ -101,7 +101,7 @@ const Pagination = ({
             id={pageNum}
             key={pageNum}
             onClick={handlePageClick}
-            className={`${currentPage === pageNum ? "bg-[#0B3B2D] text-white" : "border border-[#0B3B2D] bg-white text-[#0B3B2D]"} flex h-[40px] w-[40px] items-center justify-center rounded-[15px] text-[18px] md:h-[55px] md:w-[55px]`}
+            className={`${currentPage === pageNum ? "bg-primary text-white" : "border border-primary bg-white text-primary"} flex h-[40px] w-[40px] items-center justify-center rounded-[15px] text-[18px] md:h-[55px] md:w-[55px]`}
           >
             {pageNum + 1}
           </button>

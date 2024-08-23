@@ -1,13 +1,8 @@
-@media (min-width: 1280px) {
-  .slider-css {
-    width: 1200px;
-    padding: 0 20px;
-  }
+.slick-prev:before,
+.slick-next:before {
+  display: none;
 }
 
-@media (min-width: 768px) {
-  .slider-css {
-    width: 100%;
-    padding: 0 20px;
-  }
+.slick-slide {
+  padding: 0 10px;
 }

@@ -30,8 +30,8 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <div>
-        <section className="container relative flex justify-center bg-none">
+      <div className="container">
+        <section className="relative flex justify-center bg-none">
           <div className="absolute -top-14 w-full rounded-2xl bg-white px-6 py-9 shadow-custom-shadow-01">
             <h2 className="mb-5 text-lg font-bold md:text-xl">
               무엇을 체험하고 싶으신가요?
@@ -71,7 +71,7 @@ export default function Home() {
           <section>
             <PopularActivityList />
           </section>
-          <section className="container">
+          <section>
             <Suspense>
               <ActivityCardList />
             </Suspense>
