@@ -10,6 +10,7 @@ import { TUpdateMyInfoSchema, updateMyInfoSchema } from "@customTypes/Me";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { toast } from "sonner";
 import { useDropdown } from "@hooks/useDropdown";
 
 type MyInfoEditorProps = {
@@ -85,12 +86,12 @@ export default function MyInfoEditor({ data }: MyInfoEditorProps) {
         setValue("profileImageUrl", response.data.profileImageUrl);
         setImagePreviewUrl(response.data.profileImageUrl);
         setIsImageUploading(false);
+        toast.success("프로필 이미지 업로드 완료");
       } catch (error) {
         const axiosError = error as AxiosError;
         if (axiosError.code == "ERR_NETWORK") {
-          setPopUpMessage("파일 크기는 5MB보다 작아야 합니다.");
+          toast.error("파일 크기는 5MB보다 작아야 합니다.");
           setImagePreviewUrl(data?.profileImageUrl as string);
-          togglePopUp();
         }
       }
     }
