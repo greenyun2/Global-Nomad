@@ -430,7 +430,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
           <div>
             <input
               type="file"
-              accept="image/*"
+              accept=".jpg, .jpeg, .png"
               onChange={handleImageUpload}
               id="image-upload-input"
               className="hidden"
@@ -481,7 +481,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
           <div>
             <input
               type="file"
-              accept="image/*"
+              accept=".jpg, .jpeg, .png"
               onChange={handleSubImageUpload}
               id="sub-image-upload-input"
               className="hidden"
