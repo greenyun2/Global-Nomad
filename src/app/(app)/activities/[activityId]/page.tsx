@@ -69,7 +69,6 @@ export default async function ActivityDetailPage({
   } = activityDetailList;
 
   const { reviews, totalCount, averageRating } = activityDetailReviews;
-  const averageRatingFixed = averageRating === 0 ? 0 : averageRating.toFixed(1);
 
   return (
     <div className="container h-full w-full pt-4 md:pt-6 xl:pt-[4.875rem]">
@@ -115,7 +114,7 @@ export default async function ActivityDetailPage({
             <ActivityDetailReviews
               reviews={reviews}
               totalCount={totalCount}
-              averageRating={averageRatingFixed}
+              averageRating={averageRating}
             />
           </div>
         </div>

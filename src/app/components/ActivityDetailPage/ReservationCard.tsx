@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import Calendar from "react-calendar";
 import { useMediaQuery } from "react-responsive";
 import ReservationCardDesktop from "./ReservationCardDesktop";
 import ReservationCardMobile from "./ReservationCardMobile";
-import "./customCalendar.css";
 
 interface ReservationCardProps {
   activityId: number;

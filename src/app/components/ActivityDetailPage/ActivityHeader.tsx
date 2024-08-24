@@ -51,7 +51,7 @@ export default function ActivityHeader({
             <ActivityIconWrap
               iconType="star"
               fontColor="star"
-              text={`${rating} (${reviewCount})`}
+              text={`${rating.toFixed(1)} (${reviewCount})`}
             />
             <ActivityIconWrap
               iconType="location"
