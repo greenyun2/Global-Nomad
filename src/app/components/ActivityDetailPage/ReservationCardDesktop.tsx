@@ -20,22 +20,19 @@ import {
 } from "@tanstack/react-query";
 import { time } from "console";
 import { format } from "date-fns";
+import { twMerge } from "tailwind-merge";
 import Button from "../Button/Button";
 import Modal from "../Modal/Modal";
 import "./customCalendar.css";
+import { formatPriceKorean } from "@utils/formatPrice";
 
 type ValuePiece = Date | null;
 
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 interface ReservationCardProps {
-  price: number | string;
+  price: number;
   userId: number;
-  onPlusClick: () => void;
-  onMinusClick: () => void;
-  onChangeTotalNumber: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  totalPrice: number | string;
-  totalNumber: number;
   schedules: Schedules[];
   activityId: number;
   isLoginUserData: User | null;
@@ -62,91 +59,89 @@ type User = {
   createdAt: string;
   updatedAt: string;
 };
-const TODAY = new Date();
 
-interface FormData extends FieldValues {
-  name?: string;
-  email?: string;
-  message?: string;
-  scheduleId: number; // 추가된 속성
-  headCount: number; // 추가된 속성
+interface TotalInfo {
+  totalPrice: number;
+  totalNumber: number;
 }
 
-// interface SubmitData {
-//   activityId: number;
-//   formData: FormData;
-// }
+const TODAY = new Date();
+const FORMAT_DATE = format(new Date(), "yyyy-MM-dd");
+const FORMAT_DATE_GET_YEAR = format(FORMAT_DATE, "yyyy");
+const FORMAT_DATE_GET_MONTH = format(FORMAT_DATE, "MM");
 
-// const FORM_DATA = {
-//   scheduleId: 0,
-//   headCount: 0,
-// };
+/**
+ * 
+ * 코드 깔끔하게 가독성있게 정리하는건 포기, 시간이 지체됨
+ * @TODO 인풋 인원수 제어하는 state값 여기서 관리
+ * 그다음: 달력 제외한 스타일 정리해서 PR 금방한다
+
+ */
 
 export default function ReservationCardDesktop({
   price,
   userId,
-  onPlusClick,
-  onMinusClick,
-  onChangeTotalNumber,
-  totalNumber,
-  totalPrice,
   schedules,
   activityId,
   isLoginUserData,
 }: ReservationCardProps) {
-  /**
-   * 초기 데이터는 서버 컴포너트에서 가져오는데 8월달
-   * 근데 클라이언트 컴포넌트에서 다음달에 대한 정보 다음달에 한정이 아니라 날짜가 바뀌면 정보 요청 useQuery로
-   * 1. 초기 데이터 렌더링 => 다음달 클릭시 2024, 09 정보 가져와서 useQuery로 요청
-   *
-   * 다음달 이전달에 대한 정보는 onActiveStart => onChangeActive 필요한 정보는 month의 정보라서 괜찮음
-   *
-   *
-   * 초기 데이터 = schedules
-   * 다음달 데이터 = useQuery로 요청 및 캐싱 => 여기까지 성공
-   *
-   */
+  const [totalInfo, setTotalInfo] = useState<TotalInfo>({
+    totalPrice: price,
+    totalNumber: 1,
+  });
 
-  // 초기 데이터 스케쥴 날짜 포멧팅
-  const formatDate = format(new Date(), "yyyy-MM-dd");
-  const formatYearDate = format(formatDate, "yyyy");
-  const formatMonthDate = format(formatDate, "MM");
+  const updateTotalInfo = (modifier: number) => {
+    setTotalInfo((prevTotalInfo) => ({
+      totalPrice: prevTotalInfo.totalPrice + price * modifier,
+      totalNumber: prevTotalInfo.totalNumber + modifier,
+    }));
+  };
 
-  // 달력 클릭시 변경 state
+  const handleOnPlus = () => updateTotalInfo(1);
+
+  const handleOnMinus = () => {
+    if (totalInfo.totalNumber > 1) {
+      updateTotalInfo(-1);
+    }
+  };
+
+  const handleOnChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    if (!isNaN(value) && value > 0) {
+      setTotalInfo({
+        totalPrice: value * price,
+        totalNumber: value,
+      });
+    }
+  };
+
+  // 예약가능 스케쥴 데이터
+  const [scheduleData, setScheduleData] = useState(schedules);
+
+  const todayScheduleTimes = scheduleData
+    .filter((item) => item.date === FORMAT_DATE)
+    .flatMap((item) => item.times.map((time) => time));
+
   const [value, onChange] = useState<Value>(TODAY);
-  // 스케쥴 아이디
+  const [activeDate, setActiveDate] = useState<Date>(TODAY);
   const [scheduleId, setScheduleId] = useState(0);
-
   const [isModal, setIsModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [message, setMessage] = useState<null | string>(null);
   const [selectedTime, setSelectedTime] = useState("");
-
   const [availableMessage, setAvailableMessage] =
     useState("날짜를 선택해주세요!");
-
   // 예약가능한 날짜 정보를 불러오기 위한 api 파라미터값
   const [monthSchedule, setMonthSchedule] = useState({
-    year: formatYearDate,
-    month: formatMonthDate,
+    year: FORMAT_DATE_GET_YEAR,
+    month: FORMAT_DATE_GET_MONTH,
   });
 
-  // 페이지로 부터 초기에 받은 스케쥴 정보
-  const [scheduleData, setScheduleData] = useState(schedules);
-
-  // 날짜 클릭시, 날짜에 에약가능 스케쥴 뽑아서 => 예약가능시간에 스케쥴 시간 버튼으로 렌더링
-  const todayScheduleTimes = scheduleData
-    .filter((item) => item.date === formatDate)
-    .flatMap((item) => item.times.map((time) => time));
-
+  const [activeButton, setActiveButton] = useState<number | null>(null);
+  const [buttonClick, setButtonClick] = useState(false);
   const [availableSchedule, setAvailableSchedule] = useState<Times[] | []>(
     todayScheduleTimes,
   );
-
-  // 현재 선택된 날짜: onActiveDateChange에 필요한 정보
-  const [activeDate, setActiveDate] = useState<Date>(TODAY);
-
-  const scheduleButtonRef = useRef(null);
 
   const modalRef = useRef(null);
   const queryClient = useQueryClient();
@@ -155,7 +150,9 @@ export default function ReservationCardDesktop({
     mutationFn: postApplicationReservation,
     onSuccess: () => {
       setIsModal(true);
-      setMessage(`${selectedTime}시간에 ${totalNumber}명 예약이 완료됐습니다.`);
+      setMessage(
+        `${selectedTime}시간에 ${totalInfo.totalNumber}명 예약이 완료됐습니다.`,
+      );
       // 데이터 캐싱 무효화의 기준은 useQuery를 사용한 쿼리키
       queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
     },
@@ -195,13 +192,18 @@ export default function ReservationCardDesktop({
       setIsDisabled(true);
       return;
     }
-    mutation.mutate({ activityId, scheduleId, headCount: totalNumber });
+    mutation.mutate({
+      activityId,
+      scheduleId,
+      headCount: totalInfo.totalNumber,
+    });
     setIsDisabled(true);
+    setButtonClick(false);
+    setTotalInfo({
+      totalPrice: price,
+      totalNumber: 1,
+    });
   };
-
-  // #CED8D5 스케쥴이 있는 부분 색상, 클릭된 날짜 #0B3B2D
-
-  const [activeButton, setActiveButton] = useState<number | null>(null);
 
   // 스케쥴 시간 버튼 클릭시
   const handleOnClick = (
@@ -209,10 +211,24 @@ export default function ReservationCardDesktop({
     startTime: string,
     endTime: string,
   ) => {
-    setActiveButton(timeId);
-    setScheduleId(timeId);
-    setSelectedTime(`${startTime}~${endTime}`);
-    setIsDisabled(false);
+    setButtonClick(true);
+
+    if (timeId && timeId !== activeButton) {
+      setActiveButton(timeId);
+      setScheduleId(timeId);
+      setSelectedTime(`${startTime}~${endTime}`);
+      setIsDisabled(false);
+    }
+
+    if (timeId === activeButton && buttonClick === true) {
+      setButtonClick(false);
+      setIsDisabled(true);
+    }
+
+    if (timeId === activeButton && buttonClick === false) {
+      setButtonClick(true);
+      setIsDisabled(false);
+    }
   };
 
   // onActiveDateChange
@@ -223,6 +239,7 @@ export default function ReservationCardDesktop({
     activeStartDate: Date | null,
   ) => {
     if (action === "next" || action === "prev") {
+      setIsDisabled(true);
       if (value instanceof Date && activeStartDate instanceof Date) {
         const changeYear = format(activeStartDate, "yyyy");
         const changeMonth = format(activeStartDate, "MM");
@@ -245,6 +262,7 @@ export default function ReservationCardDesktop({
     setMonthSchedule({ year: selectedYear, month: selectedMonth });
   };
 
+  // 다음달, 이전달에 대한 스케쥴 데이터 받아오기
   const { year, month } = monthSchedule;
   const { data, isSuccess } = useQuery({
     queryKey: ["availableSchedule", activityId, year, month],
@@ -316,7 +334,7 @@ export default function ReservationCardDesktop({
             {/* 인당 가격 표시 */}
             <div className="w-full pl-[1.028125rem]">
               <p className="flex items-center gap-[0.3125rem] text-center text-3xl font-bold">
-                {`₩ ${price}`}
+                {formatPriceKorean(price)}
                 <span className="text-xl font-normal text-gray-800">/ 인</span>
               </p>
             </div>
@@ -328,7 +346,6 @@ export default function ReservationCardDesktop({
                 </h3>
                 <div className="flex justify-center">
                   <Calendar
-                    className=""
                     locale="ko"
                     calendarType="gregory"
                     value={value}
@@ -336,9 +353,9 @@ export default function ReservationCardDesktop({
                     prev2Label={null}
                     next2Label={null}
                     onChange={onChange}
+                    minDate={TODAY}
                     onClickDay={(date) => selectedDateChange(date)}
                     formatDay={(locale, date) => format(date, "dd")}
-                    // 달력 상세로 들어가서 특정 월 클릭시 아 여기도 해야함
                     minDetail="year"
                     activeStartDate={activeDate}
                     onActiveStartDateChange={({
@@ -351,6 +368,10 @@ export default function ReservationCardDesktop({
                     }
                     onClickMonth={(value, event) =>
                       handleOnClickViewMonth(value)
+                    }
+                    tileDisabled={({ date, view }) =>
+                      view !== "year" &&
+                      date.getTime() < new Date().setHours(0, 0, 0, 0)
                     }
                   />
                 </div>
@@ -365,14 +386,14 @@ export default function ReservationCardDesktop({
                 <h3 className="text-2lg font-bold text-primary">
                   예약 가능한 시간
                 </h3>
-                {/* @TODO 버튼 부무요소의 레이아웃 수정 필요 */}
                 <div className="flex flex-wrap gap-3">
                   {availableSchedule.length > 0 ? (
                     availableSchedule.map((item) => (
                       <Button
                         size="sm"
+                        className={twMerge(`h-[2.875rem] w-[7.3125rem]`)}
                         color={
-                          activeButton !== null && activeButton === item.id
+                          buttonClick && activeButton === item.id
                             ? "dark"
                             : "bright"
                         }
@@ -382,11 +403,12 @@ export default function ReservationCardDesktop({
                         type="button"
                         key={item.id}
                       >
-                        {item.startTime}~{item.endTime}
+                        <time>{item.startTime}</time>~
+                        <time>{item.endTime}</time>
                       </Button>
                     ))
                   ) : (
-                    <p>{availableMessage}</p>
+                    <span>{availableMessage}</span>
                   )}
                 </div>
               </div>
@@ -396,26 +418,24 @@ export default function ReservationCardDesktop({
                   참여 인원 수
                 </h3>
                 <div className="flex w-[7.5rem] justify-start rounded-md border border-solid border-[#CDD0DC]">
-                  {/** @TODO useFrom 사용해서 데이터 보내기, 현재 리퀘스트의 body에 데이터를 잘못 보내지만 응답은 잘오는중 */}
                   <button
                     type="button"
-                    onClick={onMinusClick}
+                    onClick={handleOnMinus}
                     className="h-[2.5rem] w-[2.5rem]"
                   >
                     -
                   </button>
-                  {/** @TODO useForm을 적용해야 하는 부분*/}
 
                   <input
                     className="h-[2.5rem] w-[2.5rem] text-center"
                     type="number"
-                    value={totalNumber}
-                    onChange={onChangeTotalNumber}
+                    value={totalInfo.totalNumber}
+                    onChange={handleOnChangeInput}
                   />
 
                   <button
                     type="button"
-                    onClick={onPlusClick}
+                    onClick={handleOnPlus}
                     className="h-[2.5rem] w-[2.5rem]"
                   >
                     +
@@ -435,7 +455,9 @@ export default function ReservationCardDesktop({
             {/* 총 합계 */}
             <div className="flex w-full items-center justify-between border-t border-solid border-gray-300 pt-4">
               <span className="text-xl font-bold text-primary">총 합계</span>
-              <data className="text-xl font-bold text-primary">{`₩ ${totalPrice}`}</data>
+              <span className="text-xl font-bold text-primary">
+                {formatPriceKorean(totalInfo.totalPrice)}
+              </span>
             </div>
           </section>
         </form>

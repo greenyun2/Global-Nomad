@@ -101,7 +101,7 @@ export default async function ActivityDetailPage({
 
           {/* 카카오 지도 */}
           <div className="flex h-[30.125rem] w-full flex-col gap-[0.5rem] border-t border-solid border-primary border-opacity-25 pb-10 pt-4 md:h-[29.75rem] md:w-full md:border-b">
-            <ActivityKakaoMap />
+            <ActivityKakaoMap address={address} />
             <ActivityIconWrap
               iconType="location"
               fontColor="location"

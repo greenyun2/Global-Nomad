@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Map, MapTypeControl, ZoomControl } from "react-kakao-maps-sdk";
 import useKakaoLoader from "@/hooks/useKakaoLoader";
 
@@ -9,8 +10,13 @@ import useKakaoLoader from "@/hooks/useKakaoLoader";
  *
  */
 
-export default function KakaoMap() {
+interface MapProps {
+  address: string;
+}
+
+export default function KakaoMap({ address }: MapProps) {
   useKakaoLoader();
+
   return (
     <Map
       // 지도를 표시할 Container
