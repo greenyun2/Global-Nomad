@@ -1,6 +1,5 @@
 import {
-  getActivityDetailList,
-  getActivityDetailReviews,
+  getActivityDetailList, // getActivityDetailReviews,
   getActivityDetailSchedule,
 } from "@api/fetchActivityDetail";
 import { getUserMe } from "@api/user";
@@ -40,14 +39,14 @@ export default async function ActivityDetailPage({
   const [
     isLoginUserData = null,
     activityDetailList,
-    activityDetailReviews,
+    // activityDetailReviews,
     activityDetailSchedules,
   ] = await Promise.all([
     getUserMeServer(),
     getActivityDetailList({
       activityId,
     }),
-    getActivityDetailReviews({ activityId }),
+    // getActivityDetailReviews({ activityId }),
     getActivityDetailSchedule({
       activityId,
       year: TODAY_YEAR,
@@ -68,7 +67,7 @@ export default async function ActivityDetailPage({
     userId,
   } = activityDetailList;
 
-  const { reviews, totalCount, averageRating } = activityDetailReviews;
+  // const { reviews, totalCount, averageRating } = activityDetailReviews;
 
   return (
     <div className="container h-full w-full pt-4 md:pt-6 xl:pt-[4.875rem]">
@@ -112,9 +111,9 @@ export default async function ActivityDetailPage({
           {/* 리뷰 */}
           <div className="md:pt-10">
             <ActivityDetailReviews
-              reviews={reviews}
-              totalCount={totalCount}
-              averageRating={averageRating}
+            // reviews={reviews}
+            // totalCount={totalCount}
+            // averageRating={averageRating}
             />
           </div>
         </div>

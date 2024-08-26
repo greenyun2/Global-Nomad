@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import instance from "@api/axios";
-import { getActivityDetailReviews } from "@api/fetchActivityDetail";
+// import { getActivityDetailReviews } from "@api/fetchActivityDetail";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, usePathname } from "next/navigation";
 import { ReviewsItem } from "../../../types/ActivityDetailTypes";
@@ -38,11 +38,7 @@ const useActivityReviews = (activityId: number, page: number, size: number) => {
   });
 };
 
-export default function ActivityDetailReviews({
-  reviews,
-  totalCount,
-  averageRating,
-}: ActivityDetailReviewsProps) {
+export default function ActivityDetailReviews() {
   const [currentPageNum, setCurrentPageNum] = useState(0); // 현재 페이지 번호
   const currentPageGroup = Math.floor(currentPageNum / 5); // 현재 페이지 그룹 계산
   const currentSize = 3; // 페이지의 데이터 수
@@ -53,10 +49,9 @@ export default function ActivityDetailReviews({
     router.push(pathname + `/reviews?page=${page + 1}`);
   };
   const activityId = Number(pathname.slice(12));
-  // const reviewdatas = reviews;
-  // console.log(reviewdatas);
-  // const activityId = Number(reviews[0].activityId);
+
   const { data } = useActivityReviews(activityId, currentPageNum, currentSize);
+  const rating = data?.averageRating || 0;
   const activityReviews = data?.reviews || [];
   const total = data?.totalCount || 0;
   return (
@@ -65,16 +60,16 @@ export default function ActivityDetailReviews({
         <h3 className="text-xl font-bold text-primary xl:text-2lg">후기</h3>
         <div className="flex gap-4">
           <data className="text-averageRating font-semibold text-primary">
-            {averageRating}
+            {rating.toFixed(1)}
           </data>
           <div className="flex flex-col gap-2">
             <span className="text-2lg font-normal text-primary">
-              {getRatingEvaluation(averageRating)}
+              {getRatingEvaluation(rating)}
             </span>
             <ActivityIconWrap
               iconType="star"
               fontColor="star"
-              text={`${totalCount}개 후기`}
+              text={`${total}개 후기`}
             />
           </div>
         </div>
