@@ -51,32 +51,27 @@ export default function ReservationCard({
   const today = new Date();
 
   /**
-   * 예약 카드 조건
-   * 1. 모바일, (데스크탑, 테블릿) 사이즈의 렌더링
-   * 데스크탑, 테블릿 || 모바일 사이즈
-   * : useMediaQuery => isMobile ? 모바일 사이즈 : 데스크탑, 테블릿 사이즈
-   * 2. userId 와 현재 로그인중인 유저의 Id 값을 비교해서 렌더링 결정
-   * userId !== 현재 로그인중인 유저 Id && <ReservationCard />
+   * 반응형 스타일
+   * 데스크탑 - 테블릿 - 모바일
    */
 
   return (
     <>
-      {/* {isMobile ? (
+      {isMobile ? (
         <ReservationCardMobile
-          user={user}
           userId={userId}
-          Calendar={<Calendar locale="ko" calendarType="hebrew" value={date} />}
+          price={price}
+          // Calendar={<Calendar locale="ko" calendarType="hebrew" value={date} />}
         />
       ) : (
-        
-      )} */}
-      <ReservationCardDesktop
-        isLoginUserData={isLoginUserData}
-        schedules={schedules}
-        activityId={activityId}
-        userId={userId}
-        price={price}
-      />
+        <ReservationCardDesktop
+          isLoginUserData={isLoginUserData}
+          schedules={schedules}
+          activityId={activityId}
+          userId={userId}
+          price={price}
+        />
+      )}
     </>
   );
 }
