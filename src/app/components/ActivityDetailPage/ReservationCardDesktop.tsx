@@ -194,14 +194,15 @@ export default function ReservationCardDesktop({
   const handlePostSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (mutation.isPending) return;
-
     // 로그인 검사
     if (isLoginUserData?.id === null) {
       setIsModal(true);
       setIsDisabled(true);
       return;
     }
+
+    if (mutation.isPending) return;
+
     mutation.mutate({
       activityId,
       scheduleId,
@@ -282,7 +283,7 @@ export default function ReservationCardDesktop({
         .flatMap((item) => item.times.map((time) => time));
       setAvailableSchedule(changeScheduleTimes);
     }
-  }, [data, isSuccess]);
+  }, [data, isSuccess, activeDate, scheduleData]);
 
   // 예약 가능 날짜에 파란색 점으로 표시
   const reservationTile = (date: Date) => {
