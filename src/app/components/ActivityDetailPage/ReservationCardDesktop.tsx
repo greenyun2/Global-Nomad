@@ -150,6 +150,7 @@ export default function ReservationCardDesktop({
   const mutation = useMutation({
     mutationFn: postApplicationReservation,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
       setIsModal(true);
       setMessage(
         `${selectedTime}시간에 ${totalInfo.totalNumber}명 예약이 완료됐습니다.`,
@@ -161,7 +162,6 @@ export default function ReservationCardDesktop({
         totalNumber: 1,
       });
       setActiveButton(null);
-      queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
     },
     onError: (error) => {
       setIsModal(true);
