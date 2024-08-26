@@ -17,6 +17,7 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
+  UseQueryResult,
 } from "@tanstack/react-query";
 import { time } from "console";
 import { format } from "date-fns";
@@ -149,12 +150,18 @@ export default function ReservationCardDesktop({
   const mutation = useMutation({
     mutationFn: postApplicationReservation,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
       setIsModal(true);
       setMessage(
         `${selectedTime}시간에 ${totalInfo.totalNumber}명 예약이 완료됐습니다.`,
       );
-      // 데이터 캐싱 무효화의 기준은 useQuery를 사용한 쿼리키
-      queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
+      setIsDisabled(true);
+      setButtonClick(false);
+      setTotalInfo({
+        totalPrice: price,
+        totalNumber: 1,
+      });
+      setActiveButton(null);
     },
     onError: (error) => {
       setIsModal(true);
@@ -186,22 +193,20 @@ export default function ReservationCardDesktop({
 
   const handlePostSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     // 로그인 검사
     if (isLoginUserData?.id === null) {
       setIsModal(true);
       setIsDisabled(true);
       return;
     }
+
+    if (mutation.isPending) return;
+
     mutation.mutate({
       activityId,
       scheduleId,
       headCount: totalInfo.totalNumber,
-    });
-    setIsDisabled(true);
-    setButtonClick(false);
-    setTotalInfo({
-      totalPrice: price,
-      totalNumber: 1,
     });
   };
 
@@ -278,7 +283,7 @@ export default function ReservationCardDesktop({
         .flatMap((item) => item.times.map((time) => time));
       setAvailableSchedule(changeScheduleTimes);
     }
-  }, [data, isSuccess]);
+  }, [data, isSuccess, activeDate, scheduleData]);
 
   // 예약 가능 날짜에 파란색 점으로 표시
   const reservationTile = (date: Date) => {
