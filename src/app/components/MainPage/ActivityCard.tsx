@@ -24,6 +24,7 @@ const ActivityCard = ({
               sizes="(min-width: 1280px) 283px,
               (min-width: 768px) 221px"
               style={{ borderRadius: 15, objectFit: "cover" }}
+              quality={100}
             />
           </div>
           <div>

@@ -15,17 +15,18 @@ export default function ReviewCard({
   return (
     <li className="flex w-full gap-4 border-b border-solid border-primary border-opacity-25 pb-6">
       {/* 프로필 이미지 부터 반응형 */}
-      <div className="relative h-[2.8125rem] w-[2.8125rem]">
+      <div className="relative aspect-square h-[45px] w-[45px]">
         <Image
-          sizes=""
           className="rounded-[50%]"
           fill
+          sizes="100%"
+          style={{ objectFit: "cover" }}
           src={user.profileImageUrl}
           alt="프로필 이미지"
         />
       </div>
       {/* 이름, 날짜, 리뷰 */}
-      <div className="flex w-full flex-col gap-2">
+      <div className="flex flex-col gap-2">
         {/* 이름, 날짜 */}
         <div className="flex items-center gap-2">
           <span className="text-lg font-bold text-primary">

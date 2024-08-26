@@ -62,7 +62,7 @@ const CategorySort = ({
         >
           {CATEGORIES.map((category) => (
             <button
-              className={`${category === currentCategory ? "bg-primary text-white" : "bg-white text-primary"} h-[41px] w-[80px] shrink-0 rounded-[15px] border border-primary hover:bg-primary hover:text-white md:h-[58px] md:w-[120px] xl:w-[127px]`}
+              className={`${category === currentCategory ? "bg-primary text-white" : "bg-white text-primary"} h-[41px] w-[100px] shrink-0 rounded-[15px] border border-primary hover:bg-primary hover:text-white md:h-[58px] md:w-[120px] xl:w-[127px]`}
               key={category}
               value={category}
               onClick={onSetCategory}

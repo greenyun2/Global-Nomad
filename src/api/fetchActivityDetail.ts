@@ -31,19 +31,19 @@ export const getActivityDetailList = async ({ activityId }: ActivityId) => {
   }
 };
 
-export const getActivityDetailReviews = async ({ activityId }: ActivityId) => {
-  try {
-    const response = await instance.get(`/activities/${activityId}/reviews`);
-    if (response.status !== 200) {
-      throw new Error(
-        `스케쥴 응답 상태 코드: ${response.status}, message:${response.data?.message}`,
-      );
-    }
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
-};
+// export const getActivityDetailReviews = async ({ activityId }: ActivityId) => {
+//   try {
+//     const response = await instance.get(`/activities/${activityId}/reviews`);
+//     if (response.status !== 200) {
+//       throw new Error(
+//         `스케쥴 응답 상태 코드: ${response.status}, message:${response.data?.message}`,
+//       );
+//     }
+//     return response.data;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 
 export const getActivityDetailSchedule = async ({
   activityId,
