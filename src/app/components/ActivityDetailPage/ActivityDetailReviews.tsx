@@ -44,11 +44,9 @@ export default function ActivityDetailReviews() {
   const [currentPageNum, setCurrentPageNum] = useState(0); // 현재 페이지 번호
   const currentPageGroup = Math.floor(currentPageNum / 5); // 현재 페이지 그룹 계산
   const currentSize = 3; // 페이지의 데이터 수
-  const router = useRouter();
   const pathname = usePathname();
   const handlePageNum = (page: number) => {
     setCurrentPageNum(page);
-    router.push(pathname + `/reviews?page=${page + 1}`);
   };
   const activityId = Number(pathname.slice(12));
 
