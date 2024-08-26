@@ -20,12 +20,14 @@ interface ActivityDetailReviewsProps {
 
 const getActivityReviews = async (
   activityId: number,
-  page?: number,
-  size?: number,
+  page: number,
+  size: number,
 ) => {
-  const params = new URLSearchParams({});
-  if (page) params.append("page", String(page));
-  if (size) params.append("size", String(size));
+  const params = new URLSearchParams({
+    page: String(page),
+    size: String(size),
+  });
+
   const response = await instance.get<ActivityDetailReviewsProps>(
     `/activities/${activityId}/reviews?${params}`,
   );
@@ -33,7 +35,7 @@ const getActivityReviews = async (
 };
 const useActivityReviews = (activityId: number, page: number, size: number) => {
   return useQuery({
-    queryKey: ["activity-reviews", activityId, page, size],
+    queryKey: ["reviews", activityId, page, size],
     queryFn: () => getActivityReviews(activityId, page, size),
   });
 };
@@ -50,7 +52,11 @@ export default function ActivityDetailReviews() {
   };
   const activityId = Number(pathname.slice(12));
 
-  const { data } = useActivityReviews(activityId, currentPageNum, currentSize);
+  const { data } = useActivityReviews(
+    activityId,
+    currentPageNum + 1,
+    currentSize,
+  );
   const rating = data?.averageRating || 0;
   const activityReviews = data?.reviews || [];
   const total = data?.totalCount || 0;
