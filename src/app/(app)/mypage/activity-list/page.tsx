@@ -82,7 +82,7 @@ export default function ActivityList() {
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-3xl font-bold text-primary">내 체험 관리</h2>
         <Button
-          size={"sm"}
+          size={"md"}
           color={"dark"}
           onClick={handleRegisterClick}
           className={""}

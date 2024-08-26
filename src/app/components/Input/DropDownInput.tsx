@@ -76,7 +76,7 @@ const DropDownInput = forwardRef<HTMLInputElement, DropDownPropsType>(
             value={value || selectedOption}
             placeholder={!setInitialValue ? placeholder : ""}
             className={twMerge(
-              `w-full rounded-[6px] border ${invalid ? "border-red-500" : "border-gray-700"} cursor-pointer px-[16px] py-[16px] caret-transparent`,
+              `w-full rounded-[6px] border ${invalid ? "border-red-500" : "border-gray-700"} cursor-pointer px-[16px] py-[16px] caret-transparent md:px-[16px] md:py-[16px]`,
               className,
             )}
           />

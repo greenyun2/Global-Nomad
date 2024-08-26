@@ -63,7 +63,7 @@ const MyActivity: React.FC<MyActivityProps> = ({
                 width={18}
                 height={18}
               />
-              <span>{rating}</span>
+              <span>{rating.toFixed(1)}</span>
               <span>&#40;{reviewCount}&#41;</span>
             </div>
             <h3 className="truncate text-md font-bold text-primary md:text-2lg xl:text-xl">
