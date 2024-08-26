@@ -1,16 +1,21 @@
 "use client";
 
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { deleteMyActivity, getMyActivities } from "@api/myActivites";
 import Button from "@app/components/Button/Button";
+import FormErrorMessageModal from "@app/components/Form/FormErrorMessageModal";
 import { MyActivityType } from "@customTypes/MyActivityStatusType";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import EmptyState from "@components/EmptyState/EmptyState";
 import MyActivityComponent from "./MyActivity";
+import { useDropdown } from "@hooks/useDropdown";
 import { MyActivityListContext } from "@context/MyActivityListContext";
 
 export default function ActivityList() {
+  const { isOpen: isPopUpOpen, toggle: togglePopUp, ref } = useDropdown();
+  const [popupMessage, setPopUpMessage] = useState("");
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -24,12 +29,11 @@ export default function ActivityList() {
 
   const { myActivityList, setMyActivityList } = context;
 
-  // useQuery를 사용하여 데이터를 패칭하고 컨텍스트와 동기화
   const { data } = useQuery<MyActivityType[]>({
     queryKey: ["myActivityList"],
     queryFn: async () => {
       const response = await getMyActivities();
-      return response.activities as MyActivityType[]; // MyActivityType으로 캐스팅
+      return response.activities as MyActivityType[];
     },
     initialData: myActivityList,
   });
@@ -53,18 +57,24 @@ export default function ActivityList() {
         "myActivityList",
       ]);
 
-      setMyActivityList((prev) =>
-        prev.filter((activity) => activity.id !== activityId),
-      );
-
       return { previousData: previousData || [] };
     },
     onError: (err, variables, context) => {
-      if (context?.previousData) {
+      if (err) {
+        const axiosError = err as AxiosError<ErrorResponse>;
+        const errorMessage = axiosError.response?.data?.message;
+        if (errorMessage) {
+          setPopUpMessage(errorMessage);
+          togglePopUp();
+        }
+      } else if (context?.previousData) {
         setMyActivityList(context.previousData);
       }
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      setMyActivityList((prev) =>
+        prev.filter((activity) => activity.id !== variables),
+      );
       queryClient.invalidateQueries({ queryKey: ["myActivityList"] });
     },
   });
@@ -78,31 +88,40 @@ export default function ActivityList() {
   };
 
   return (
-    <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-3xl font-bold text-primary">내 체험 관리</h2>
-        <Button
-          size={"md"}
-          color={"dark"}
-          onClick={handleRegisterClick}
-          className={""}
-        >
-          체험 등록하기
-        </Button>
-      </div>
-      {myActivityList.length > 0 ? (
-        <ul className="flex flex-col gap-4 xl:gap-6">
-          {myActivityList.map((myActivity) => (
-            <MyActivityComponent
-              key={myActivity.id}
-              {...myActivity}
-              onDelete={handleDelete}
-            />
-          ))}
-        </ul>
-      ) : (
-        <EmptyState>아직 등록한 체험이 없어요</EmptyState>
+    <>
+      {isPopUpOpen && (
+        <FormErrorMessageModal
+          errorMessage={popupMessage}
+          toggle={togglePopUp}
+          ref={ref}
+        />
       )}
-    </div>
+      <div>
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-3xl font-bold text-primary">내 체험 관리</h2>
+          <Button
+            size={"md"}
+            color={"dark"}
+            onClick={handleRegisterClick}
+            className={""}
+          >
+            체험 등록하기
+          </Button>
+        </div>
+        {myActivityList.length > 0 ? (
+          <ul className="flex flex-col gap-4 xl:gap-6">
+            {myActivityList.map((myActivity) => (
+              <MyActivityComponent
+                key={myActivity.id}
+                {...myActivity}
+                onDelete={handleDelete}
+              />
+            ))}
+          </ul>
+        ) : (
+          <EmptyState>아직 등록한 체험이 없어요</EmptyState>
+        )}
+      </div>
+    </>
   );
 }
