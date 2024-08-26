@@ -38,7 +38,7 @@ export default async function ActivityDetailPage({
   const activityId = Number(params.activityId);
 
   const [
-    isLoginUserData = null,
+    isLoginUserData,
     activityDetailList,
     activityDetailReviews,
     activityDetailSchedules,
