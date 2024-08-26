@@ -112,7 +112,6 @@ const ActivityCardList = () => {
 
   const totalCount = data?.totalCount || 0; // activity 데이터에서 totalCount
   const activities = data?.activities || []; // activity 데이터에서 activities
-
   return (
     <>
       <CategorySort

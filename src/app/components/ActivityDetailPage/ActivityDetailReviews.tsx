@@ -1,3 +1,10 @@
+"use client";
+
+import { useState } from "react";
+import instance from "@api/axios";
+import { getActivityDetailReviews } from "@api/fetchActivityDetail";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter, usePathname } from "next/navigation";
 import { ReviewsItem } from "../../../types/ActivityDetailTypes";
 import EmptyState from "../EmptyState/EmptyState";
 import Pagination from "../MainPage/Pagination";
@@ -10,11 +17,47 @@ interface ActivityDetailReviewsProps {
   averageRating: number;
 }
 
+const getActivityReviews = async (
+  activityId: number,
+  page?: number,
+  size?: number,
+) => {
+  const params = new URLSearchParams({});
+  if (page) params.append("page", String(page));
+  if (size) params.append("size", String(size));
+  const response = await instance.get<ActivityDetailReviewsProps>(
+    `/activities/${activityId}/reviews?${params}`,
+  );
+  return response.data;
+};
+const useActivityReviews = (activityId: number, page: number, size: number) => {
+  return useQuery({
+    queryKey: ["activity-reviews", activityId, page, size],
+    queryFn: () => getActivityReviews(activityId, page, size),
+  });
+};
+
 export default function ActivityDetailReviews({
   reviews,
   totalCount,
   averageRating,
 }: ActivityDetailReviewsProps) {
+  const [currentPageNum, setCurrentPageNum] = useState(0); // 현재 페이지 번호
+  const currentPageGroup = Math.floor(currentPageNum / 5); // 현재 페이지 그룹 계산
+  const currentSize = 3; // 페이지의 데이터 수
+  const router = useRouter();
+  const pathname = usePathname();
+  const handlePageNum = (page: number) => {
+    setCurrentPageNum(page);
+    router.push(pathname + `/reviews?page=${page + 1}`);
+  };
+  const activityId = Number(pathname.slice(12));
+  // const reviewdatas = reviews;
+  // console.log(reviewdatas);
+  // const activityId = Number(reviews[0].activityId);
+  const { data } = useActivityReviews(activityId, currentPageNum, currentSize);
+  const activityReviews = data?.reviews || [];
+  const total = data?.totalCount || 0;
   return (
     <div className="mb-4 flex w-full flex-col gap-6">
       <div className="flex w-full flex-col gap-[1.125rem] md:gap-6">
@@ -35,26 +78,21 @@ export default function ActivityDetailReviews({
       </div>
 
       <ul className="mb-10 flex w-full flex-col gap-6 md:mb-[5.625rem] xl:mb-[4.5rem]">
-        {reviews.length >= 1 ? (
-          reviews.map((item) => <ReviewCard key={item.id} {...item} />)
+        {activityReviews.length >= 1 ? (
+          activityReviews.map((item) => <ReviewCard key={item.id} {...item} />)
         ) : (
           <EmptyState>아직 등록된 리뷰가 없어요.</EmptyState>
         )}
       </ul>
 
-      {/**피이지 네이션 버튼
-       * 조건: 한 페이지에 3개씩
-       * 토탈 개수 / 3 = button의 개수
-       * 1번 버튼 클릭
-       *  */}
       <div className="flex h-[55px] w-full items-center justify-center gap-[10px]">
-        <button className="flex h-[55px] w-[55px] items-center justify-center border border-solid border-gray-500">
-          {"<"}
-        </button>
-
-        <button className="flex h-[55px] w-[55px] items-center justify-center border border-solid border-gray-500">
-          {">"}
-        </button>
+        <Pagination
+          totalCount={total}
+          currentPage={currentPageNum}
+          offsetLimit={currentSize}
+          currentGroup={currentPageGroup}
+          setPageNum={handlePageNum}
+        />
       </div>
     </div>
   );

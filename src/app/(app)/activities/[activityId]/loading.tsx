@@ -9,7 +9,7 @@ export default function Loading() {
           src={loadingGif}
           alt="Loading"
           fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          ="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         /> */}
         로딩...
       </div>
