@@ -389,7 +389,9 @@ export default function ReservationCardMobile({
                       <Image
                         src={icon_close}
                         alt="close_icon"
-                        className="w-[30px]"
+                        className=""
+                        width={30}
+                        height={30}
                       />
                     </button>
                   </div>
