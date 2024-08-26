@@ -121,7 +121,7 @@ export default function MyInfoEditor({ data }: MyInfoEditorProps) {
               프로필 이미지
             </label>
             <div className="flex items-center gap-4">
-              <div className="h-36 w-36 md:h-[11.25rem] md:w-[11.25rem]">
+              <div className="h-[96px] w-[96px]">
                 <input
                   type="file"
                   accept="image/*"
@@ -218,7 +218,7 @@ export default function MyInfoEditor({ data }: MyInfoEditorProps) {
               render={({ field }) => (
                 <BasicInput
                   id="password"
-                  type="text"
+                  type="password"
                   placeholder="8자 이상 입력해 주세요"
                   onChange={field.onChange}
                   value={field.value}
@@ -246,7 +246,7 @@ export default function MyInfoEditor({ data }: MyInfoEditorProps) {
               render={({ field }) => (
                 <BasicInput
                   id="confirmPassword"
-                  type="text"
+                  type="password"
                   placeholder="비밀번호를 한번 더 입력해 주세요"
                   onChange={field.onChange}
                   value={field.value}
