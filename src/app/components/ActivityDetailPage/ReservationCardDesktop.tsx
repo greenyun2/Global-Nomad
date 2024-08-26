@@ -17,6 +17,7 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
+  UseQueryResult,
 } from "@tanstack/react-query";
 import { time } from "console";
 import { format } from "date-fns";
@@ -192,6 +193,9 @@ export default function ReservationCardDesktop({
 
   const handlePostSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (mutation.isPending) return;
+
     // 로그인 검사
     if (isLoginUserData?.id === null) {
       setIsModal(true);
