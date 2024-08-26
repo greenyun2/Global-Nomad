@@ -153,7 +153,13 @@ export default function ReservationCardDesktop({
       setMessage(
         `${selectedTime}시간에 ${totalInfo.totalNumber}명 예약이 완료됐습니다.`,
       );
-      // 데이터 캐싱 무효화의 기준은 useQuery를 사용한 쿼리키
+      setIsDisabled(true);
+      setButtonClick(false);
+      setTotalInfo({
+        totalPrice: price,
+        totalNumber: 1,
+      });
+      setActiveButton(null);
       queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
     },
     onError: (error) => {
@@ -196,12 +202,6 @@ export default function ReservationCardDesktop({
       activityId,
       scheduleId,
       headCount: totalInfo.totalNumber,
-    });
-    setIsDisabled(true);
-    setButtonClick(false);
-    setTotalInfo({
-      totalPrice: price,
-      totalNumber: 1,
     });
   };
 
