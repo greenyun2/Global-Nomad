@@ -103,7 +103,7 @@ export default function ActivityImageSlider({
       <Slider {...settings}>
         <div className="relative h-[19.375rem] w-full md:h-[19.375rem] xl:h-[33.375rem]">
           <Image
-            className="rounded-md"
+            style={{ objectFit: "cover", borderRadius: "1rem" }}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             src={bannerImageUrl}
@@ -119,7 +119,7 @@ export default function ActivityImageSlider({
             >
               <Image
                 fill
-                className="rounded-md"
+                style={{ objectFit: "cover", borderRadius: "1rem" }}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 src={image.imageUrl}
                 alt="서브 이미지"
