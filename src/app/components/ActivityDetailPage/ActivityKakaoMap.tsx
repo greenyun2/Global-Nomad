@@ -1,41 +1,60 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Map, MapTypeControl, ZoomControl } from "react-kakao-maps-sdk";
+import { Map, MapTypeControl, ZoomControl, MapMarker } from "react-kakao-maps-sdk";
 import useKakaoLoader from "@/hooks/useKakaoLoader";
-
-/**
- * 카카오맵의 초기 렌더링시, 주소에 맞게 화면을 보여줌
- * 주소에 맞는 위치에 마크업 표시
- *
- */
 
 interface MapProps {
   address: string;
 }
 
 export default function KakaoMap({ address }: MapProps) {
-  useKakaoLoader();
+  const isKakaoLoaded = useKakaoLoader(); // SDK 로드 상태 확인
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
+
+  useEffect(() => {
+    if (isKakaoLoaded) {
+      if (window.kakao && window.kakao.maps && window.kakao.maps.services) {
+        console.log("Kakao Maps services 라이브러리가 로드되었습니다.");
+
+        const geocoder = new window.kakao.maps.services.Geocoder();
+
+        geocoder.addressSearch(address, (result, status) => {
+          if (status === window.kakao.maps.services.Status.OK) {
+            const { y, x } = result[0];
+            setMapCenter({ lat: parseFloat(y), lng: parseFloat(x) });
+          } else {
+            alert("주소를 찾을 수 없습니다.");
+          }
+        });
+      } else {
+        console.error("Kakao Maps services 라이브러리가 로드되지 않았습니다.");
+      }
+    }
+  }, [isKakaoLoaded, address]);
+
+  if (!isKakaoLoaded) {
+    return <div>카카오맵 로딩 중...</div>;
+  }
+
+  if (!mapCenter) {
+    return <div>지도 로딩 중...</div>;
+  }
 
   return (
     <Map
-      // 지도를 표시할 Container
       id="map"
-      center={{
-        // 지도의 중심좌표
-        lat: 33.450701,
-        lng: 126.570667,
-      }}
+      center={mapCenter}
       style={{
-        // 지도의 크기
         width: "100%",
         height: "100%",
         borderRadius: "1rem",
       }}
-      level={3} // 지도의 확대 레벨
+      level={3}
     >
       <MapTypeControl position={"TOPRIGHT"} />
       <ZoomControl position={"RIGHT"} />
+      <MapMarker position={mapCenter} />
     </Map>
   );
 }
