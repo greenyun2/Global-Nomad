@@ -38,7 +38,7 @@ export default function ActivityHeader({
    * SEO에 맞게 태그 변경
    */
   return (
-    <header className="flex h-[6.625rem] w-[21.4375rem] justify-between md:mb-[0.9375rem] md:w-[43.5rem] xl:mb-[1.5625rem] xl:w-full">
+    <header className="mb-4 flex h-[6.625rem] justify-between md:mb-[0.9375rem] xl:mb-[1.5625rem]">
       <div className="flex h-full w-[18.25rem] flex-col justify-between md:w-[24.375rem]">
         {/* span or data */}
         <data className="text-md font-regular text-primary">{category}</data>
@@ -51,7 +51,7 @@ export default function ActivityHeader({
             <ActivityIconWrap
               iconType="star"
               fontColor="star"
-              text={`${rating} (${reviewCount})`}
+              text={`${rating.toFixed(1)} (${reviewCount})`}
             />
             <ActivityIconWrap
               iconType="location"

@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className="min-w-80 antialiased">
+      <body className="min-w-96 antialiased">
         <AuthProvider>
           <ReactQueryProvider>
             <Toaster position="top-right" richColors />

@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import Calendar from "react-calendar";
 import { useMediaQuery } from "react-responsive";
 import ReservationCardDesktop from "./ReservationCardDesktop";
 import ReservationCardMobile from "./ReservationCardMobile";
-import "./customCalendar.css";
 
 interface ReservationCardProps {
   activityId: number;
@@ -52,37 +50,6 @@ export default function ReservationCard({
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const today = new Date();
 
-  /** @TODO 서버 사이드 렌더링에서 유저 정보 가져오는 함수  */
-
-  const [totalInfo, setTotalInfo] = useState<TotalInfo>({
-    totalPrice: price,
-    totalNumber: 1,
-  });
-
-  const updateTotalInfo = (modifier: number) => {
-    setTotalInfo((prevTotalInfo) => ({
-      totalPrice: prevTotalInfo.totalPrice + price * modifier,
-      totalNumber: prevTotalInfo.totalNumber + modifier,
-    }));
-  };
-
-  const handleOnPlus = () => updateTotalInfo(1);
-
-  const handleOnMinus = () => {
-    if (totalInfo.totalNumber > 1) {
-      updateTotalInfo(-1);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
-    if (!isNaN(value) && value > 0) {
-      setTotalInfo({
-        totalPrice: value * price,
-        totalNumber: value,
-      });
-    }
-  };
   /**
    * 예약 카드 조건
    * 1. 모바일, (데스크탑, 테블릿) 사이즈의 렌더링
@@ -98,7 +65,6 @@ export default function ReservationCard({
         <ReservationCardMobile
           user={user}
           userId={userId}
-          price={price.toLocaleString()}
           Calendar={<Calendar locale="ko" calendarType="hebrew" value={date} />}
         />
       ) : (
@@ -109,12 +75,7 @@ export default function ReservationCard({
         schedules={schedules}
         activityId={activityId}
         userId={userId}
-        price={price.toLocaleString()}
-        totalNumber={totalInfo.totalNumber}
-        totalPrice={totalInfo.totalPrice.toLocaleString()}
-        onPlusClick={handleOnPlus}
-        onMinusClick={handleOnMinus}
-        onChangeTotalNumber={handleChange}
+        price={price}
       />
     </>
   );
