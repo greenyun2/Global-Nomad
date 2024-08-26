@@ -107,7 +107,6 @@ export default async function ActivityDetailPage({
               text={address}
             />
           </div>
-
           {/* 리뷰 */}
           <div className="md:pt-10">
             <ActivityDetailReviews
