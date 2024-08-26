@@ -90,7 +90,7 @@ const MyReservationCard = ({
             <Link href={`/activities/${activity.id}`}>
               <Image
                 src={`${activity.bannerImageUrl}`}
-                alt="activity bannerImage"
+                alt={`${activity.title}`}
                 fill
                 sizes="100%"
                 style={{ objectFit: "cover" }}
