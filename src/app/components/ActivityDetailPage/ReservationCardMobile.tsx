@@ -297,7 +297,11 @@ export default function ReservationCardMobile({
 
   const tileContent = (date: Date) => {
     const eachDate = format(date, "d");
-    return <div>{eachDate}</div>;
+    const today = new Date();
+    const isPastDate = format(date, "yyyy-MM-dd") < format(today, "yyyy-MM-dd");
+    return (
+      <div className={`${isPastDate && "text-[#a4a1aa]"}`}>{eachDate}</div>
+    );
   };
 
   // tileClassName function to conditionally add the 'react-calendar__tile--active' class
@@ -425,6 +429,7 @@ export default function ReservationCardMobile({
                       }
                       tileDisabled={disabledTiles}
                       tileClassName={tileClassName}
+                      showNeighboringMonth={false}
                     />
                   </div>
                 </div>

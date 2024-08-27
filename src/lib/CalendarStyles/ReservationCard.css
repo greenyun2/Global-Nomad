@@ -1,0 +1,110 @@
+.reservation-card .react-calendar {
+  width: 350px;
+  max-width: 100%;
+  border: 1px solid #eeeeee;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.125em;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.reservation-card
+  .react-calendar__tile.react-calendar__month-view__days__day--neighboringMonth {
+  color: #a4a1aa;
+}
+
+/* .reservation-card .react-calendar__month-view__days {
+    width: 100%;
+  } */
+
+.reservation-card .react-calendar__month-view__weekdays__weekday {
+  abbr {
+    text-decoration: none;
+  }
+}
+
+/* 기존의 각 date tile에 렌더링 되는 default 날짜들을 안보이게 설정 */
+.reservation-card .react-calendar__tile abbr {
+  display: none;
+}
+
+.reservation-card .react-calendar button {
+  margin: 0;
+  border: 0;
+  outline: none;
+}
+
+.reservation-card .react-calendar__navigation {
+  display: flex;
+  align-items: center;
+  height: 29px;
+  color: #1b1b1b;
+  font-weight: 700;
+}
+
+.reservation-card .react-calendar__navigation button {
+  min-width: 44px;
+}
+
+/* .reservation-card .react-calendar__navigation button:disabled {
+  background-color: #f0f0f0;
+} */
+
+.reservation-card .react-calendar__month-view__weekdays {
+  text-align: center;
+  /* text-transform: uppercase; */
+  font: inherit;
+  font-size: 0.75em;
+  font-weight: 700;
+  color: #4b4b4b;
+  font-size: 14px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.reservation-card .react-calendar__month-view__weekdays__weekday {
+  padding: 0.5em;
+}
+
+/* .reservation-card .react-calendar__month-view__weekNumbers .react-calendar__tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font: inherit;
+    font-size: 0.75em;
+    font-weight: bold;
+  } */
+
+.reservation-card .react-calendar__tile {
+  max-width: 100%;
+  padding: 10px 6.6667px;
+  background: none;
+  text-align: center;
+  font-size: 13px;
+  color: #4b4b4b;
+  font-weight: 600;
+  /* line-height: 18px; */
+  /* font: inherit; */
+}
+
+.reservation-card .react-calendar__tile--hasScedule {
+  background: #ced8d5;
+  color: #0b3b2d;
+  border-radius: 8px;
+  transform: scale(0.9);
+}
+
+.reservation-card .react-calendar__tile--selectedDate {
+  background: #0b3b2d;
+  color: white;
+  border-radius: 8px;
+  transform: scale(0.9); /* Shrink the entire tile content by 90% */
+  transition: transform 0.2s ease-in-out; /* Smooth transition */
+}
+
+.reservation-card
+  .react-calendar__navigation
+  button.react-calendar__navigation__label {
+  pointer-events: none; /* Disables clicking */
+  cursor: default; /* Change the cursor to default */
+}
