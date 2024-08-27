@@ -55,13 +55,15 @@ export default function EditActivity() {
       router.push("/mypage/activity-list");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError;
+        const axiosError = error as AxiosError<ErrorResponse>;
 
         if (axiosError.response) {
           const status = axiosError.response.status;
 
           if (status === 400) {
-            setPopUpMessage("제목은 문자열로 입력해주세요.");
+            const errorMessage =
+              axiosError.response.data.message || "잘못된 요청입니다.";
+            setPopUpMessage(errorMessage);
             togglePopUp();
           } else if (status === 409) {
             setPopUpMessage("겹치는 예약 가능 시간대가 존재합니다.");

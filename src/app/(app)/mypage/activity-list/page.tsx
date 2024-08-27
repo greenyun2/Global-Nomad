@@ -9,16 +9,26 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import EmptyState from "@components/EmptyState/EmptyState";
+import ConfirmModal from "./ConfirmModal";
 import MyActivityComponent from "./MyActivity";
 import { useDropdown } from "@hooks/useDropdown";
 import { MyActivityListContext } from "@context/MyActivityListContext";
 
 export default function ActivityList() {
-  const { isOpen: isPopUpOpen, toggle: togglePopUp, ref } = useDropdown();
+  const {
+    isOpen: isPopUpOpen,
+    toggle: togglePopUp,
+    ref: refPopUp,
+  } = useDropdown();
+  const {
+    isOpen: isConfirmOpen,
+    toggle: toggleConfirm,
+    ref: refConfirm,
+  } = useDropdown();
   const [popupMessage, setPopUpMessage] = useState("");
+  const [activityToDelete, setActivityToDelete] = useState<number | null>(null);
   const queryClient = useQueryClient();
   const router = useRouter();
-
   const context = useContext(MyActivityListContext);
 
   if (!context) {
@@ -56,7 +66,6 @@ export default function ActivityList() {
       const previousData = queryClient.getQueryData<MyActivityType[]>([
         "myActivityList",
       ]);
-
       return { previousData: previousData || [] };
     },
     onError: (err, variables, context) => {
@@ -80,7 +89,15 @@ export default function ActivityList() {
   });
 
   const handleDelete = (id: number) => {
-    mutation.mutate(id);
+    setActivityToDelete(id);
+    toggleConfirm(); // 모달 열기/닫기
+  };
+
+  const confirmDelete = () => {
+    if (activityToDelete !== null) {
+      mutation.mutate(activityToDelete);
+      toggleConfirm(); // 삭제 후 모달 닫기
+    }
   };
 
   const handleRegisterClick = () => {
@@ -93,7 +110,14 @@ export default function ActivityList() {
         <FormErrorMessageModal
           errorMessage={popupMessage}
           toggle={togglePopUp}
-          ref={ref}
+          ref={refPopUp}
+        />
+      )}
+      {isConfirmOpen && ( // 모달이 열려 있을 때만 렌더링
+        <ConfirmModal
+          ref={refConfirm}
+          toggle={toggleConfirm}
+          handleDelete={confirmDelete} // 삭제 작업 처리 함수 전달
         />
       )}
       <div>
