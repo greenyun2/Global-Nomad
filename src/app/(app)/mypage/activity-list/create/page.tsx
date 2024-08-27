@@ -30,38 +30,29 @@ export default function RegisterActivity() {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ErrorResponse>;
 
-        if (axiosError.response) {
-          const status = axiosError.response.status;
+        const status = axiosError.response?.status;
+        const errorMessage =
+          axiosError.response?.data.message ||
+          "예상치 못한 오류가 발생했습니다.";
 
-          if (status === 400) {
-            const errorMessage =
-              axiosError.response.data.message || "잘못된 요청입니다.";
-            setPopUpMessage(errorMessage);
-            togglePopUp();
-          } else if (status === 409) {
-            setPopUpMessage("겹치는 예약 가능 시간대가 존재합니다.");
-            togglePopUp();
-            return;
-          } else if (status === 401) {
-            setPopUpMessage("재로그인이 후 다시 시도해주세요.");
-            togglePopUp();
-          } else {
-            setPopUpMessage("예상치 못한 오류가 발생했습니다.");
-            togglePopUp();
-          }
+        if (status === 400) {
+          setPopUpMessage(errorMessage || "잘못된 요청입니다.");
+        } else if (status === 409) {
+          setPopUpMessage("겹치는 예약 가능 시간대가 존재합니다.");
+        } else if (status === 401) {
+          setPopUpMessage("재로그인 후 다시 시도해주세요.");
         } else {
-          setPopUpMessage("네트워크 오류가 발생했습니다. 다시 시도해 주세요.");
-          togglePopUp();
+          setPopUpMessage(errorMessage);
         }
       } else {
         console.log("An unexpected error occurred", error);
         setPopUpMessage("예상치 못한 오류가 발생했습니다.");
-        togglePopUp();
       }
+      togglePopUp();
     },
   });
 
-  const handleSubmit = async (formData: CreateActivityBody) => {
+  const handleSubmit = (formData: CreateActivityBody) => {
     mutation.mutate(formData);
   };
 
