@@ -11,14 +11,6 @@ export default function Footer() {
       <div className="container">
         <div className="flex flex-wrap items-center justify-center gap-3 text-lg text-[#4a524e] md:justify-between">
           <div className="">&copy; 2023 @codeit-2023</div>
-          <div className="flex gap-7">
-            <Link href="/privacy-policy" className="hover:underline">
-              Privacy Policy
-            </Link>
-            <Link href="/faq" className="hover:underline">
-              FAQ
-            </Link>
-          </div>
           <div className="flex gap-3">
             <Link
               href="https://www.facebook.com"
