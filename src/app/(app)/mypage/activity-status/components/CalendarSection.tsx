@@ -142,7 +142,7 @@ export default function CalendarSection() {
       {isOpen && selectedDate && (
         <div
           ref={ref}
-          className="fixed bottom-[160px] left-0 top-0 z-50 w-full md:absolute md:left-auto md:right-0 md:top-[70px] md:max-w-[429px]"
+          className="fixed inset-0 z-50 w-full md:absolute md:left-auto md:right-0 md:top-[70px] md:max-w-[429px]"
         >
           <PopUpMenu
             date={selectedDate}
