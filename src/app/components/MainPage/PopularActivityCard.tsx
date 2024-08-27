@@ -31,7 +31,7 @@ const PopularActivityCard = ({
               <span>{` (${reviewCount})`}</span>
             </p>
           </div>
-          <div className="max-w-[140px] text-[18px] font-semibold md:max-w-[240px] md:text-2xl xl:text-3xl">
+          <div className="max-w-[140px] break-all text-[18px] font-semibold md:max-w-[240px] md:text-2xl xl:text-3xl">
             {title}
           </div>
           <div className="text-lg font-bold md:text-xl">

@@ -19,7 +19,7 @@ export default function Search() {
     <>
       <section>
         <div className="relative flex h-[240px] w-full justify-center bg-[url('../../public/images/img_main_banner.png')] bg-cover bg-center md:h-[550px]">
-          <div className="relative -left-1/4 mt-[74px] flex flex-col gap-5 md:mt-[144px] xl:mt-[159px]">
+          <div className="container relative mt-[74px] flex flex-col gap-5 md:mt-[144px] xl:mt-[159px]">
             <h1 className="text-[24px] font-bold leading-tight text-white md:text-[54px] xl:text-[68px]">
               함께 배우면 즐거운
               <br /> 스트릿 댄스

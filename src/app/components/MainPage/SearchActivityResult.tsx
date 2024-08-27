@@ -53,7 +53,7 @@ const SearchActivityResult = () => {
         <p className="mb-6 text-lg">총 {searchTotalCount}개의 결과</p>
       </div>
       <div className="flex flex-col gap-[38px] md:gap-[72px] xl:gap-[64px]">
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
           {searchActivities.map((activity) => (
             <ActivityCard key={activity.id} cardData={activity} />
           ))}
