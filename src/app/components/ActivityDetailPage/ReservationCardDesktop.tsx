@@ -258,7 +258,7 @@ export default function ReservationCardDesktop({
         setActiveDate(activeStartDate);
 
         if (activeStartDate !== activeDate) {
-          setAvailableMessage("날짜를 선택해주세요!");
+          setAvailableMessage("날짜를 선택해주세요");
         }
       }
     }

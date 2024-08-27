@@ -7,6 +7,7 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { twMerge } from "tailwind-merge";
 import Modal from "@components/Modal/Modal";
 import Button from "../Button/Button";
 import kebabMenuIcon from "@icons/icon_menu.svg";
@@ -60,12 +61,13 @@ export default function ActivityHeaderKebabMenu({
         <Modal>
           <div className="relative flex h-[250px] flex-col items-center justify-center">
             <div>
-              <data className="flex items-center justify-center text-2lg font-medium text-[#333236]">
+              <span className="flex items-center justify-center text-2lg font-medium text-[#333236]">
                 {message !== null ? message : "정말로 삭제하시겠습니까?"}
-              </data>
+              </span>
             </div>
-            <div className="absolute bottom-7 right-7 flex justify-end gap-3">
+            <div className="flex w-full justify-center gap-3">
               <Button
+                className={twMerge("h-12 w-[7.5rem]")}
                 type="button"
                 size="md"
                 color="dark"
@@ -74,10 +76,11 @@ export default function ActivityHeaderKebabMenu({
                 확인
               </Button>
               <Button
+                className={twMerge("h-12 w-[7.5rem]")}
                 type="button"
                 onClick={() => setIsModal((prevClick) => !prevClick)}
                 size="md"
-                color="dark"
+                color="bright"
               >
                 취소
               </Button>
