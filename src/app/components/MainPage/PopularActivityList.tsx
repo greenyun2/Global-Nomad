@@ -27,6 +27,7 @@ const usePopularData = () => {
   return useQuery({
     queryKey: ["popularActivities"],
     queryFn: () => getPopularData(),
+    staleTime: 1000 * 60 * 5,
   });
 };
 

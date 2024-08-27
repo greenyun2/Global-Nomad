@@ -1,4 +1,4 @@
-import { MouseEvent, useState, useEffect, useRef } from "react";
+import { MouseEvent } from "react";
 import Slider from "react-slick";
 import Image from "next/image";
 import "slick-carousel/slick/slick-theme.css";
@@ -6,7 +6,6 @@ import "slick-carousel/slick/slick.css";
 import "./CategorySlider.css";
 import Sort from "./Sort";
 import { useDropdown } from "@hooks/useDropdown";
-import useOffsetSize from "@hooks/useOffsetSize";
 import icon_arrow_next from "@icons/icon_arrow_button.svg";
 import icon_arrow_prev from "@icons/icon_arrow_button_prev.svg";
 import icon_arrow_filter from "@icons/icon_arrow_filter.svg";
@@ -25,15 +24,6 @@ const CategorySort = ({
   currentCategory,
 }: CategorySortProps) => {
   const { ref, isOpen, toggle, close } = useDropdown();
-  const changeSize = useOffsetSize(1, 2, 3);
-  const [categoryState, setCategoryState] = useState(0);
-
-  const handleButtonClick = (value: number) => {
-    const nextCategory = categoryState + value;
-    if (nextCategory >= 0 && nextCategory <= changeSize) {
-      setCategoryState(nextCategory);
-    }
-  };
 
   const SlickButtonFix = (props: {
     children: JSX.Element;

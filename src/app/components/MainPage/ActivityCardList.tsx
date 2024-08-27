@@ -40,6 +40,7 @@ const useActivitiesData = (
   return useQuery({
     queryKey: ["activities", pageNum, size, category, sort],
     queryFn: () => getActivitiesData(pageNum, size, category, sort),
+    staleTime: 1000 * 60 * 5,
   });
 };
 

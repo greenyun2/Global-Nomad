@@ -26,6 +26,7 @@ const useSearch = (keyword: string, pageNum: number, size: number) => {
     queryKey: ["searchActivity", keyword, pageNum, size],
     queryFn: () => getSearch(keyword, pageNum, size),
     placeholderData: keepPreviousData,
+    staleTime: 1000 * 60 * 5,
   });
 };
 
