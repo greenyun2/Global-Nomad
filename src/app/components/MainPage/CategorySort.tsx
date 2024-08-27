@@ -52,17 +52,12 @@ const CategorySort = ({
     initialSlide: 0,
     nextArrow: (
       <SlickButtonFix>
-        <Image src={icon_arrow_next} alt="right arrow" fill />
+        <Image src={icon_arrow_next} alt="right arrow" />
       </SlickButtonFix>
     ),
     prevArrow: (
       <SlickButtonFix>
-        <Image
-          src={icon_arrow_prev}
-          alt="left arrow"
-          fill
-          style={{ top: "-2px" }}
-        />
+        <Image src={icon_arrow_prev} alt="left arrow" style={{ top: "-2px" }} />
       </SlickButtonFix>
     ),
     responsive: [
