@@ -1,14 +1,14 @@
 "use client";
 
+import { formatPriceKorean } from "@utils/formatPrice";
+
 type ValuePiece = Date | null;
 
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 interface ReservationCardProps {
-  price: number | string;
+  price: number;
   userId: number;
-  // Calendar: React.ReactNode;
-  // user: User | null;
   handleOpenReservationCard: () => void;
 }
 
@@ -42,7 +42,9 @@ export default function ReservationCardMobileOpener({
       <div className="fixed bottom-0 left-0 z-[9999] flex h-[83px] w-full justify-between border-t border-solid border-gray-600 bg-white px-4">
         <div className="flex flex-col gap-2 pb-[0.625rem] pt-4">
           <div className="flex items-center gap-1.5">
-            <h2 className="text-xl font-bold text-primary">{`₩ ${price}`}</h2>
+            <h2 className="text-xl font-bold text-primary">
+              {formatPriceKorean(price)}
+            </h2>
             <span className="text-xl font-semibold text-primary">/</span>
             {/** @TODO text-[]/[]으로 font-size, line-height 다른곳에서도 값 바꾸기*/}
             <span className="text-[1.125rem]/[1.625rem] font-medium text-green-300">

@@ -87,8 +87,8 @@ export default async function ActivityDetailPage({
         subImages={subImages}
       />
 
-      <div className="mb-[2.5rem] w-full pt-[0.9375rem] md:flex md:w-full md:gap-[0.875rem] md:pt-8 xl:gap-6 xl:pt-[5.3125rem]">
-        <div className="h-full md:w-[49.375rem] md:border-t md:border-solid md:border-primary md:border-opacity-25">
+      <div className="mb-[2.5rem] pt-[0.9375rem] md:flex md:w-full md:items-start md:justify-start md:gap-[0.875rem] md:pt-8 xl:gap-6 xl:pt-[5.3125rem]">
+        <div className="h-full md:w-full md:border-t md:border-solid md:border-primary md:border-opacity-25">
           {/* 체험 설명 */}
           <div className="flex h-auto w-full flex-col gap-[1rem] pb-4 md:pb-[2.125rem] md:pt-[2.5rem]">
             <h3 className="text-xl font-bold text-primary">체험 설명</h3>
