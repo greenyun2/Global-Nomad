@@ -27,7 +27,6 @@ const CategorySort = ({
   const { ref, isOpen, toggle, close } = useDropdown();
   const changeSize = useOffsetSize(1, 2, 3);
   const [categoryState, setCategoryState] = useState(0);
-  const categoryRef = useRef<HTMLDivElement>(null);
 
   const handleButtonClick = (value: number) => {
     const nextCategory = categoryState + value;
@@ -35,12 +34,6 @@ const CategorySort = ({
       setCategoryState(nextCategory);
     }
   };
-  // useEffect(() => {
-  //   if (categoryRef.current !== null) {
-  //     categoryRef.current.style.transition = "all 0.5s ease-in-out";
-  //     categoryRef.current.style.transform = `translateX(-${categoryState * 50}%)`;
-  //   }
-  // }, [categoryState, changeSize]);
 
   const SlickButtonFix = (props: {
     children: JSX.Element;
@@ -101,20 +94,6 @@ const CategorySort = ({
     <div className="flex justify-between gap-3 text-[16px] font-medium md:text-[18px]">
       {/* Category */}
       <div className="w-full overflow-hidden px-5">
-        {/* {categoryState !== 0 && (
-          <button
-            className="z-10 flex shrink-0 items-center"
-            onClick={() => handleButtonClick(-1)}
-          >
-            <Image
-              src={icon_arrow_prev}
-              alt="arrow prev"
-              width={42}
-              height={42}
-              style={{ width: 42, height: 42 }}
-            />
-          </button>
-        )} */}
         <div className="gap-[8px] md:gap-[14px] xl:gap-[24px]">
           <Slider {...settings}>
             {CATEGORIES.map((category) => (
@@ -129,21 +108,6 @@ const CategorySort = ({
             ))}
           </Slider>
         </div>
-
-        {/* {categoryState < changeSize && (
-          <button
-            className="flex shrink-0 items-center"
-            onClick={() => handleButtonClick(1)}
-          >
-            <Image
-              src={icon_arrow_next}
-              alt="arrow next"
-              width={42}
-              height={42}
-              style={{ width: 42, height: 42 }}
-            />
-          </button>
-        )} */}
       </div>
       {/* Sort */}
       <div ref={ref}>
