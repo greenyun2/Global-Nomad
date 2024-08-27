@@ -33,6 +33,8 @@ export default function MyReservationPage() {
   const FilteredData = reservations.filter(
     (reservation) => reservation.status === filter,
   );
+  const FilteredDataLength = FilteredData.length;
+  console.log(FilteredDataLength);
 
   return (
     <div>
@@ -41,7 +43,7 @@ export default function MyReservationPage() {
         <div ref={ref}>
           <button
             onClick={toggle}
-            className="mb-2 flex h-[41px] w-[100px] items-center justify-between rounded-[15px] border-2 border-primary px-[10px] py-[20px] text-primary md:h-[53px] md:w-[140px] md:px-[16px] xl:w-[127px]"
+            className="mb-2 flex h-[41px] w-[100px] items-center justify-between rounded-[15px] border border-primary px-[10px] py-[20px] text-primary md:h-[53px] md:w-[140px] md:px-[16px] xl:w-[127px]"
           >
             <p className="text-[14px] font-medium text-primary md:text-[18px]">
               {filter === "" && "전체"}
@@ -71,21 +73,25 @@ export default function MyReservationPage() {
         <EmptyState>체험 예약 내역이 없어요</EmptyState>
       ) : (
         <ul className="flex flex-col gap-4 xl:gap-6">
-          {filter === ""
-            ? reservations.map((reservation) => (
-                <MyReservationCard
-                  key={reservation.id}
-                  cardData={reservation}
-                  reservationId={reservation.id}
-                />
-              ))
-            : FilteredData.map((reservation) => (
-                <MyReservationCard
-                  key={reservation.id}
-                  cardData={reservation}
-                  reservationId={reservation.id}
-                />
-              ))}
+          {filter === "" ? (
+            reservations.map((reservation) => (
+              <MyReservationCard
+                key={reservation.id}
+                cardData={reservation}
+                reservationId={reservation.id}
+              />
+            ))
+          ) : FilteredDataLength === 0 ? (
+            <EmptyState>내역이 없습니다.</EmptyState>
+          ) : (
+            FilteredData.map((reservation) => (
+              <MyReservationCard
+                key={reservation.id}
+                cardData={reservation}
+                reservationId={reservation.id}
+              />
+            ))
+          )}
         </ul>
       )}
     </div>
