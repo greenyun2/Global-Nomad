@@ -20,7 +20,7 @@ import { twMerge } from "tailwind-merge";
 import Button from "../Button/Button";
 import Modal from "../Modal/Modal";
 import { formatPriceKorean } from "@utils/formatPrice";
-import "@lib/Calendar/ReservationCardStyle.css";
+import "@lib/CalendarStyles/ReservationCard.css";
 import icon_close from "@icons/icon_x_40px.svg";
 
 type ValuePiece = Date | null;
@@ -395,7 +395,7 @@ export default function ReservationCardMobile({
                       />
                     </button>
                   </div>
-                  <div className="flex justify-center">
+                  <div className="reservation-card flex justify-center">
                     <Calendar
                       locale="eng"
                       calendarType="gregory"
