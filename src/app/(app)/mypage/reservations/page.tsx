@@ -34,7 +34,6 @@ export default function MyReservationPage() {
     (reservation) => reservation.status === filter,
   );
   const FilteredDataLength = FilteredData.length;
-  console.log(FilteredDataLength);
 
   return (
     <div>
