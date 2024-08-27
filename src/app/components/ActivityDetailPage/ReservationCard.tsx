@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import ReservationCardMobile from "@app/components/ActivityDetailPage/ReservationCardMobile";
 import ReservationCardDesktop from "./ReservationCardDesktop";
-import ReservationCardMobile from "./ReservationCardMobile";
+import ReservationCardMobileOpener from "./ReservationCardMobileOpener";
 
 interface ReservationCardProps {
   activityId: number;
@@ -48,30 +49,44 @@ export default function ReservationCard({
   isLoginUserData,
 }: ReservationCardProps) {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const today = new Date();
 
-  /**
-   * 반응형 스타일
-   * 데스크탑 - 테블릿 - 모바일
-   */
+  const [openReservationCard, setOpenReservationCard] = useState(false);
+
+  const handleOpenReservationCard = () => {
+    setOpenReservationCard((prev) => !prev);
+  };
+
+  useEffect(() => {
+    !isMobile && setOpenReservationCard(false);
+  }, [isMobile]);
 
   return (
     <>
-      {isMobile ? (
+      {openReservationCard ? (
         <ReservationCardMobile
-          userId={userId}
-          price={price}
-          // Calendar={<Calendar locale="ko" calendarType="hebrew" value={date} />}
-        />
-      ) : (
-        <ReservationCardDesktop
           isLoginUserData={isLoginUserData}
           schedules={schedules}
           activityId={activityId}
           userId={userId}
           price={price}
+          handleCloseClick={handleOpenReservationCard}
         />
+      ) : (
+        <div className={`block md:hidden`}>
+          <ReservationCardMobileOpener
+            userId={userId}
+            price={price}
+            handleOpenReservationCard={handleOpenReservationCard}
+          />
+        </div>
       )}
+      <ReservationCardDesktop
+        isLoginUserData={isLoginUserData}
+        schedules={schedules}
+        activityId={activityId}
+        userId={userId}
+        price={price}
+      />
     </>
   );
 }

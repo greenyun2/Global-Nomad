@@ -7,3 +7,8 @@
 .slick-dots {
   bottom: 0.5rem;
 }
+
+.slick-prev,
+.slick-next {
+  z-index: 30 !important;
+}

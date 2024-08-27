@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import Calendar from "react-calendar";
+import Calendar, { TileArgs, TileDisabledFunc } from "react-calendar";
 import {
   useForm,
   Controller,
@@ -21,11 +21,13 @@ import {
 } from "@tanstack/react-query";
 import { time } from "console";
 import { format } from "date-fns";
+import Image from "next/image";
 import { twMerge } from "tailwind-merge";
 import Button from "../Button/Button";
 import Modal from "../Modal/Modal";
-import "./customCalendar.css";
 import { formatPriceKorean } from "@utils/formatPrice";
+import "@lib/Calendar/ReservationCardStyle.css";
+import icon_close from "@icons/icon_x_40px.svg";
 
 type ValuePiece = Date | null;
 
@@ -143,6 +145,7 @@ export default function ReservationCardDesktop({
   const [availableSchedule, setAvailableSchedule] = useState<Times[] | []>(
     todayScheduleTimes,
   );
+  const [selectedDate, setSelectedDate] = useState("");
 
   const modalRef = useRef(null);
   const queryClient = useQueryClient();
@@ -150,7 +153,9 @@ export default function ReservationCardDesktop({
   const mutation = useMutation({
     mutationFn: postApplicationReservation,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
+      queryClient.invalidateQueries({
+        queryKey: ["my-reservations", "availableSchedule"],
+      });
       setIsModal(true);
       setMessage(
         `${selectedTime}시간에 ${totalInfo.totalNumber}명 예약이 완료됐습니다.`,
@@ -285,20 +290,47 @@ export default function ReservationCardDesktop({
     }
   }, [data, isSuccess, activeDate, scheduleData]);
 
-  // 예약 가능 날짜에 파란색 점으로 표시
-  const reservationTile = (date: Date) => {
-    let tile;
-    if (date instanceof Date) {
-      const formatDate = format(date, "yyyy-MM-dd");
-      scheduleData.forEach((item) => {
-        item.date === formatDate
-          ? (tile = (
-              <div className="mx-auto h-1 w-1 rounded-full bg-blue-300"></div>
-            ))
-          : null;
-      });
+  const tileContent = (date: Date) => {
+    const eachDate = format(date, "d");
+    return <div>{eachDate}</div>;
+  };
+
+  const tileClassName = ({ date, view }: { date: Date; view: string }) => {
+    // 해당 date에 예약건이 있는지 확인합니다.
+    const hasSchedule = schedules?.find(
+      (schedule) => schedule.date == format(date, "yyyy-MM-dd"),
+    );
+
+    const isSelected = selectedDate == format(date, "yyyy-MM-dd");
+
+    if (view === "month") {
+      if (isSelected) {
+        return "react-calendar__tile--selectedDate";
+      } else if (hasSchedule) {
+        return "react-calendar__tile--hasScedule";
+      }
     }
-    return tile;
+    return null;
+  };
+
+  const disabledTiles: TileDisabledFunc = ({ date }: TileArgs) => {
+    const hasSchedule = schedules?.find(
+      (schedule) => schedule.date == format(date, "yyyy-MM-dd"),
+    );
+    const today = new Date();
+
+    if (!hasSchedule) {
+      return true;
+    } else if (format(date, "yyyy-MM-dd") < format(today, "yyyy-MM-dd")) {
+      return true;
+    }
+    return false;
+  };
+
+  const [isTabletModalClick, setIsTabletModalClick] = useState(false);
+
+  const handleOnTabletModalClick = () => {
+    setIsTabletModalClick((prevClick) => !prevClick);
   };
 
   return (
@@ -330,36 +362,182 @@ export default function ReservationCardDesktop({
       )}
 
       {isLoginUserData?.id !== userId && (
-        <form
-          // @TODO onSubmit 이벤트헨들러 수정
-          onSubmit={handlePostSubmit}
-          className="mt-[1px] flex h-[46.625rem] w-[24rem] flex-col gap-4 rounded-xl border border-solid border-gray-300 pb-[1.125rem] pt-6 shadow-[0_0.25rem_1rem_0_#1122110D]"
-        >
-          <section className="flex flex-col gap-4">
-            {/* 인당 가격 표시 */}
-            <div className="w-full pl-[1.028125rem]">
-              <p className="flex items-center gap-[0.3125rem] text-center text-3xl font-bold">
-                {formatPriceKorean(price)}
-                <span className="text-xl font-normal text-gray-800">/ 인</span>
-              </p>
-            </div>
-            {/* 달력 */}
-            <div className="flex justify-center">
-              <div className="flex w-[21rem] flex-col gap-4 border-t border-solid border-gray-300 pt-4">
-                <h3 className="text-xl/[1.625rem] font-bold text-primary">
-                  날짜
-                </h3>
-                <div className="flex justify-center">
+        <div className="hidden h-full md:block">
+          <form
+            // @TODO onSubmit 이벤트헨들러 수정
+            onSubmit={handlePostSubmit}
+            className="relative mt-[1px] flex h-full w-full flex-col gap-4 rounded-xl border border-solid border-gray-300 pb-[1.125rem] shadow-[0_0.25rem_1rem_0_#1122110D] md:w-[15.6875rem] xl:w-[24rem] xl:pb-0"
+          >
+            <section className="flex h-full flex-col gap-4">
+              {/* 인당 가격 표시 */}
+              <div className="w-full md:mt-6 md:block md:pl-6 xl:pl-[1.028125rem]">
+                <p className="flex items-center gap-[0.3125rem] text-center font-bold md:text-2xl xl:text-3xl">
+                  {formatPriceKorean(price)}
+                  <span className="font-normal text-gray-800 md:text-lg xl:text-xl">
+                    / 인
+                  </span>
+                </p>
+              </div>
+              {/* 달력 */}
+              <div className="flex md:justify-center">
+                <div className="flex w-[21rem] flex-col gap-4 border-t border-solid border-gray-300 px-6 pt-4 md:w-full">
+                  <h3 className="text-xl/[1.625rem] font-bold text-primary md:text-xl">
+                    날짜
+                  </h3>
+
+                  <button
+                    type="button"
+                    className="sm:hidden flex w-[87px] justify-start text-lg font-semibold text-primary md:block xl:hidden"
+                    onClick={handleOnTabletModalClick}
+                  >
+                    날짜 선택하기
+                  </button>
+
+                  <div className="flex justify-center md:hidden xl:block">
+                    <Calendar
+                      locale="eng"
+                      calendarType="gregory"
+                      value={value}
+                      tileContent={({ date }) => tileContent(date)}
+                      prev2Label={null}
+                      next2Label={null}
+                      onChange={onChange}
+                      minDate={TODAY}
+                      onClickDay={(date) => {
+                        setSelectedDate(format(date, "yyyy-MM-dd"));
+                        selectedDateChange(date);
+                      }}
+                      formatDay={(locale, date) => format(date, "dd")}
+                      minDetail="year"
+                      activeStartDate={activeDate}
+                      onActiveStartDateChange={({
+                        action,
+                        activeStartDate,
+                        value,
+                        view,
+                      }) =>
+                        handleOnActiveDateChange(action, value, activeStartDate)
+                      }
+                      onClickMonth={(value, event) =>
+                        handleOnClickViewMonth(value)
+                      }
+                      tileDisabled={disabledTiles}
+                      tileClassName={tileClassName}
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="flex h-full w-full flex-col items-start gap-[1.5rem] px-6">
+              <div className="w-full">
+                {/* 예약 스케쥴 버튼 */}
+                <div className="flex w-full flex-col gap-[0.875rem] border-b border-solid border-gray-300 pb-4 md:hidden xl:block">
+                  <h3 className="text-2lg font-bold text-primary xl:mb-[0.875rem]">
+                    예약 가능한 시간
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {availableSchedule.length > 0 ? (
+                      availableSchedule.map((item) => (
+                        <Button
+                          size="sm"
+                          className={twMerge(`h-[2.875rem] w-[7.3125rem]`)}
+                          color={
+                            buttonClick && activeButton === item.id
+                              ? "dark"
+                              : "bright"
+                          }
+                          onClick={() =>
+                            handleOnClick(item.id, item.startTime, item.endTime)
+                          }
+                          type="button"
+                          key={item.id}
+                        >
+                          <time>{item.startTime}</time>~
+                          <time>{item.endTime}</time>
+                        </Button>
+                      ))
+                    ) : (
+                      <span>{availableMessage}</span>
+                    )}
+                  </div>
+                </div>
+                {/* 참여 인원 수 */}
+                <div className="flex flex-col gap-2 pt-3 md:pt-[0.6875rem]">
+                  <h3 className="text-2lg font-bold text-primary">
+                    참여 인원 수
+                  </h3>
+                  <div className="flex w-[7.5rem] justify-start rounded-md border border-solid border-[#CDD0DC]">
+                    <button
+                      type="button"
+                      onClick={handleOnMinus}
+                      className="h-[2.5rem] w-[2.5rem]"
+                    >
+                      -
+                    </button>
+
+                    <input
+                      className="h-[2.5rem] w-[2.5rem] text-center"
+                      type="number"
+                      value={totalInfo.totalNumber}
+                      onChange={handleOnChangeInput}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={handleOnPlus}
+                      className="h-[2.5rem] w-[2.5rem]"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <Button
+                disabled={isDisabled}
+                type="submit"
+                size="lg"
+                color={isDisabled ? "bright" : "dark"}
+                className={twMerge(`rounded`)}
+              >
+                예약하기
+              </Button>
+              {/* 총 합계 */}
+              <div className="flex w-full items-center justify-between border-t border-solid border-gray-300 pb-4 pt-4">
+                <span className="text-xl font-bold text-primary">총 합계</span>
+                <span className="text-xl font-bold text-primary">
+                  {formatPriceKorean(totalInfo.totalPrice)}
+                </span>
+              </div>
+            </section>
+            {/* 테블릿 모달 */}
+            {isTabletModalClick && (
+              <div className="sm:hidden absolute right-0 top-[-3px] z-[9999] flex w-[30rem] flex-col justify-start rounded-3xl bg-white px-6 pb-[2rem] pt-[1.75rem]">
+                <div className="flex h-full w-full items-center justify-between">
+                  <h3 className="text-2xl font-bold text-black">날짜</h3>
+                  <button onClick={handleOnTabletModalClick} type="button">
+                    <Image
+                      width={40}
+                      height={40}
+                      src={icon_close}
+                      alt="close_icon"
+                    />
+                  </button>
+                </div>
+                <div className="mb-8 mt-5 flex h-full justify-center">
                   <Calendar
-                    locale="ko"
+                    locale="eng"
                     calendarType="gregory"
                     value={value}
-                    tileContent={({ date }) => reservationTile(date)}
+                    tileContent={({ date }) => tileContent(date)}
                     prev2Label={null}
                     next2Label={null}
                     onChange={onChange}
                     minDate={TODAY}
-                    onClickDay={(date) => selectedDateChange(date)}
+                    onClickDay={(date) => {
+                      setSelectedDate(format(date, "yyyy-MM-dd"));
+                      selectedDateChange(date);
+                    }}
                     formatDay={(locale, date) => format(date, "dd")}
                     minDetail="year"
                     activeStartDate={activeDate}
@@ -374,98 +552,55 @@ export default function ReservationCardDesktop({
                     onClickMonth={(value, event) =>
                       handleOnClickViewMonth(value)
                     }
-                    tileDisabled={({ date, view }) =>
-                      view !== "year" &&
-                      date.getTime() < new Date().setHours(0, 0, 0, 0)
-                    }
+                    tileDisabled={disabledTiles}
+                    tileClassName={tileClassName}
                   />
                 </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="flex h-[21.25rem] w-full flex-col items-start gap-[1.5rem] px-6">
-            <div className="w-full">
-              {/* 예약 스케쥴 버튼 */}
-              <div className="flex w-full flex-col gap-[0.875rem] border-b border-solid border-gray-300 pb-4">
-                <h3 className="text-2lg font-bold text-primary">
-                  예약 가능한 시간
-                </h3>
-                <div className="flex flex-wrap gap-3">
-                  {availableSchedule.length > 0 ? (
-                    availableSchedule.map((item) => (
-                      <Button
-                        size="sm"
-                        className={twMerge(`h-[2.875rem] w-[7.3125rem]`)}
-                        color={
-                          buttonClick && activeButton === item.id
-                            ? "dark"
-                            : "bright"
-                        }
-                        onClick={() =>
-                          handleOnClick(item.id, item.startTime, item.endTime)
-                        }
-                        type="button"
-                        key={item.id}
-                      >
-                        <time>{item.startTime}</time>~
-                        <time>{item.endTime}</time>
-                      </Button>
-                    ))
-                  ) : (
-                    <span>{availableMessage}</span>
-                  )}
+                <div className="sm:hidden mb-16 ml-[0.71875rem] flex h-full w-full flex-col gap-[0.875rem]">
+                  <h3 className="text-2lg font-bold text-primary">
+                    예약 가능한 시간
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {availableSchedule.length > 0 ? (
+                      availableSchedule.map((item) => (
+                        <Button
+                          size="sm"
+                          className={twMerge(`h-[2.875rem] w-[7.3125rem]`)}
+                          color={
+                            buttonClick && activeButton === item.id
+                              ? "dark"
+                              : "bright"
+                          }
+                          onClick={() =>
+                            handleOnClick(item.id, item.startTime, item.endTime)
+                          }
+                          type="button"
+                          key={item.id}
+                        >
+                          <time>{item.startTime}</time>~
+                          <time>{item.endTime}</time>
+                        </Button>
+                      ))
+                    ) : (
+                      <span>{availableMessage}</span>
+                    )}
+                  </div>
                 </div>
+                <Button
+                  disabled={isDisabled}
+                  type="submit"
+                  size="lg"
+                  color={isDisabled ? "bright" : "dark"}
+                  className=""
+                >
+                  예약하기
+                </Button>
               </div>
-              {/* 참여 인원 수 */}
-              <div className="flex flex-col gap-2 pt-3">
-                <h3 className="text-2lg font-bold text-primary">
-                  참여 인원 수
-                </h3>
-                <div className="flex w-[7.5rem] justify-start rounded-md border border-solid border-[#CDD0DC]">
-                  <button
-                    type="button"
-                    onClick={handleOnMinus}
-                    className="h-[2.5rem] w-[2.5rem]"
-                  >
-                    -
-                  </button>
+            )}
 
-                  <input
-                    className="h-[2.5rem] w-[2.5rem] text-center"
-                    type="number"
-                    value={totalInfo.totalNumber}
-                    onChange={handleOnChangeInput}
-                  />
-
-                  <button
-                    type="button"
-                    onClick={handleOnPlus}
-                    className="h-[2.5rem] w-[2.5rem]"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
-            <Button
-              disabled={isDisabled}
-              type="submit"
-              size="lg"
-              color={isDisabled ? "bright" : "dark"}
-              className=""
-            >
-              예약하기
-            </Button>
-            {/* 총 합계 */}
-            <div className="flex w-full items-center justify-between border-t border-solid border-gray-300 pt-4">
-              <span className="text-xl font-bold text-primary">총 합계</span>
-              <span className="text-xl font-bold text-primary">
-                {formatPriceKorean(totalInfo.totalPrice)}
-              </span>
-            </div>
-          </section>
-        </form>
+            {/* 테블릿 모달 */}
+          </form>
+        </div>
       )}
     </>
   );
