@@ -107,12 +107,12 @@ const MyReservationCard = ({
                   {activity.title}
                 </h3>
               </Link>
-              <div className="flex gap-3">
-                <span>{date}</span>
-                <span>
+              <div className="flex gap-3 text-sm md:text-lg xl:text-xl">
+                <p>{date}</p>
+                <p>
                   {startTime} - {endTime}
-                </span>
-                <span>{headCount}명</span>
+                </p>
+                <p>{headCount}명</p>
               </div>
             </div>
             <div className="mt-auto flex place-items-center justify-between">
