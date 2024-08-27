@@ -107,12 +107,12 @@ const MyReservationCard = ({
                   {activity.title}
                 </h3>
               </Link>
-              <div className="flex gap-3">
-                <span>{date}</span>
-                <span>
+              <div className="flex gap-3 text-sm md:text-lg xl:text-xl">
+                <p>{date}</p>
+                <p>
                   {startTime} - {endTime}
-                </span>
-                <span>{headCount}명</span>
+                </p>
+                <p>{headCount}명</p>
               </div>
             </div>
             <div className="mt-auto flex place-items-center justify-between">
@@ -122,7 +122,7 @@ const MyReservationCard = ({
               {status === "pending" && (
                 <button
                   onClick={toggleCancelModal}
-                  className="flex h-[32px] w-[80px] items-center justify-center rounded-md border-2 border-primary px-3 py-2 text-md font-bold md:h-[42px] md:w-[112px] md:text-lg xl:w-[144px]"
+                  className="flex h-[32px] w-[80px] items-center justify-center rounded-md border border-primary px-3 py-2 text-md font-bold md:h-[42px] md:w-[112px] md:text-lg xl:w-[144px]"
                 >
                   예약 취소
                 </button>

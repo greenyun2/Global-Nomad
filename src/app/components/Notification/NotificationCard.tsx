@@ -48,9 +48,8 @@ const NotificationCard = ({
           <Image src={icon_X} alt="delete notification" />
         </button>
       </div>
-      <div>
+      <div className="break-all">
         {content.split(confirmOrDecline)[0]}
-        <br />
         <div
           className={`${confirmOrDecline === "승인" ? "text-blue-300" : "text-red-100"} inline`}
         >
