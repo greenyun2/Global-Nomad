@@ -1,5 +1,9 @@
 import { MouseEvent, useState, useEffect, useRef } from "react";
+import Slider from "react-slick";
 import Image from "next/image";
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
+import "./CategorySlider.css";
 import Sort from "./Sort";
 import { useDropdown } from "@hooks/useDropdown";
 import useOffsetSize from "@hooks/useOffsetSize";
@@ -31,18 +35,73 @@ const CategorySort = ({
       setCategoryState(nextCategory);
     }
   };
-  useEffect(() => {
-    if (categoryRef.current !== null) {
-      categoryRef.current.style.transition = "all 0.5s ease-in-out";
-      categoryRef.current.style.transform = `translateX(-${categoryState * 50}%)`;
-    }
-  }, [categoryState, changeSize]);
+  // useEffect(() => {
+  //   if (categoryRef.current !== null) {
+  //     categoryRef.current.style.transition = "all 0.5s ease-in-out";
+  //     categoryRef.current.style.transform = `translateX(-${categoryState * 50}%)`;
+  //   }
+  // }, [categoryState, changeSize]);
+
+  const SlickButtonFix = (props: {
+    children: JSX.Element;
+    slideCount?: number;
+    currentSlide?: number;
+  }) => {
+    const { children, currentSlide, slideCount, ...others } = props;
+    return <span {...others}>{children}</span>;
+  };
+
+  const settings = {
+    dots: false,
+    infinite: false,
+    slidesToShow: 6,
+    slidesToScroll: 3,
+    initialSlide: 0,
+    nextArrow: (
+      <SlickButtonFix>
+        <Image src={icon_arrow_next} alt="right arrow" fill />
+      </SlickButtonFix>
+    ),
+    prevArrow: (
+      <SlickButtonFix>
+        <Image
+          src={icon_arrow_prev}
+          alt="left arrow"
+          fill
+          style={{ top: "-2px" }}
+        />
+      </SlickButtonFix>
+    ),
+    responsive: [
+      {
+        breakpoint: 1280,
+        settings: {
+          slidesToShow: 6,
+          slidesToScroll: 3,
+        },
+      },
+      {
+        breakpoint: 786,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 2,
+        },
+      },
+      {
+        breakpoint: 640,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+        },
+      },
+    ],
+  };
 
   return (
-    <div className="flex justify-between text-[16px] font-medium md:text-[18px]">
+    <div className="flex justify-between gap-3 text-[16px] font-medium md:text-[18px]">
       {/* Category */}
-      <div className="flex overflow-hidden">
-        {categoryState !== 0 && (
+      <div className="w-full overflow-hidden px-5">
+        {/* {categoryState !== 0 && (
           <button
             className="z-10 flex shrink-0 items-center"
             onClick={() => handleButtonClick(-1)}
@@ -55,23 +114,23 @@ const CategorySort = ({
               style={{ width: 42, height: 42 }}
             />
           </button>
-        )}
-        <div
-          ref={categoryRef}
-          className="flex gap-[8px] overflow-hidden md:gap-[14px] xl:gap-[24px]"
-        >
-          {CATEGORIES.map((category) => (
-            <button
-              className={`${category === currentCategory ? "bg-primary text-white" : "bg-white text-primary"} h-[41px] w-[100px] shrink-0 rounded-[15px] border border-primary hover:bg-primary hover:text-white md:h-[58px] md:w-[120px] xl:w-[127px]`}
-              key={category}
-              value={category}
-              onClick={onSetCategory}
-            >
-              {category}
-            </button>
-          ))}
+        )} */}
+        <div className="gap-[8px] md:gap-[14px] xl:gap-[24px]">
+          <Slider {...settings}>
+            {CATEGORIES.map((category) => (
+              <button
+                className={`${category === currentCategory ? "bg-primary text-white" : "bg-white text-primary"} h-[41px] shrink-0 whitespace-nowrap rounded-[15px] border border-primary hover:bg-primary hover:text-white md:h-[58px]`}
+                key={category}
+                value={category}
+                onClick={onSetCategory}
+              >
+                {category}
+              </button>
+            ))}
+          </Slider>
         </div>
-        {categoryState < changeSize && (
+
+        {/* {categoryState < changeSize && (
           <button
             className="flex shrink-0 items-center"
             onClick={() => handleButtonClick(1)}
@@ -84,7 +143,7 @@ const CategorySort = ({
               style={{ width: 42, height: 42 }}
             />
           </button>
-        )}
+        )} */}
       </div>
       {/* Sort */}
       <div ref={ref}>

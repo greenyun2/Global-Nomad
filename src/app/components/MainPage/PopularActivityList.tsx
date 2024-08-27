@@ -85,7 +85,7 @@ const PopularActivityList = () => {
   const totalCount = data?.totalCount || 0;
   const activities = data?.activities || [];
   const popularActivities = activities.slice(0, 6);
-  const [color, setColor] = useState("");
+  const [color, setColor] = useState("bright");
   const handleTextColor = (e: MouseEvent<HTMLButtonElement>) => {
     const button = e.target as HTMLButtonElement;
     setColor(button.value);
