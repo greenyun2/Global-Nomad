@@ -20,7 +20,7 @@ import { twMerge } from "tailwind-merge";
 import Button from "../Button/Button";
 import Modal from "../Modal/Modal";
 import { formatPriceKorean } from "@utils/formatPrice";
-import "@lib/Calendar/ReservationCardStyle.css";
+import "@lib/CalendarStyles/ReservationCard.css";
 import icon_close from "@icons/icon_x_40px.svg";
 
 type ValuePiece = Date | null;
@@ -297,7 +297,11 @@ export default function ReservationCardMobile({
 
   const tileContent = (date: Date) => {
     const eachDate = format(date, "d");
-    return <div>{eachDate}</div>;
+    const today = new Date();
+    const isPastDate = format(date, "yyyy-MM-dd") < format(today, "yyyy-MM-dd");
+    return (
+      <div className={`${isPastDate && "text-[#a4a1aa]"}`}>{eachDate}</div>
+    );
   };
 
   // tileClassName function to conditionally add the 'react-calendar__tile--active' class
@@ -395,7 +399,7 @@ export default function ReservationCardMobile({
                       />
                     </button>
                   </div>
-                  <div className="flex justify-center">
+                  <div className="reservation-card flex justify-center">
                     <Calendar
                       locale="eng"
                       calendarType="gregory"
@@ -425,6 +429,7 @@ export default function ReservationCardMobile({
                       }
                       tileDisabled={disabledTiles}
                       tileClassName={tileClassName}
+                      showNeighboringMonth={false}
                     />
                   </div>
                 </div>

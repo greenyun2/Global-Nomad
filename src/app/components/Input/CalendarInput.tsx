@@ -2,13 +2,14 @@
 
 import { ForwardedRef, forwardRef, useEffect, useState } from "react";
 import Calendar, { TileArgs, TileDisabledFunc } from "react-calendar";
-import "react-calendar/dist/Calendar.css";
+// import "react-calendar/dist/Calendar.css";
 // react-calendar 기본 css
 // date객체를 쉽게 format할 수 있는 library를 설치 했습니다.
 import { format } from "date-fns";
 import Image from "next/image";
 import { twMerge } from "tailwind-merge";
 import { useDropdown } from "@hooks/useDropdown";
+import "@lib/CalendarStyles/CalendarInput.css";
 import icon_calendar from "@icons/icon_calendar.svg";
 
 // react-calender용 types
@@ -77,7 +78,7 @@ const CalendarInput = forwardRef<HTMLInputElement, CalendarInputPropsType>(
           value={(value && format(value, "yy/MM/dd")) || dateformat2}
           ref={ref}
           className={twMerge(
-            `${invalid ? "border-red-100" : "border-gray-700"} h-[58px] w-full cursor-pointer rounded-[6px] border px-[16px] py-[20px] md:px-[16px] md:py-[20px] text-[16px] font-[400] text-black`,
+            `${invalid ? "border-red-100" : "border-gray-700"} h-[58px] w-full cursor-pointer rounded-[6px] border px-[16px] py-[20px] text-[16px] font-[400] text-black md:px-[16px] md:py-[20px]`,
             className,
           )}
           onClick={() => toggle()}
@@ -90,12 +91,16 @@ const CalendarInput = forwardRef<HTMLInputElement, CalendarInputPropsType>(
           onClick={() => toggle()}
         />
         {isDayPickerOpen ? (
-          <div className="absolute left-[210px] top-[15px] z-50">
+          <div className="calendar-input absolute top-[50px] z-50 md:left-[120px] xl:left-[390px]">
             {/* 1. 유저가 날짜를 선택하면 selectedDate에 값을 저장합니다. */}
             <Calendar
               onChange={setSelectedDate}
               onClickDay={() => toggle()}
               tileDisabled={disabledTiles}
+              showNeighboringMonth={false}
+              prev2Label={false}
+              next2Label={false}
+              calendarType="gregory"
             />
           </div>
         ) : null}

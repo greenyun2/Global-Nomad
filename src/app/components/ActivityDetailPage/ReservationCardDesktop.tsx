@@ -26,7 +26,7 @@ import { twMerge } from "tailwind-merge";
 import Button from "../Button/Button";
 import Modal from "../Modal/Modal";
 import { formatPriceKorean } from "@utils/formatPrice";
-import "@lib/Calendar/ReservationCardStyle.css";
+import "@lib/CalendarStyles/ReservationCard.css";
 import icon_close from "@icons/icon_x_40px.svg";
 
 type ValuePiece = Date | null;
@@ -292,7 +292,11 @@ export default function ReservationCardDesktop({
 
   const tileContent = (date: Date) => {
     const eachDate = format(date, "d");
-    return <div>{eachDate}</div>;
+    const today = new Date();
+    const isPastDate = format(date, "yyyy-MM-dd") < format(today, "yyyy-MM-dd");
+    return (
+      <div className={`${isPastDate && "text-[#a4a1aa]"}`}>{eachDate}</div>
+    );
   };
 
   const tileClassName = ({ date, view }: { date: Date; view: string }) => {
@@ -392,8 +396,7 @@ export default function ReservationCardDesktop({
                   >
                     날짜 선택하기
                   </button>
-
-                  <div className="flex justify-center md:hidden xl:block">
+                  <div className="reservation-card flex justify-center md:hidden xl:block">
                     <Calendar
                       locale="eng"
                       calendarType="gregory"
@@ -423,6 +426,7 @@ export default function ReservationCardDesktop({
                       }
                       tileDisabled={disabledTiles}
                       tileClassName={tileClassName}
+                      showNeighboringMonth={false}
                     />
                   </div>
                 </div>
@@ -512,7 +516,7 @@ export default function ReservationCardDesktop({
             </section>
             {/* 테블릿 모달 */}
             {isTabletModalClick && (
-              <div className="sm:hidden absolute right-0 top-[-3px] z-[9999] flex w-[30rem] flex-col justify-start rounded-3xl bg-white px-6 pb-[2rem] pt-[1.75rem]">
+              <div className="sm:hidden absolute right-0 top-[-3px] z-[9999] flex w-[30rem] flex-col justify-start rounded-3xl bg-white px-6 pb-[2rem] pt-[1.75rem] xl:hidden">
                 <div className="flex h-full w-full items-center justify-between">
                   <h3 className="text-2xl font-bold text-black">날짜</h3>
                   <button onClick={handleOnTabletModalClick} type="button">
@@ -524,7 +528,7 @@ export default function ReservationCardDesktop({
                     />
                   </button>
                 </div>
-                <div className="mb-8 mt-5 flex h-full justify-center">
+                <div className="reservation-card mb-8 mt-5 flex h-full justify-center">
                   <Calendar
                     locale="eng"
                     calendarType="gregory"
@@ -554,6 +558,7 @@ export default function ReservationCardDesktop({
                     }
                     tileDisabled={disabledTiles}
                     tileClassName={tileClassName}
+                    showNeighboringMonth={false}
                   />
                 </div>
                 <div className="sm:hidden mb-16 ml-[0.71875rem] flex h-full w-full flex-col gap-[0.875rem]">

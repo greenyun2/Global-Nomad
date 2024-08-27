@@ -10,7 +10,7 @@ import PrevMonthIcon from "./PrevMonthIcon";
 import { useDropdown } from "@hooks/useDropdown";
 import useMonthlyReservations from "@hooks/useMonthlyReservations";
 import useMyActivityList from "@hooks/useMyActivityList";
-import "@lib/Calendar/MyActivityStatusCalendar.css";
+import "@lib/CalendarStyles/MyActivityStatusCalendar.css";
 
 type ValuePiece = Date | null;
 
@@ -115,7 +115,7 @@ export default function CalendarSection() {
   };
 
   return (
-    <div className="relative flex items-center">
+    <div className="my-activity-calendar relative flex items-center">
       <Calendar
         value={value}
         onChange={onChange}
@@ -142,7 +142,7 @@ export default function CalendarSection() {
       {isOpen && selectedDate && (
         <div
           ref={ref}
-          className="fixed bottom-[160px] left-0 top-0 z-50 w-full md:absolute md:left-auto md:right-0 md:top-[70px] md:max-w-[429px]"
+          className="fixed inset-0 z-50 w-full md:absolute md:left-auto md:right-0 md:top-[70px] md:max-w-[429px]"
         >
           <PopUpMenu
             date={selectedDate}

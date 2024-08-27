@@ -308,7 +308,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
 
   const handleFormSubmit = async (data: ModifiedEditorSchemaType) => {
     let finalData: ModifiedEditorSchemaType;
-  
+
     if (initialData) {
       const filteredSchedulesToAdd =
         data.schedules?.filter((schedule) => !schedule.id) || [];
@@ -317,7 +317,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
           (url) =>
             !initialData.subImages.some((img: any) => img.imageUrl === url),
         ) || [];
-  
+
       finalData = {
         title: data.title,
         category: data.category,
@@ -344,7 +344,7 @@ export default function Editor({ initialData, onSubmit }: EditorProps) {
         subImageUrls: data.subImageUrls, // 그대로 전송
       };
     }
-  
+
     console.log("Submitting data:", finalData);
     onSubmit(finalData);
   };

@@ -18,10 +18,10 @@ axiosServer.interceptors.request.use(
     const cookieStore = cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
 
-    console.log(
-      "🔥 axiosServer: current accessToken from browser cookie 👉",
-      accessToken,
-    );
+    // console.log(
+    //   "🔥 axiosServer: current accessToken from browser cookie 👉",
+    //   accessToken,
+    // );
 
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
