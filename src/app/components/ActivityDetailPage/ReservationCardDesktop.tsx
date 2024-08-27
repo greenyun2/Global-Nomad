@@ -277,6 +277,7 @@ export default function ReservationCardDesktop({
   const { data, isSuccess } = useQuery({
     queryKey: ["availableSchedule", activityId, year, month],
     queryFn: () => getActivityDetailSchedule({ activityId, year, month }),
+    staleTime: 5 * 60 * 1000,
   });
 
   useEffect(() => {
@@ -516,7 +517,7 @@ export default function ReservationCardDesktop({
             </section>
             {/* 테블릿 모달 */}
             {isTabletModalClick && (
-              <div className="sm:hidden absolute right-0 top-[-3px] z-[9999] flex w-[30rem] flex-col justify-start rounded-3xl bg-white px-6 pb-[2rem] pt-[1.75rem] xl:hidden">
+              <div className="sm:hidden absolute right-0 top-[-3px] z-[40] flex w-[30rem] flex-col justify-start rounded-3xl bg-white px-6 pb-[2rem] pt-[1.75rem] xl:hidden">
                 <div className="flex h-full w-full items-center justify-between">
                   <h3 className="text-2xl font-bold text-black">날짜</h3>
                   <button onClick={handleOnTabletModalClick} type="button">

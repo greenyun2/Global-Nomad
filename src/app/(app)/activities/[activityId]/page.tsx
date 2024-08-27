@@ -109,11 +109,7 @@ export default async function ActivityDetailPage({
           </div>
           {/* 리뷰 */}
           <div className="md:pt-10">
-            <ActivityDetailReviews
-            // reviews={reviews}
-            // totalCount={totalCount}
-            // averageRating={averageRating}
-            />
+            <ActivityDetailReviews />
           </div>
         </div>
         {/* 예약 카드 */}

@@ -32,11 +32,6 @@ export default function ActivityHeaderKebabMenu({
     setIsModal(true);
   };
 
-  /**
-   * 삭제 기능 => 삭제시 useQuery로 클라이언트측에 렌더링되는 데이터 invalidDateQueries 데이터 무효화 해주기
-   * popularActivities, queryKey: ["activities", pageNum, size, category, sort], myActivityList
-   */
-
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: deleteMyActivityPage,
@@ -55,17 +50,22 @@ export default function ActivityHeaderKebabMenu({
     mutation.mutate({ activityId });
   };
 
+  /**
+   * @TODO 모달정리, useQuery staleTime 5분 작성
+   */
+
   return (
     <>
+      {/* 모달 삭제 클릭시 모달 레이아웃 정리, 모달 배경 클릭시 닫히게 */}
       {isModal && (
         <Modal>
-          <div className="relative flex h-[250px] flex-col items-center justify-center">
+          <div className="flex h-[250px] flex-col items-center justify-end pb-7">
             <div>
               <span className="flex items-center justify-center text-2lg font-medium text-[#333236]">
                 {message !== null ? message : "정말로 삭제하시겠습니까?"}
               </span>
             </div>
-            <div className="flex w-full justify-center gap-3">
+            <div className="mt-10 flex w-full justify-center gap-3">
               <Button
                 className={twMerge("h-12 w-[7.5rem]")}
                 type="button"

@@ -266,6 +266,7 @@ export default function ReservationCardMobile({
   const { data, isSuccess } = useQuery({
     queryKey: ["availableSchedule", activityId, year, month],
     queryFn: () => getActivityDetailSchedule({ activityId, year, month }),
+    staleTime: 5 * 60 * 1000,
   });
 
   useEffect(() => {
