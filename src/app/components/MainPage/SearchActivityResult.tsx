@@ -13,7 +13,7 @@ const getSearch = async (keyword: string, pageNum: number, size: number) => {
   const params = new URLSearchParams({
     method: "offset",
     keyword,
-    page: String(pageNum + 1),
+    page: String(pageNum),
     size: String(size),
   });
   const response = await instance.get<ActivityResponse>(
@@ -31,7 +31,7 @@ const useSearch = (keyword: string, pageNum: number, size: number) => {
 };
 
 const SearchActivityResult = () => {
-  const [currentPageNum, setCurrentPageNum] = useState(0);
+  const [currentPageNum, setCurrentPageNum] = useState(1);
   const searchParams = useSearchParams();
   const currentPageGroup = Math.floor(currentPageNum / 5);
   const currentSize = useOffsetSize();
