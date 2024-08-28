@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { MouseEvent } from "react";
 import instance from "@api/axios";
 import { ActivityResponse } from "@customTypes/MainPage";
@@ -20,7 +20,7 @@ const getActivitiesData = async (
 ) => {
   const params = new URLSearchParams({
     method: "offset",
-    page: String(pageNum + 1),
+    page: String(pageNum),
     size: String(size),
   });
   if (category) params.append("category", category);
@@ -45,16 +45,14 @@ const useActivitiesData = (
 };
 
 const ActivityCardList = () => {
-  const [currentPageNum, setCurrentPageNum] = useState(0); // 현재 페이지 번호
+  const [currentPageNum, setCurrentPageNum] = useState(1); // 현재 페이지 번호
   const [currentCategory, setCurrentCategory] = useState(""); // 현재 카테고리
   const [currentSort, setCurrentSort] = useState(""); // 현재 정렬
   const currentPageGroup = Math.floor(currentPageNum / 5); // 현재 페이지 그룹 계산
   const currentSize = useOffsetSize(); // 페이지의 데이터 수 - 화면 크기에 따라 결정
-
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  // const sortParams = searchParams.get("sort");
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -67,10 +65,9 @@ const ActivityCardList = () => {
 
   const handlePageNum = (pageNum: number) => {
     setCurrentPageNum(pageNum);
-    router.push(
-      pathname + "?" + createQueryString("page", String(pageNum + 1)),
-      { scroll: false },
-    );
+    router.push(pathname + "?" + createQueryString("page", String(pageNum)), {
+      scroll: false,
+    });
   };
 
   const handleSort = (e: MouseEvent<HTMLButtonElement>) => {
@@ -84,7 +81,7 @@ const ActivityCardList = () => {
     router.push(`/?${query}`, {
       scroll: false,
     });
-    setCurrentPageNum(0);
+    setCurrentPageNum(1);
   };
 
   const handleCategory = (e: MouseEvent<HTMLButtonElement>) => {
@@ -101,9 +98,17 @@ const ActivityCardList = () => {
       });
       router.push(`/?${query}`, { scroll: false });
     }
-    setCurrentPageNum(0);
+    setCurrentPageNum(1);
   };
+  useEffect(() => {
+    const sort = searchParams.get("sort");
+    const page = searchParams.get("page");
+    const category = searchParams.get("category");
 
+    setCurrentSort(sort || "");
+    setCurrentPageNum(Number(page) || 1);
+    setCurrentCategory(category || "");
+  }, [searchParams]);
   const { data } = useActivitiesData(
     currentPageNum,
     currentSize,
