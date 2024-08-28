@@ -1,6 +1,8 @@
 /* 기본 버튼의 화살표를 초기화 */
 .slick-next::before,
-.slick-prev::before {
+.slick-next::after,
+.slick-prev::before,
+.slick-prev::after {
   display: none;
 }
 /* 슬라이더의 도트 위치 */

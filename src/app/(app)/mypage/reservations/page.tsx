@@ -16,6 +16,7 @@ const useMyReservation = (size: 500, cursorId?: number, status?: string) => {
   return useQuery({
     queryKey: ["my-reservations"],
     queryFn: () => getMyReservation(size),
+    staleTime: 1000 * 60 * 5,
   });
 };
 

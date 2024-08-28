@@ -1,8 +1,6 @@
 import { ForwardedRef, forwardRef } from "react";
 import DaumPostcode from "react-daum-postcode";
 import Modal from "@app/components/Modal/Modal";
-import Image from "next/image";
-import IconClose from "@icons/icon_x_medium_24px.svg";
 
 type AddressModalProps = {
   ref: ForwardedRef<HTMLDivElement>;

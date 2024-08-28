@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import Slider from "react-slick";
 import { Settings } from "react-slick";
 import Image from "next/image";
+import { block } from "sharp";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import "./slick.css";
@@ -44,14 +45,16 @@ export default function ActivityImageSlider({
           ...style,
           display: "block",
           cursor: "pointer",
-          width: "2.5rem",
-          height: "2.5rem",
           zIndex: "9999",
-          right: "1rem",
+          right: "2rem",
+          width: "24px",
+          height: "47px",
+          top: "50%",
+          transform: "translateY(-50%)",
         }}
         onClick={onClick}
       >
-        <div className="flex h-[2.9375rem] w-6 items-center justify-center rounded bg-black">
+        <div className="flex h-full w-full items-center justify-center rounded bg-black">
           <div className="relative h-3 w-[0.375rem]">
             <Image fill src={nextArrow} alt="다음 버튼" />
           </div>
@@ -69,14 +72,16 @@ export default function ActivityImageSlider({
           ...style,
           display: "block",
           cursor: "pointer",
-          width: "2.5rem",
-          height: "2.5rem",
           zIndex: "9999",
-          left: "1rem",
+          left: "2rem",
+          width: "24px",
+          height: "47px",
+          top: "50%",
+          transform: "translateY(-50%)",
         }}
         onClick={onClick}
       >
-        <div className="flex h-[2.9375rem] w-6 items-center justify-center rounded bg-black">
+        <div className="flex h-full w-full items-center justify-center rounded bg-black">
           <div className="relative h-3 w-[0.375rem]">
             <Image fill src={prevArrow} alt="다음 버튼" />
           </div>
@@ -85,18 +90,15 @@ export default function ActivityImageSlider({
     );
   };
 
-  const settings = useMemo(
-    () => ({
-      dots: true,
-      infinite: true,
-      slidesToShow: 1,
-      slidesToScroll: 1,
-      initialSlide: 0,
-      nextArrow: <CustomNextButton />,
-      prevArrow: <CustomPrevButton />,
-    }),
-    [],
-  );
+  const settings = {
+    dots: true,
+    infinite: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    initialSlide: 0,
+    nextArrow: <CustomNextButton />,
+    prevArrow: <CustomPrevButton />,
+  };
 
   return (
     <div className="h-[19.375rem] w-full overflow-hidden md:relative md:h-[19.375rem] xl:h-[33.375rem]">

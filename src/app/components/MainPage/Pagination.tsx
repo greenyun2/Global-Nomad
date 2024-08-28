@@ -50,19 +50,17 @@ const Pagination = ({
   setPageNum,
 }: PaginationProps) => {
   const totalPage = Math.ceil(totalCount / offsetLimit); // 전체 페이지 수 계산
-  const pageNumberArray = new Array(totalPage).fill(0).map((v, i) => v + i); // 페이지 숫자 배열 생성
+  const pageNumberArray = new Array(totalPage).fill(1).map((v, i) => v + i); // 페이지 숫자 배열 생성
   const pageGroupArray = []; // 페이지 그룹 배열 생성
   // 페이지 그룹 배열
   for (let i = 0; i < pageNumberArray.length; i += GROUP_LIMIT) {
     pageGroupArray.push(pageNumberArray.slice(i, i + GROUP_LIMIT));
   }
-
   // '<' 버튼 클릭했을 때
   const handleLeftClick = () => {
-    if (currentPage === 0) return;
+    if (currentPage === 1) return;
     setPageNum(currentPage - 1);
   };
-
   // '>' 버튼 클릭했을 때
   const handleRightClick = () => {
     const lastPage = pageNumberArray.length - 1;
@@ -82,13 +80,13 @@ const Pagination = ({
       <button
         onClick={handleLeftClick}
         className={
-          currentPage === 0 || totalCount === 0
+          currentPage === 1 || totalCount === 0
             ? ARROW_BUTTON_STYLE.disabled
             : ARROW_BUTTON_STYLE.active
         }
-        disabled={currentPage === 0 || totalCount === 0}
+        disabled={currentPage === 1 || totalCount === 0}
       >
-        {currentPage === 0 || totalCount === 0 ? (
+        {currentPage === 1 || totalCount === 0 ? (
           <Image src={Arrow_Left} alt="arrow left" />
         ) : (
           <LeftArrowOn />
@@ -103,7 +101,7 @@ const Pagination = ({
             onClick={handlePageClick}
             className={`${currentPage === pageNum ? "bg-primary text-white" : "border border-primary bg-white text-primary"} flex h-[40px] w-[40px] items-center justify-center rounded-[15px] text-[18px] md:h-[55px] md:w-[55px]`}
           >
-            {pageNum + 1}
+            {pageNum}
           </button>
         ))}
       {/* '>' 버튼 - 끝 페이지일 때 비활성화 */}

@@ -17,6 +17,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
+      <head>
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/icons/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/icons/favicon-16x16.png"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="120x120"
+          href="/icons/apple-touch-icon.png"
+        />
+        <meta name="theme-color" content="#ffffff" />
+      </head>
       <body className="min-w-96 antialiased">
         <AuthProvider>
           <ReactQueryProvider>

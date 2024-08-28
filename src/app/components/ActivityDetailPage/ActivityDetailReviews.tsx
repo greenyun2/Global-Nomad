@@ -41,7 +41,7 @@ const useActivityReviews = (activityId: number, page: number, size: number) => {
 };
 
 export default function ActivityDetailReviews() {
-  const [currentPageNum, setCurrentPageNum] = useState(0); // 현재 페이지 번호
+  const [currentPageNum, setCurrentPageNum] = useState(1); // 현재 페이지 번호
   const currentPageGroup = Math.floor(currentPageNum / 5); // 현재 페이지 그룹 계산
   const currentSize = 3; // 페이지의 데이터 수
   const pathname = usePathname();
@@ -50,11 +50,7 @@ export default function ActivityDetailReviews() {
   };
   const activityId = Number(pathname.slice(12));
 
-  const { data } = useActivityReviews(
-    activityId,
-    currentPageNum + 1,
-    currentSize,
-  );
+  const { data } = useActivityReviews(activityId, currentPageNum, currentSize);
   const rating = data?.averageRating || 0;
   const activityReviews = data?.reviews || [];
   const total = data?.totalCount || 0;
