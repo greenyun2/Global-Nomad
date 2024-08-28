@@ -148,14 +148,13 @@ export default function ReservationCardDesktop({
   const [selectedDate, setSelectedDate] = useState("");
 
   const modalRef = useRef(null);
-  const queryClient = useQueryClient();
 
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: postApplicationReservation,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["my-reservations", "availableSchedule"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
+      queryClient.invalidateQueries({ queryKey: ["availableSchedule"] });
       setIsModal(true);
       setMessage(
         `${selectedTime}시간에 ${totalInfo.totalNumber}명 예약이 완료됐습니다.`,

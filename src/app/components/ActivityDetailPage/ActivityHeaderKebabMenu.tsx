@@ -36,9 +36,9 @@ export default function ActivityHeaderKebabMenu({
   const mutation = useMutation({
     mutationFn: deleteMyActivityPage,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["activities", "myActivityList", "popularActivities"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["activities"] });
+      queryClient.invalidateQueries({ queryKey: ["myActivityList"] });
+      queryClient.invalidateQueries({ queryKey: ["popularActivities"] });
       router.replace("/");
     },
     onError: (error) => {

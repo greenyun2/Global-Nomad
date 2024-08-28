@@ -10,6 +10,7 @@ import ActivityIconWrap from "@app/components/ActivityDetailPage/ActivityIconWra
 import ActivityImageSlider from "@app/components/ActivityDetailPage/ActivityImageSlider";
 import ActivityKakaoMap from "@app/components/ActivityDetailPage/ActivityKakaoMap";
 import ReservationCard from "@app/components/ActivityDetailPage/ReservationCard";
+import type { Metadata, ResolvingMetadata } from "next";
 
 interface ActivityDetailPageProps {
   params: {
@@ -17,42 +18,48 @@ interface ActivityDetailPageProps {
   };
 }
 
-type User = {
-  id: number;
-  email: string;
-  nickname?: string;
-  profileImageUrl?: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
 const TODAY = new Date();
 const TODAY_DATE = TODAY.toISOString().split("T").join("").split("-");
 const TODAY_YEAR = TODAY_DATE[0];
 const TODAY_MONTH = TODAY_DATE[1];
+
+// 동적 메타 데이터 설정
+export async function generateMetadata(
+  { params }: ActivityDetailPageProps,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const activityId = Number(params.activityId);
+
+  const product = await getActivityDetailList({ activityId });
+
+  const previousImages = (await parent).openGraph?.images || [];
+
+  return {
+    title: `${product.title} | globalNomad`,
+    description: product.description,
+    openGraph: {
+      images: [product.bannerImageUrl, ...previousImages],
+    },
+  };
+}
 
 export default async function ActivityDetailPage({
   params,
 }: ActivityDetailPageProps) {
   const activityId = Number(params.activityId);
 
-  const [
-    isLoginUserData,
-    activityDetailList,
-    // activityDetailReviews,
-    activityDetailSchedules,
-  ] = await Promise.all([
-    getUserMeServer(),
-    getActivityDetailList({
-      activityId,
-    }),
-    // getActivityDetailReviews({ activityId }),
-    getActivityDetailSchedule({
-      activityId,
-      year: TODAY_YEAR,
-      month: TODAY_MONTH,
-    }),
-  ]);
+  const [isLoginUserData, activityDetailList, activityDetailSchedules] =
+    await Promise.all([
+      getUserMeServer(),
+      getActivityDetailList({
+        activityId,
+      }),
+      getActivityDetailSchedule({
+        activityId,
+        year: TODAY_YEAR,
+        month: TODAY_MONTH,
+      }),
+    ]);
 
   const {
     category,
@@ -66,9 +73,6 @@ export default async function ActivityDetailPage({
     price,
     userId,
   } = activityDetailList;
-
-  // const { reviews, totalCount, averageRating } = activityDetailReviews;
-
   return (
     <div className="container h-full w-full pt-4 md:pt-6 xl:pt-[4.875rem]">
       <ActivityHeader
