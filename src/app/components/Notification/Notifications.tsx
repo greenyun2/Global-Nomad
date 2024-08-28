@@ -21,6 +21,7 @@ const useNotification = (size?: number, cursorId?: number | null) => {
   return useQuery({
     queryKey: ["notification"],
     queryFn: () => getNotification(size, cursorId),
+    staleTime: 1000 * 60 * 5,
   });
 };
 
