@@ -10,7 +10,10 @@ export const signUpSchema = z
       .string({ required_error: "비밀번호를 입력해 주세요" })
       .min(8, { message: "8자리 이상 입력해 주세요" }),
     confirmPassword: z.string(),
-    nickname: z.string().min(1, { message: "닉네임을 입력해 주세요" }),
+    nickname: z
+      .string()
+      .min(1, { message: "닉네임을 입력해 주세요" })
+      .max(10, { message: "닉네임은 10자 이하로 작성해 주세요." }),
   })
   .refine((data) => data.password == data.confirmPassword, {
     message: "비밀번호가 일치하지 않습니다",

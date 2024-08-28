@@ -13,6 +13,7 @@ const useDailySchedulesReservations = (
   } = useQuery<TScheduleReservationsStatus[]>({
     queryKey: ["dailyReservations", date, selectedActivityId],
     queryFn: () => getDailyReservations(date, selectedActivityId),
+    staleTime: 1000 * 60 * 5,
   });
 
   const activityTimeOptions = dailyReservations?.map((dailyReservation) => {

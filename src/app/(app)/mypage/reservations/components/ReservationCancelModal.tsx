@@ -25,6 +25,7 @@ export const ReservationCancelModal = forwardRef<
       });
     },
   });
+
   const handleDelete = () => {
     mutate(reservationId);
     toggle();

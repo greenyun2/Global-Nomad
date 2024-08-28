@@ -301,8 +301,8 @@ export default function ReservationCardDesktop({
 
   const tileClassName = ({ date, view }: { date: Date; view: string }) => {
     // 해당 date에 예약건이 있는지 확인합니다.
-    const hasSchedule = schedules?.find(
-      (schedule) => schedule.date == format(date, "yyyy-MM-dd"),
+    const hasSchedule = scheduleData?.find(
+      (scheduleData) => scheduleData.date == format(date, "yyyy-MM-dd"),
     );
 
     const isSelected = selectedDate == format(date, "yyyy-MM-dd");
@@ -318,8 +318,8 @@ export default function ReservationCardDesktop({
   };
 
   const disabledTiles: TileDisabledFunc = ({ date }: TileArgs) => {
-    const hasSchedule = schedules?.find(
-      (schedule) => schedule.date == format(date, "yyyy-MM-dd"),
+    const hasSchedule = scheduleData?.find(
+      (scheduleData) => scheduleData.date == format(date, "yyyy-MM-dd"),
     );
     const today = new Date();
 

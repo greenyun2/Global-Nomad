@@ -37,6 +37,7 @@ const useScheduleReservationsStatus = (
         selectedScheduleId,
         activeTabInEng,
       ),
+    staleTime: 1000 * 60 * 5,
   });
 
   console.log("$ clicked a schedule 👉 useScheduleReservationsStatus ran");
