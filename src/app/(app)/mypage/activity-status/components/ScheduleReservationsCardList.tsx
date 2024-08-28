@@ -30,7 +30,7 @@ export default function ScheduleReservationsList({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["scheduleReservationsStatus"],
+        queryKey: ["scheduleReservationsStatus", "MonthlyReservations"],
       });
     },
   });

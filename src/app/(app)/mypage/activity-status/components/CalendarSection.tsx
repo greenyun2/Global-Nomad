@@ -59,10 +59,15 @@ export default function CalendarSection() {
     const reservation = monthlyReservations?.find(
       (dailyReservation) => dailyReservation.date == formattedDate,
     );
-    // 예약건이 있는 타일에 표시할 dot에 관련한 logic을 생성합니다.
-    const today = new Date().getDate();
-    const isPast = date.getDate() < today;
-    const dotColor = isPast ? "bg-[#4B4B4B]" : "bg-[#0085FF]";
+    // 관리 할 예약건이 있는 타일에 표시할 dot에 관련한 logic을 생성합니다.
+    const hasReservation = monthlyReservations?.find(
+      (dailyReservation) =>
+        dailyReservation.date == formattedDate &&
+        (dailyReservation.reservations.pending != 0 ||
+          dailyReservation.reservations.confirmed != 0),
+    );
+
+    const dotColor = hasReservation ? "bg-[#0085FF]" : "bg-[#4B4B4B]";
 
     return (
       <div className="relative flex h-full flex-col justify-between">
