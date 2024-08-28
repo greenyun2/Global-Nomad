@@ -150,10 +150,18 @@ export default function ReservationCardMobile({
     mutationFn: postApplicationReservation,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
+      queryClient.invalidateQueries({ queryKey: ["availableSchedule"] });
       setIsModal(true);
       setMessage(
         `${selectedTime}시간에 ${totalInfo.totalNumber}명 예약이 완료됐습니다.`,
       );
+      setIsDisabled(true);
+      setButtonClick(false);
+      setTotalInfo({
+        totalPrice: price,
+        totalNumber: 1,
+      });
+      setActiveButton(null);
     },
     onError: (error) => {
       setIsModal(true);
@@ -195,12 +203,6 @@ export default function ReservationCardMobile({
       activityId,
       scheduleId,
       headCount: totalInfo.totalNumber,
-    });
-    setIsDisabled(true);
-    setButtonClick(false);
-    setTotalInfo({
-      totalPrice: price,
-      totalNumber: 1,
     });
   };
 
@@ -266,6 +268,7 @@ export default function ReservationCardMobile({
   const { data, isSuccess } = useQuery({
     queryKey: ["availableSchedule", activityId, year, month],
     queryFn: () => getActivityDetailSchedule({ activityId, year, month }),
+    staleTime: 5 * 60 * 1000,
   });
 
   useEffect(() => {
