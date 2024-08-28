@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getActivityById } from "@api/activities";
 import { updateMyActivity, UpdateActivityBody } from "@api/myActivites";
 import FormErrorMessageModal from "@app/components/Form/FormErrorMessageModal";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { useRouter, useParams } from "next/navigation";
 import Editor, { ModifiedEditorSchemaType } from "../../Editor";
@@ -14,25 +14,20 @@ export default function EditActivity() {
   const router = useRouter();
   const { activityId } = useParams();
   const queryClient = useQueryClient();
-  const [initialData, setInitialData] = useState<any | null>(null);
   const [popupMessage, setPopUpMessage] = useState<string | undefined>(
     undefined,
   );
   const { isOpen: isPopUpOpen, toggle: togglePopUp, ref } = useDropdown();
 
-  useEffect(() => {
-    const fetchActivity = async () => {
-      try {
-        const activityData = await getActivityById(Number(activityId));
-        setInitialData(activityData);
-      } catch (error) {
-        console.error("Error fetching activity data:", error);
-        setPopUpMessage("활동 데이터를 가져오는 데 문제가 발생했습니다.");
-      }
-    };
+  const { data: initialData, error } = useQuery({
+    queryKey: ["activity", activityId],
+    queryFn: async () => await getActivityById(Number(activityId)),
+    staleTime: 1000 * 60 * 5,
+  });
 
-    fetchActivity();
-  }, [activityId]);
+  if (error) {
+    setPopUpMessage("활동 데이터를 가져오는 데 문제가 발생했습니다.");
+  }
 
   const handleSubmit = async (formData: ModifiedEditorSchemaType) => {
     try {

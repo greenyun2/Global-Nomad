@@ -46,6 +46,7 @@ export default function ActivityList() {
       return response.activities as MyActivityType[];
     },
     initialData: myActivityList,
+    staleTime: 1000 * 60 * 5,
   });
 
   useEffect(() => {
