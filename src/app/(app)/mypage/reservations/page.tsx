@@ -1,7 +1,9 @@
 "use client";
 
 import { MouseEvent, useState } from "react";
-import { getMyReservation } from "@api/myReservation";
+import { getMyReservation, ReservationData } from "@api/myReservation";
+import ReservationCancelModal from "@app/(app)/mypage/reservations/components/ReservationCancelModal";
+import ReservationReviewModal from "@app/(app)/mypage/reservations/components/ReservationReviewModal";
 import EmptyState from "@app/components/EmptyState/EmptyState";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
@@ -29,11 +31,30 @@ export default function MyReservationPage() {
     const button = e.target as HTMLButtonElement;
     setFilter(button.value);
   };
+  const [clickedReservationId, setClickedReservationId] = useState<
+    number | null
+  >(null);
+
+  const handleReservationClick = (reservationId: number) => {
+    setClickedReservationId(reservationId);
+  };
 
   const FilteredData = reservations.filter(
     (reservation) => reservation.status === filter,
   );
   const FilteredDataLength = FilteredData.length;
+
+  const {
+    isOpen: isReviewModalOpen,
+    ref: reviewModalRef,
+    toggle: toggleReviewModal,
+  } = useDropdown();
+
+  const {
+    isOpen: isReservationCancelModalOpen,
+    ref: cancelModalRef,
+    toggle: toggleCancelModal,
+  } = useDropdown();
 
   return (
     <div>
@@ -67,7 +88,6 @@ export default function MyReservationPage() {
           )}
         </div>
       </div>
-
       {totalCount === 0 ? (
         <EmptyState>체험 예약 내역이 없어요</EmptyState>
       ) : (
@@ -78,6 +98,9 @@ export default function MyReservationPage() {
                 key={reservation.id}
                 cardData={reservation}
                 reservationId={reservation.id}
+                handleReservationClick={handleReservationClick}
+                toggleCancelModal={toggleCancelModal}
+                toggleReviewModal={toggleReviewModal}
               />
             ))
           ) : FilteredDataLength === 0 ? (
@@ -88,10 +111,35 @@ export default function MyReservationPage() {
                 key={reservation.id}
                 cardData={reservation}
                 reservationId={reservation.id}
+                handleReservationClick={handleReservationClick}
+                toggleCancelModal={toggleCancelModal}
+                toggleReviewModal={toggleReviewModal}
               />
             ))
           )}
         </ul>
+      )}
+      {isReservationCancelModalOpen && (
+        <ReservationCancelModal
+          ref={cancelModalRef}
+          toggle={toggleCancelModal}
+          reservationId={
+            data?.reservations.find(
+              (reservation) => reservation.id == clickedReservationId,
+            )?.id as number
+          }
+        />
+      )}
+      {isReviewModalOpen && (
+        <ReservationReviewModal
+          cardData={
+            data?.reservations.find(
+              (reservation) => reservation.id == clickedReservationId,
+            ) as ReservationData
+          }
+          toggle={toggleReviewModal}
+          ref={reviewModalRef}
+        />
       )}
     </div>
   );
