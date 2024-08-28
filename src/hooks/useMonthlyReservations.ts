@@ -18,6 +18,7 @@ export const useMonthlyReservations = (
     // 아니 근데 애초에 year, month 이런 값들을 기억하고 있다는 것도 말이 안되는데
     queryKey: ["MonthlyReservations", selectedActivityId, year, month],
     queryFn: () => getMonthlyReservations(selectedActivityId, year, month),
+    staleTime: 1000 * 60 * 5,
   });
 
   return { monthlyReservations, error, isLoading };

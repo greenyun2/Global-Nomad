@@ -49,7 +49,9 @@ export const ReservationReviewModal = forwardRef<
         return response;
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
+        queryClient.invalidateQueries({
+          queryKey: ["my-reservations", "reviews"],
+        });
         toggleReviewModal();
         toast.success("후기가 정상적으로 등록됐습니다.");
       },

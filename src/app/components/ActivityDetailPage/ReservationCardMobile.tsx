@@ -150,10 +150,18 @@ export default function ReservationCardMobile({
     mutationFn: postApplicationReservation,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
+      queryClient.invalidateQueries({ queryKey: ["availableSchedule"] });
       setIsModal(true);
       setMessage(
         `${selectedTime}시간에 ${totalInfo.totalNumber}명 예약이 완료됐습니다.`,
       );
+      setIsDisabled(true);
+      setButtonClick(false);
+      setTotalInfo({
+        totalPrice: price,
+        totalNumber: 1,
+      });
+      setActiveButton(null);
     },
     onError: (error) => {
       setIsModal(true);
@@ -195,12 +203,6 @@ export default function ReservationCardMobile({
       activityId,
       scheduleId,
       headCount: totalInfo.totalNumber,
-    });
-    setIsDisabled(true);
-    setButtonClick(false);
-    setTotalInfo({
-      totalPrice: price,
-      totalNumber: 1,
     });
   };
 
@@ -266,6 +268,7 @@ export default function ReservationCardMobile({
   const { data, isSuccess } = useQuery({
     queryKey: ["availableSchedule", activityId, year, month],
     queryFn: () => getActivityDetailSchedule({ activityId, year, month }),
+    staleTime: 5 * 60 * 1000,
   });
 
   useEffect(() => {
@@ -307,7 +310,7 @@ export default function ReservationCardMobile({
   // tileClassName function to conditionally add the 'react-calendar__tile--active' class
   const tileClassName = ({ date, view }: { date: Date; view: string }) => {
     // 해당 date에 예약건이 있는지 확인합니다.
-    const hasSchedule = schedules?.find(
+    const hasSchedule = scheduleData?.find(
       (schedule) => schedule.date == format(date, "yyyy-MM-dd"),
     );
 
@@ -324,7 +327,7 @@ export default function ReservationCardMobile({
   };
 
   const disabledTiles: TileDisabledFunc = ({ date }: TileArgs) => {
-    const hasSchedule = schedules?.find(
+    const hasSchedule = scheduleData?.find(
       (schedule) => schedule.date == format(date, "yyyy-MM-dd"),
     );
     const today = new Date();

@@ -74,12 +74,14 @@ export default function ReservationCard({
       ) : (
         <div className={`block md:hidden`}>
           <ReservationCardMobileOpener
+            isLoginUserData={isLoginUserData}
             userId={userId}
             price={price}
             handleOpenReservationCard={handleOpenReservationCard}
           />
         </div>
       )}
+
       <ReservationCardDesktop
         isLoginUserData={isLoginUserData}
         schedules={schedules}
