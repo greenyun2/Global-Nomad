@@ -307,7 +307,7 @@ export default function ReservationCardMobile({
   // tileClassName function to conditionally add the 'react-calendar__tile--active' class
   const tileClassName = ({ date, view }: { date: Date; view: string }) => {
     // 해당 date에 예약건이 있는지 확인합니다.
-    const hasSchedule = schedules?.find(
+    const hasSchedule = scheduleData?.find(
       (schedule) => schedule.date == format(date, "yyyy-MM-dd"),
     );
 
@@ -324,7 +324,7 @@ export default function ReservationCardMobile({
   };
 
   const disabledTiles: TileDisabledFunc = ({ date }: TileArgs) => {
-    const hasSchedule = schedules?.find(
+    const hasSchedule = scheduleData?.find(
       (schedule) => schedule.date == format(date, "yyyy-MM-dd"),
     );
     const today = new Date();
