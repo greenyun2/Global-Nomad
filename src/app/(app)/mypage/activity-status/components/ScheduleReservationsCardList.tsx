@@ -30,7 +30,13 @@ export default function ScheduleReservationsList({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["scheduleReservationsStatus", "MonthlyReservations"],
+        queryKey: ["scheduleReservationsStatus"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["dailyReservations"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["MonthlyReservations"],
       });
     },
   });
